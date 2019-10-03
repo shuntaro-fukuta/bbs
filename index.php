@@ -52,7 +52,7 @@
     </form>
     <?php foreach ($posts as $post) : ?>
       <hr>
-      <?php echo $post['comment'] ?>
+      <?php echo nl2br(htmlspecialchars($post['comment'], ENT_QUOTES)) ?>
       <?php echo $post['created_at'] ?>
     <?php endforeach ?>
   </body>
