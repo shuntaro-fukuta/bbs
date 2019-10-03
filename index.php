@@ -1,5 +1,20 @@
 <?php
 
+    $host     = 'localhost';
+    $username = 'root';
+    $password = 'root';
+    $db_name  = 'bbs';
+
+    $mysqli = new mysqli ($host, $username, $password, $db_name);
+
+    if ($mysqli->connect_error) {
+        exit($mysqli->$connect_error);
+    }
+
+    $mysqli->set_charset('utf8');
+
+    $mysqli->close();
+
 ?>
 
 <html>
