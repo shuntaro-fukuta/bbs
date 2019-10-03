@@ -23,11 +23,15 @@
         if ($comment_length === 0) {
             $error_massage = '何か入力してください。';
         } elseif ($comment_length < $min_comment_length || $comment_length > $max_comment_length) {
-            $error_massage = '入力は10文字以上200文字以内にして下さい。';
+            $error_massage = "入力は{$min_comment_length}文字以上{$max_comment_length}文字以内にして下さい。";
         } else {
             $mysqli->query("INSERT INTO posts (comment) VALUES ('$comment')");
+            header("Location: {$_SERVER['SCRIPT_NAME']}");
         }
     }
+
+    $results = $mysqli->query("SELECT comment, created_at FROM posts ORDER BY created_at DESC");
+    $posts   = $results->fetch_all(MYSQLI_ASSOC);
 
     $mysqli->close();
 
@@ -46,5 +50,10 @@
       <br>
       <input type="submit" value="Submit">
     </form>
+    <?php foreach ($posts as $post) : ?>
+      <hr>
+      <?php echo $post['comment'] ?>
+      <?php echo $post['created_at'] ?>
+    <?php endforeach ?>
   </body>
 </html>
