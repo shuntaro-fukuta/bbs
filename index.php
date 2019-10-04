@@ -60,8 +60,10 @@
       <?php echo $error_massage ?>
     <?php endif ?>
     <form method="post" action="">
-      <textarea name="comment"></textarea>
-      <br>
+      <label for="title">Title</label><br>
+      <input id="title" type="text" name="title"><br>
+      <label for="comment">Body</label><br>
+      <textarea id="comment" name="comment"></textarea><br>
       <input type="submit" value="Submit">
     </form>
     <?php foreach ($posts as $post) : ?>
