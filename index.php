@@ -1,5 +1,10 @@
 <?php
 
+    function mb_trim ($string) {
+        $string = mb_convert_kana($string, 's');
+        return trim($string);
+    }
+
     $host     = 'localhost';
     $username = 'root';
     $password = 'root';
@@ -18,6 +23,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comment        = $mysqli->real_escape_string($_POST['comment']);
+        $comment        = mb_trim($comment);
         $comment_length = mb_strlen($comment);
 
         if ($comment_length === 0) {
