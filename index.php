@@ -1,5 +1,10 @@
 <?php
 
+// ebine
+// 長いコメントとかタイトルとか入力して、
+// バリデーションエラーが発生した場合、
+// 頑張って書いた内容が全部消えちゃうので、残念な気持ちになる。
+
     function mb_trim($string) {
         return preg_replace('/\A[\p{Z}]+|[\p{Z}]+\z/u', '', $string);
     }
@@ -42,6 +47,8 @@
                 $error_massages[] = "タイトルは{$min_title_length}文字以上{$max_title_length}以内で入力してください";
             }
         } else {
+            // ebine
+            // これなに？いらないよね
             $error_massages[] = 'タイトルの投稿に失敗しました';
         }
 
