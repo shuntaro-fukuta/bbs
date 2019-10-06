@@ -16,11 +16,16 @@ $encoding = 'utf8';
 
 $mysqli = new mysqli($host, $username, $password, $db_name);
 
-$min_title_length = 10;
-$max_title_length = 32;
-
-$min_comment_length = 10;
-$max_comment_length = 200;
+$validation_length = [
+    'min' => [
+        'title'   => 10,
+        'comment' => 10,
+    ],
+    'max' => [
+        'title'   => 32,
+        'comment' => 200,
+    ],
+];
 
 if ($mysqli->connect_error) {
     echo $mysqli->connect_error;
@@ -38,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($title_length === 0) {
             $error_massages[] = 'タイトルを入力してください';
-        } elseif ($title_length < $min_title_length || $title_length > $max_title_length) {
-            $error_massages[] = "タイトルは{$min_title_length}文字以上{$max_title_length}以内で入力してください";
+        } elseif ($title_length < $validation_length['min']['title'] || $title_length > $validation_length['max']['title']) {
+            $error_massages[] = "タイトルは{$validation_length['min']['title']}文字以上{$validation_length['max']['title']}以内で入力してください";
         }
     }
 
@@ -49,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($comment_length === 0) {
             $error_massages[] = 'メッセージを入力してください。';
-        } elseif ($comment_length < $min_comment_length || $comment_length > $max_comment_length) {
-            $error_massages[] = "メッセージは{$min_comment_length}文字以上{$max_comment_length}文字以内で入力してください";
+        } elseif ($comment_length < $validation_length['min']['comment'] || $comment_length > $validation_length['max']['comment']) {
+            $error_massages[] = "メッセージは{$validation_length['min']['comment']}文字以上{$validation_length['max']['comment']}文字以内で入力してください";
         }
     }
 
