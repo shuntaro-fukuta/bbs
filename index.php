@@ -2,19 +2,7 @@
 
 require_once('dbconnect.php');
 require_once('functions.php');
-
-$validations = [
-    'title' => [
-        'required'   => true,
-        'min_length' => 10,
-        'max_length' => 32,
-    ],
-    'comment' => [
-        'required'   => true,
-        'min_length' => 10,
-        'max_length' => 200,
-    ],
-];
+require_once('validations.php');
 
 $error_massages = [];
 
