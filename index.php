@@ -8,25 +8,36 @@ function h($string) {
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
-function validate_input_length($validation_settings, $inputs) {
+function validate($validations, $inputs) {
     $error_massages = [];
 
     foreach ($inputs as $attribute_name => $input) {
-        $input_length = mb_strlen($input);
+        $validation_lists = $validations[$attribute_name];
 
-        if ($validation_settings[$attribute_name]['required'] === true && $input_length === 0) {
-            $error_massages[] = "{$attribute_name}を入力してください";
-        } elseif (isset($validation_settings[$attribute_name]['length']['min'])) {
-            $min_length = $validation_settings[$attribute_name]['length']['min'];
+        foreach ($validation_lists as $validation_type => $condition) {
+            $error_massage = null;
 
-            if ($input_length < $min_length) {
-                $error_massages[] = "{$attribute_name}は{$min_length}文字以上入力してください";
+            switch ($validation_type) {
+                case 'required':
+                    if ($condition === true && empty($input)) {
+                        $error_massage = "{$attribute_name}を入力してください";
+                    }
+                    break;
+                case 'min_length':
+                    if (mb_strlen($input) < $condition) {
+                        $error_massage = "{$attribute_name}は{$condition}文字以上入力してください";
+                    }
+                    break;
+                case 'max_length':
+                    if (mb_strlen($input) > $condition) {
+                        $error_massage = "{$attribute_name}は{$condition}文字以内で入力してください";
+                    }
+                    break;
             }
-        } elseif (isset($validation_settings[$attribute_name]['length']['max'])) {
-            $max_length = $validation_settings[$attribute_name]['length']['max'];
 
-            if ($input_length < $max_length) {
-                $error_massages[] = "{$attribute_name}は{$max_length}文字以内で入力してください";
+            if (isset($error_massage)) {
+                $error_massages[] = $error_massage;
+                break;
             }
         }
     }
@@ -42,20 +53,16 @@ $encoding = 'utf8';
 
 $mysqli = new mysqli($host, $username, $password, $db_name);
 
-$validation_settings = [
+$validations = [
     'title' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 32,
-        ],
+        'required'   => true,
+        'min_length' => 10,
+        'max_length' => 32,
     ],
     'comment' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 32,
-        ],
+        'required'   => true,
+        'min_length' => 10,
+        'max_length' => 200,
     ],
 ];
 
@@ -75,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $trimmed_inputs[$attribute_name] = mb_trim($input);
     }
 
-    $error_massages = validate_input_length($validation_settings, $trimmed_inputs);
+    $error_massages = validate($validations, $trimmed_inputs);
 
     if (empty($error_massages)) {
         $title   = $mysqli->real_escape_string($trimmed_inputs['title']);
