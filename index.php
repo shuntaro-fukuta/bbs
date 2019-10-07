@@ -5,7 +5,7 @@ function mb_trim($string) {
 }
 
 function h($string) {
-    return htmlspecialchars($string, ENT_QUOTES);
+    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 
 function validate($validations, $inputs) {
@@ -49,7 +49,7 @@ $host     = 'localhost';
 $username = 'root';
 $password = 'root';
 $db_name  = 'bbs';
-$encoding = 'utf8';
+$encoding = 'UTF-8';
 
 $mysqli = new mysqli($host, $username, $password, $db_name);
 
@@ -88,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title   = $mysqli->real_escape_string($trimmed_inputs['title']);
         $comment = $mysqli->real_escape_string($trimmed_inputs['comment']);
         $mysqli->query("INSERT INTO posts (title, comment) VALUES ('$title', '$comment')");
+
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
     } else {
@@ -97,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results = $mysqli->query("SELECT * FROM posts ORDER BY created_at DESC");
+$results = $mysqli->query("SELECT * FROM posts ORDER BY id DESC");
 $posts   = $results->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
