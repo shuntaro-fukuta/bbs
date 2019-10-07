@@ -8,6 +8,32 @@ function h($string) {
     return htmlspecialchars($string, ENT_QUOTES);
 }
 
+function validate_input_length($validation_settings, $inputs) {
+    $error_massages = [];
+
+    foreach ($inputs as $attribute_name => $input) {
+        $input_length = mb_strlen($input);
+
+        if ($validation_settings[$attribute_name]['required'] === true && $input_length === 0) {
+            $error_massages[] = "{$attribute_name}を入力してください";
+        } elseif (isset($validation_settings[$attribute_name]['length']['min'])) {
+            $min_length = $validation_settings[$attribute_name]['length']['min'];
+
+            if ($input_length < $min_length) {
+                $error_massages[] = "{$attribute_name}は{$min_length}文字以上入力してください";
+            }
+        } elseif (isset($validation_settings[$attribute_name]['length']['max'])) {
+            $max_length = $validation_settings[$attribute_name]['length']['max'];
+
+            if ($input_length < $max_length) {
+                $error_massages[] = "{$attribute_name}は{$max_length}文字以内で入力してください";
+            }
+        }
+    }
+
+    return $error_massages;
+}
+
 $host     = 'localhost';
 $username = 'root';
 $password = 'root';
@@ -16,14 +42,20 @@ $encoding = 'utf8';
 
 $mysqli = new mysqli($host, $username, $password, $db_name);
 
-$validation_length = [
-    'min' => [
-        'title'   => 10,
-        'comment' => 10,
+$validation_settings = [
+    'title' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 32,
+        ],
     ],
-    'max' => [
-        'title'   => 32,
-        'comment' => 200,
+    'comment' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 32,
+        ],
     ],
 ];
 
@@ -37,38 +69,24 @@ $mysqli->set_charset($encoding);
 $error_massages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['title'])) {
-        $title        = mb_trim($_POST['title']);
-        $title_length = mb_strlen($title);
 
-        if ($title_length === 0) {
-            $error_massages[] = 'タイトルを入力してください';
-        } elseif ($title_length < $validation_length['min']['title'] || $title_length > $validation_length['max']['title']) {
-            $error_massages[] = "タイトルは{$validation_length['min']['title']}文字以上{$validation_length['max']['title']}以内で入力してください";
-        }
+    $trimmed_inputs = [];
+    foreach ($_POST as $attribute_name => $input) {
+        $trimmed_inputs[$attribute_name] = mb_trim($input);
     }
 
-    if (isset($_POST['comment'])) {
-        $comment        = mb_trim($_POST['comment']);
-        $comment_length = mb_strlen($comment);
-
-        if ($comment_length === 0) {
-            $error_massages[] = 'メッセージを入力してください。';
-        } elseif ($comment_length < $validation_length['min']['comment'] || $comment_length > $validation_length['max']['comment']) {
-            $error_massages[] = "メッセージは{$validation_length['min']['comment']}文字以上{$validation_length['max']['comment']}文字以内で入力してください";
-        }
-    }
+    $error_massages = validate_input_length($validation_settings, $trimmed_inputs);
 
     if (empty($error_massages)) {
-        $title   = $mysqli->real_escape_string($title);
-        $comment = $mysqli->real_escape_string($comment);
+        $title   = $mysqli->real_escape_string($trimmed_inputs['title']);
+        $comment = $mysqli->real_escape_string($trimmed_inputs['comment']);
         $mysqli->query("INSERT INTO posts (title, comment) VALUES ('$title', '$comment')");
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
     } else {
         session_start();
-        $_SESSION['title']   = $title;
-        $_SESSION['comment'] = $comment;
+        $_SESSION['title']   = $trimmed_inputs['title'];
+        $_SESSION['comment'] = $trimmed_inputs['comment'];
     }
 }
 
