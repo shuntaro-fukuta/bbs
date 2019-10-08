@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $trimmed_inputs[$attribute_name] = mb_trim($input);
     }
 
-    $error_massages = validate($validations, $trimmed_inputs);
+    $error_massages = validate($validation_settings, $trimmed_inputs);
 
     if (empty($error_massages)) {
         $title   = $mysqli->real_escape_string($trimmed_inputs['title']);
