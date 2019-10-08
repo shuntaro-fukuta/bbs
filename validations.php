@@ -1,18 +1,18 @@
 <?php
 
-function execute_validations($validations, $inputs) {
+function execute_validations($validation_settings, $inputs) {
     $error_massages = [];
 
-    foreach ($validations as $attribute_name => $conditions) {
-        if ($conditions['required'] === true) {
+    foreach ($validation_settings as $attribute_name => $settings) {
+        if ($settings['required'] === true) {
             $input = $inputs[$attribute_name];
 
             $error_massage = null;
 
             if (empty($input)) {
                 $error_massage = "{$attribute_name}を入力してください";
-            } elseif (isset($conditions['length'])) {
-                $error_massage = validate_input_length($attribute_name, $input, $conditions['length']);
+            } elseif (isset($settings['length'])) {
+                $error_massage = validate_input_length($attribute_name, $input, $settings['length']);
             }
 
             if (isset($error_massage)) {

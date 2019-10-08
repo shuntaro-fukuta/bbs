@@ -18,7 +18,7 @@ if ($mysqli->connect_error) {
 
 $mysqli->set_charset($encoding);
 
-$bbs_post_validations = [
+$bbs_post_validation_settings = [
     'title' => [
         'required' => true,
         'length'   => [
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title   = $inputs['title'];
     $comment = $inputs['comment'];
 
-    $error_massages = execute_validations($bbs_post_validations, $inputs);
+    $error_massages = execute_validations($bbs_post_validation_settings, $inputs);
 
     if (empty($error_massages)) {
         $title   = $mysqli->real_escape_string($title);
