@@ -1,35 +1,22 @@
 <?php
 
-function validate($validations, $inputs) {
+function execute_validations($validations, $inputs) {
     $error_massages = [];
 
-    foreach ($inputs as $attribute_name => $input) {
-        $validation_lists = $validations[$attribute_name];
+    foreach ($validations as $attribute_name => $conditions) {
+        if ($conditions['required'] === true) {
+            $input = $inputs[$attribute_name];
 
-        foreach ($validation_lists as $validation_type => $condition) {
             $error_massage = null;
 
-            switch ($validation_type) {
-                case 'required':
-                    if ($condition === true && empty($input)) {
-                        $error_massage = "{$attribute_name}を入力してください";
-                    }
-                    break;
-                case 'min_length':
-                    if (mb_strlen($input) < $condition) {
-                        $error_massage = "{$attribute_name}は{$condition}文字以上入力してください";
-                    }
-                    break;
-                case 'max_length':
-                    if (mb_strlen($input) > $condition) {
-                        $error_massage = "{$attribute_name}は{$condition}文字以内で入力してください";
-                    }
-                    break;
+            if (empty($input)) {
+                $error_massage = "{$attribute_name}を入力してください";
+            } elseif (isset($conditions['length'])) {
+                $error_massage = validate_input_length($attribute_name, $input, $conditions['length']);
             }
 
             if (isset($error_massage)) {
                 $error_massages[] = $error_massage;
-                break;
             }
         }
     }
@@ -37,15 +24,24 @@ function validate($validations, $inputs) {
     return $error_massages;
 }
 
-$validations = [
-    'title' => [
-        'required'   => true,
-        'min_length' => 10,
-        'max_length' => 32,
-    ],
-    'comment' => [
-        'required'   => true,
-        'min_length' => 10,
-        'max_length' => 200,
-    ],
-];
+function validate_input_length($attribute_name, $input, $length_limits) {
+    $input_length = mb_strlen($input);
+
+    $error_massage = null;
+
+    if (isset($length_limits['min']) && isset($length_limits['max'])) {
+        if ($input_length < $length_limits['min'] || $input_length > $length_limits['max']) {
+            $error_massage = "{$attribute_name}は{$length_limits['min']}文字以上{$length_limits['max']}文字以内で入力してください";
+        }
+    } elseif (isset($length_limits['min'])) {
+        if ($input_length < $length_limits['min']) {
+            $error_massage = "{$attribute_name}は{$length_limits['min']}文字以上入力してください";
+        }
+    } elseif (isset($length_limits['max'])) {
+        if ($input_length > $length_limits['max']) {
+            $error_massage = "{$attribute_name}は{$length_limits['max']}文字以内で入力してください";
+        }
+    }
+
+    return $error_massage;
+}

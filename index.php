@@ -1,8 +1,39 @@
 <?php
 
-require_once('dbconnect.php');
 require_once('functions.php');
 require_once('validations.php');
+
+$host     = 'localhost';
+$username = 'root';
+$password = 'root';
+$db_name  = 'bbs';
+$encoding = 'UTF-8';
+
+$mysqli = new mysqli($host, $username, $password, $db_name);
+
+if ($mysqli->connect_error) {
+    echo $mysqli->connect_error;
+    exit;
+}
+
+$mysqli->set_charset($encoding);
+
+$bbs_post_validations = [
+    'title' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 32,
+        ],
+    ],
+    'comment' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 200,
+        ],
+    ],
+];
 
 $error_massages = [];
 
@@ -15,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title   = $inputs['title'];
     $comment = $inputs['comment'];
 
-    $error_massages = validate($validations, $inputs);
+    $error_massages = execute_validations($bbs_post_validations, $inputs);
 
     if (empty($error_massages)) {
         $title   = $mysqli->real_escape_string($title);
@@ -48,15 +79,9 @@ $mysqli->close();
     <?php endif ?>
     <form method="post" action="">
       <label for="title">Title</label><br>
-<<<<<<< HEAD
-      <input id="title" type="text" name="title" value="<?php echo isset($_SESSION['title']) ? $_SESSION['title'] : '' ?>"><br>
-      <label for="comment">Body</label><br>
-      <textarea id="comment" name="comment"><?php echo isset($_SESSION['comment']) ? $_SESSION['comment'] : '' ?></textarea><br>
-=======
       <input id="title" type="text" name="title" value="<?php echo isset($title) ? h($title) : '' ?>"><br>
       <label for="comment">Body</label><br>
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
->>>>>>> 80ec321... 指摘箇所の修正
       <input type="submit" value="Submit">
     </form>
     <?php foreach ($posts as $post) : ?>
@@ -67,10 +92,4 @@ $mysqli->close();
       <?php echo h($post['created_at']) ?>
     <?php endforeach ?>
   </body>
-<<<<<<< HEAD
-  <?php session_unset() ?>
-  <?php session_destroy() ?>
 </html>
-=======
-</html>
->>>>>>> 80ec321... 指摘箇所の修正
