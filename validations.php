@@ -4,19 +4,25 @@ function execute_validations($validation_settings, $inputs) {
     $error_massages = [];
 
     foreach ($validation_settings as $attribute_name => $settings) {
-        if ($settings['required'] === true) {
-            $input = $inputs[$attribute_name];
+        $input = $inputs[$attribute_name];
 
-            $error_massage = null;
+        $error_massage = null;
 
-            if (empty($input)) {
-                $error_massage = "{$attribute_name}を入力してください";
-            } elseif (isset($settings['length'])) {
-                $error_massage = validate_input_length($attribute_name, $input, $settings['length']);
+        if (isset($settings['required'])) {
+            if ($settings['required'] === true && empty($input)) {
+                $error_massages[] = "{$attribute_name}を入力してください";
+
+                continue;
             }
+        }
 
-            if (isset($error_massage)) {
+        if (isset($settings['length'])) {
+            $error_massage = validate_input_length($attribute_name, $input, $settings['length']);
+
+            if ($error_massage) {
                 $error_massages[] = $error_massage;
+
+                continue;
             }
         }
     }
