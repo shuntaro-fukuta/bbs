@@ -43,7 +43,7 @@ function execute_validations($validation_settings, $inputs) {
 function validate_input_required($attribute_name, $input, $condition) {
     $error_massage = null;
 
-    if ($condition === true && (empty($input) || is_null($input))) {
+    if ($condition === true && (empty($input))) {
         $error_massage = "{$attribute_name}を入力してください";
     }
 
@@ -51,7 +51,7 @@ function validate_input_required($attribute_name, $input, $condition) {
 }
 
 function validate_input_length($attribute_name, $input, $length_limits) {
-    if (is_null($input)) {
+    if (empty($input)) {
         return;
     }
 
