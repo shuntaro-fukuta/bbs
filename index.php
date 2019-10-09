@@ -35,7 +35,7 @@ $bbs_post_validation_settings = [
     ],
 ];
 
-$error_massages = [];
+$error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputs = [];
@@ -43,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs[$attribute_name] = mb_trim($input);
     }
 
-    $error_massages = execute_validations($bbs_post_validation_settings, $inputs);
+    $error_messages = execute_validations($bbs_post_validation_settings, $inputs);
 
-    if (empty($error_massages)) {
+    if (empty($error_messages)) {
         $title   = $mysqli->real_escape_string($inputs['title']);
         $comment = $mysqli->real_escape_string($inputs['comment']);
 
@@ -75,8 +75,8 @@ $mysqli->close();
     <title>challnege2</title>
   </head>
   <body>
-    <?php if (!empty($error_massages)) : ?>
-      <?php foreach ($error_massages as $error_message) : ?>
+    <?php if (!empty($error_messages)) : ?>
+      <?php foreach ($error_messages as $error_message) : ?>
         <?php echo $error_message ?>
         <br>
       <?php endforeach ?>
