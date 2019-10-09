@@ -5,29 +5,30 @@ function execute_validations($validation_settings, $inputs) {
 
     foreach ($validation_settings as $attribute_name => $settings) {
 
-        if (!isset($inputs[$attribute_name])) {
-            $error_massages[] = "{$attribute_name}を入力してください";
-            continue;
+        if (isset($inputs[$attribute_name])) {
+            $input = $inputs[$attribute_name];
+        } else {
+            $input = null;
         }
-
-        $input = $inputs[$attribute_name];
 
         foreach ($settings as $validation_type => $condition) {
 
             switch ($validation_type) {
                 case 'required':
-                    if ($condition === true && empty($input)) {
+                    if ($condition === true && (empty($input) || is_null($input))) {
                         $error_massages[] = "{$attribute_name}を入力してください";
                         continue 3;
                     }
 
                     break;
                 case 'length':
-                    $error_massage = validate_input_length($attribute_name, $input, $condition);
+                    if (!is_null($input)) {
+                        $error_massage = validate_input_length($attribute_name, $input, $condition);
 
-                    if (isset($error_massage)) {
-                        $error_massages[] = $error_massage;
-                        continue 3;
+                        if (isset($error_massage)) {
+                            $error_massages[] = $error_massage;
+                            continue 3;
+                        }
                     }
 
                     break;
