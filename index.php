@@ -43,19 +43,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs[$attribute_name] = mb_trim($input);
     }
 
-    $title   = $inputs['title'];
-    $comment = $inputs['comment'];
-
     $error_massages = execute_validations($bbs_post_validation_settings, $inputs);
 
     if (empty($error_massages)) {
-        $title   = $mysqli->real_escape_string($title);
-        $comment = $mysqli->real_escape_string($comment);
+        $title   = $mysqli->real_escape_string($inputs['title']);
+        $comment = $mysqli->real_escape_string($inputs['comment']);
 
         $mysqli->query("INSERT INTO posts (title, comment) VALUES ('{$title}', '{$comment}')");
 
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
+    } else {
+        if (isset($inputs['title'])) {
+            $title = $inputs['title'];
+        }
+        if (isset($inputs['comment'])) {
+            $comment = $inputs['comment'];
+        }
     }
 }
 
