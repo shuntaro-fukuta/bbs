@@ -1,11 +1,5 @@
 <?php
 
-function get_total_record_count($db_object, $table_name) {
-    $results = $db_object->query("SELECT COUNT(*) AS 'count' FROM {$table_name}")->fetch_assoc();
-
-    return (int) $results['count'];
-}
-
 function get_current_page($last_page) {
     if (isset($_GET['page'])) {
         $page = (int) mb_convert_kana($_GET['page'], 'n');
@@ -23,14 +17,13 @@ function get_current_page($last_page) {
     return $current_page;
 }
 
-function get_page_records($current_page, $db_instance, $table_name, $record_count) {
-    $offset  = ($current_page - 1) * $record_count;
-    $records = $db_instance->query("SELECT * FROM {$table_name} ORDER BY id DESC LIMIT {$record_count} OFFSET {$offset}")->fetch_all(MYSQLI_ASSOC);
+function get_page_numbers($current_page, $max_pager_count, $last_page) {
+    if ($last_page > $max_pager_count) {
+        $pager_count = $max_pager_count;
+    } else {
+        $pager_count = $last_page;
+    }
 
-    return $records;
-}
-
-function create_pagers($current_page, $pager_count, $last_page) {
     // 偶数のときは左寄り
     if (($pager_count % 2) === 0) {
         $offset_left  = ($pager_count / 2) - 1;
@@ -41,15 +34,15 @@ function create_pagers($current_page, $pager_count, $last_page) {
     }
 
     if (($current_page - $offset_left) < 1) {
-        $start_pager = 1;
-        $end_pager   = $pager_count;
+        $start_page = 1;
+        $end_page   = $pager_count;
     } elseif (($current_page + $offset_right) > $last_page) {
-        $end_pager   = $last_page;
-        $start_pager = $end_pager - $pager_count + 1;
+        $end_page   = $last_page;
+        $start_page = $end_page - $pager_count + 1;
     } else {
-        $start_pager = $current_page - $offset_left;
-        $end_pager   = $current_page + $offset_right;
+        $start_page = $current_page - $offset_left;
+        $end_page   = $current_page + $offset_right;
     }
 
-    return range($start_pager, $end_pager);
+    return range($start_page, $end_page);
 }

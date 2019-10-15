@@ -36,8 +36,8 @@ $bbs_post_validation_settings = [
     ],
 ];
 
-$page_message_count = 10;
-$max_pager_count    = 5;
+$page_post_count = 10;
+$max_pager_count = 5;
 
 $error_messages = [];
 
@@ -67,25 +67,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$total_message_count = get_total_record_count($mysqli, 'posts');
+$results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch_assoc();
+$total_post_count = (int) $results['count'];
 
-$posts  = null;
-$pagers = null;
-if ($total_message_count) {
-    $last_page  = (int) ceil($total_message_count / $page_message_count);
+$posts        = null;
+$page_numbers = null;
+if ($total_post_count) {
+    $last_page = (int) ceil($total_post_count / $page_post_count);
 
     $current_page = get_current_page($last_page);
 
-    $posts = get_page_records($current_page, $mysqli, 'posts', $page_message_count);
+    $offset = ($current_page - 1) * $page_post_count;
+    $posts  = $mysqli->query("SELECT * FROM posts ORDER BY id DESC LIMIT {$page_post_count} OFFSET {$offset}")->fetch_all(MYSQLI_ASSOC);
 
     if ($last_page > 1) {
-        if ($last_page > $max_pager_count) {
-            $pager_count = $max_pager_count;
-        } else {
-            $pager_count = $last_page;
-        }
-
-        $pagers = create_pagers($current_page, $pager_count, $last_page);
+        $page_numbers = get_page_numbers($current_page, $max_pager_count, $last_page);
     }
 }
 
@@ -122,16 +118,16 @@ $mysqli->close();
     <?php endif ?>
     <hr>
     <div>
-      <?php if (isset($pagers)) : ?>
+      <?php if (isset($page_numbers)) : ?>
         <?php if ($current_page !== 1) : ?>
           <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $current_page - 1 ?>">&lt;</a>
         <?php endif ?>
 
-        <?php foreach ($pagers as $pager) : ?>
-          <?php if ($pager !== $current_page) : ?>
-            <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pager ?>"><?php echo $pager ?></a>
+        <?php foreach ($page_numbers as $page_number) : ?>
+          <?php if ($page_number !== $current_page) : ?>
+            <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $page_number ?>"><?php echo $page_number ?></a>
           <?php else: ?>
-            <?php echo $pager ?>
+            <?php echo $page_number ?>
           <?php endif ?>
         <?php endforeach ?>
 
