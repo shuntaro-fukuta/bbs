@@ -36,12 +36,8 @@ $bbs_post_validation_settings = [
     ],
 ];
 
-$pagination_settings = [
-    'db_instance'       => $mysqli,
-    'table_name'        => 'posts',
-    'page_record_count' => 10,
-    'max_pager_count'   => 5,
-];
+$page_message_count = 10;
+$max_pager_count    = 5;
 
 $error_messages = [];
 
@@ -71,7 +67,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$posts = paginate($pagination_settings);
+$total_message_count = get_total_record_count($mysqli, 'posts');
+
+$posts  = null;
+$pagers = null;
+if ($total_message_count) {
+    $last_page  = (int) ceil($total_message_count / $page_message_count);
+
+    $current_page = get_current_page($last_page);
+
+    $posts = get_page_records($current_page, $mysqli, 'posts', $page_message_count);
+
+    if ($last_page > 1) {
+        if ($last_page > $max_pager_count) {
+            $pager_count = $max_pager_count;
+        } else {
+            $pager_count = $last_page;
+        }
+
+        $pagers = create_pagers($current_page, $pager_count, $last_page);
+    }
+}
 
 $mysqli->close();
 
@@ -95,8 +111,8 @@ $mysqli->close();
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
       <input type="submit" value="Submit">
     </form>
-    <?php if (isset($posts['records'])) : ?>
-      <?php foreach ($posts['records'] as $post) : ?>
+    <?php if (isset($posts)) : ?>
+      <?php foreach ($posts as $post) : ?>
         <hr>
         <?php echo h($post['title']) ?>
         <br>
@@ -106,10 +122,22 @@ $mysqli->close();
     <?php endif ?>
     <hr>
     <div>
-      <?php if (isset($posts['pagers'])) : ?>
-        <?php foreach ($posts['pagers'] as $pager) : ?>
-          <?php echo $pager ?>
+      <?php if (isset($pagers)) : ?>
+        <?php if ($current_page !== 1) : ?>
+          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $current_page - 1 ?>">&lt;</a>
+        <?php endif ?>
+
+        <?php foreach ($pagers as $pager) : ?>
+          <?php if ($pager !== $current_page) : ?>
+            <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pager ?>"><?php echo $pager ?></a>
+          <?php else: ?>
+            <?php echo $pager ?>
+          <?php endif ?>
         <?php endforeach ?>
+
+        <?php if ($current_page !== $last_page) : ?>
+          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $current_page + 1 ?>">&gt;</a>
+        <?php endif ?>
       <?php endif ?>
     </div>
   </body>
