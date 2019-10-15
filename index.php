@@ -2,6 +2,7 @@
 
 require_once('functions.php');
 require_once('validations.php');
+require_once('paginations.php');
 
 $host     = 'localhost';
 $username = 'root';
@@ -35,6 +36,13 @@ $bbs_post_validation_settings = [
     ],
 ];
 
+$pagination_settings = [
+    'db_instance'       => $mysqli,
+    'table_name'        => 'posts',
+    'page_record_count' => 10,
+    'max_pager_count'   => 5,
+];
+
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -63,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results = $mysqli->query('SELECT * FROM posts ORDER BY id DESC');
-$posts   = $results->fetch_all(MYSQLI_ASSOC);
+$posts = paginate($pagination_settings);
 
 $mysqli->close();
 
@@ -72,7 +79,7 @@ $mysqli->close();
 
 <html>
   <head>
-    <title>challnege2</title>
+    <title>challnege3</title>
   </head>
   <body>
     <?php if (!empty($error_messages)) : ?>
@@ -88,12 +95,22 @@ $mysqli->close();
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
       <input type="submit" value="Submit">
     </form>
-    <?php foreach ($posts as $post) : ?>
-      <hr>
-      <?php echo h($post['title']) ?>
-      <br>
-      <?php echo nl2br(h($post['comment'])) ?>
-      <?php echo h($post['created_at']) ?>
-    <?php endforeach ?>
+    <?php if (isset($posts['records'])) : ?>
+      <?php foreach ($posts['records'] as $post) : ?>
+        <hr>
+        <?php echo h($post['title']) ?>
+        <br>
+        <?php echo nl2br(h($post['comment'])) ?>
+        <?php echo h($post['created_at']) ?>
+      <?php endforeach ?>
+    <?php endif ?>
+    <hr>
+    <div>
+      <?php if (isset($posts['pagers'])) : ?>
+        <?php foreach ($posts['pagers'] as $pager) : ?>
+          <?php echo $pager ?>
+        <?php endforeach ?>
+      <?php endif ?>
+    </div>
   </body>
 </html>
