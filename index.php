@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 require_once('functions.php');
 require_once('validations.php');
-require_once('paginations.php');
+require_once('pagination.php');
 
 $host     = 'localhost';
 $username = 'root';
@@ -36,9 +38,6 @@ $bbs_post_validation_settings = [
     ],
 ];
 
-$page_post_count = 10;
-$max_pager_count = 5;
-
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -70,20 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch_assoc();
 $total_post_count = (int) $results['count'];
 
-$posts        = null;
-$page_numbers = null;
-if ($total_post_count) {
-    $last_page = (int) ceil($total_post_count / $page_post_count);
+$pagination = new Pagination($total_post_count);
 
-    $current_page = get_current_page($last_page);
+$page_numbers = $pagination->getPageNumbers();
 
-    $offset = ($current_page - 1) * $page_post_count;
-    $posts  = $mysqli->query("SELECT * FROM posts ORDER BY id DESC LIMIT {$page_post_count} OFFSET {$offset}")->fetch_all(MYSQLI_ASSOC);
-
-    if ($last_page > 1) {
-        $page_numbers = get_page_numbers($current_page, $max_pager_count, $last_page);
-    }
-}
+$posts = $mysqli->query("
+    SELECT *
+    FROM posts
+    ORDER BY id DESC
+    LIMIT {$pagination->getPageItemCount()}
+    OFFSET {$pagination->getRecordOffset()}
+")->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
 
@@ -107,7 +103,7 @@ $mysqli->close();
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
       <input type="submit" value="Submit">
     </form>
-    <?php if (isset($posts)) : ?>
+    <?php if (!empty($posts)) : ?>
       <?php foreach ($posts as $post) : ?>
         <hr>
         <?php echo h($post['title']) ?>
@@ -119,20 +115,20 @@ $mysqli->close();
     <hr>
     <div>
       <?php if (isset($page_numbers)) : ?>
-        <?php if ($current_page !== 1) : ?>
-          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $current_page - 1 ?>">&lt;</a>
+        <?php if (!($pagination->isFirstPage())) : ?>
+          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pagination->getPreviousPage() ?>">&lt;</a>
         <?php endif ?>
 
         <?php foreach ($page_numbers as $page_number) : ?>
-          <?php if ($page_number !== $current_page) : ?>
+          <?php if (!($pagination->isCurrentPage($page_number))) : ?>
             <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $page_number ?>"><?php echo $page_number ?></a>
-          <?php else: ?>
+          <?php else : ?>
             <?php echo $page_number ?>
           <?php endif ?>
         <?php endforeach ?>
 
-        <?php if ($current_page !== $last_page) : ?>
-          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $current_page + 1 ?>">&gt;</a>
+        <?php if (!($pagination->isLastPage())) : ?>
+          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pagination->getNextPage() ?>">&gt;</a>
         <?php endif ?>
       <?php endif ?>
     </div>
