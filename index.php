@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 require_once('functions.php');
 require_once('validations.php');
 require_once('pagination.php');
@@ -38,6 +36,8 @@ $bbs_post_validation_settings = [
     ],
 ];
 
+$pagination_param_name = 'page';
+
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -70,6 +70,9 @@ $results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch
 $total_post_count = (int) $results['count'];
 
 $pagination = new Pagination($total_post_count);
+
+$current_page = (int) filter_input(INPUT_GET, $pagination_param_name);
+$pagination->setCurrentPage($current_page);
 
 $page_numbers = $pagination->getPageNumbers();
 
@@ -116,19 +119,23 @@ $mysqli->close();
     <div>
       <?php if (isset($page_numbers)) : ?>
         <?php if (!($pagination->isFirstPage())) : ?>
+<<<<<<< HEAD
           <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pagination->getPreviousPage() ?>">&lt;</a>
+=======
+          <a href="<?php echo $pagination->getPreviousPageUrl($pagination_param_name) ?>">&lt;</a>
+>>>>>>> 35dc710... レビューの指摘箇所の修正
         <?php endif ?>
 
         <?php foreach ($page_numbers as $page_number) : ?>
           <?php if (!($pagination->isCurrentPage($page_number))) : ?>
-            <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $page_number ?>"><?php echo $page_number ?></a>
+            <a href="<?php echo $pagination->buildPageUrl($pagination_param_name, $page_number) ?>"><?php echo $page_number ?></a>
           <?php else : ?>
             <?php echo $page_number ?>
           <?php endif ?>
         <?php endforeach ?>
 
         <?php if (!($pagination->isLastPage())) : ?>
-          <a href="<?php echo $_SERVER['SCRIPT_NAME'] ?>?page=<?php echo $pagination->getNextPage() ?>">&gt;</a>
+          <a href="<?php echo $pagination->getNextPageUrl($pagination_param_name) ?>">&gt;</a>
         <?php endif ?>
       <?php endif ?>
     </div>

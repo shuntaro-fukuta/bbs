@@ -5,16 +5,19 @@ class Pagination
     private $record_count;
     private $page_item_count = 10;
     private $max_pager_count = 5;
+    private $current_page    = 1;
 
     public function __construct(int $record_count)
     {
-        $this->record_count = $record_count;
+        $this->setRecordCount($record_count);
     }
 
     public function setPageItemCount(int $count)
     {
-        if ($count) {
+        if ($count >= 1) {
             $this->page_item_count = $count;
+        } else {
+            throw new InvalidArgumentException();
         }
     }
 
@@ -25,19 +28,38 @@ class Pagination
 
     public function setMaxPagerCount(int $count)
     {
-        if ($count) {
+        if ($count >= 1) {
             $this->max_pager_count = $count;
+        } else {
+            throw new InvalidArgumentException();
         }
     }
 
-    public function getPreviousPage()
+    public function setCurrentPage(int $page)
     {
-        return ($this->getCurrentPage() - 1);
+        $last_page = $this->getLastPage();
+
+        if (($page >= 1) && ($page <= $last_page)) {
+            $this->current_page = $page;
+        } elseif ($page > $last_page) {
+            $this->current_page = $last_page;
+        } else {
+            $this->current_page = 1;
+        }
     }
 
-    public function getNextPage()
+    public function getPreviousPageUrl($param_name)
     {
-        return ($this->getCurrentPage() + 1);
+        $previous_page = $this->current_page - 1;
+
+        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
+    }
+
+    public function getNextPageUrl($param_name)
+    {
+        $next_page = $this->current_page + 1;
+
+        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$next_page}";
     }
 
     public function getPageNumbers()
@@ -48,7 +70,7 @@ class Pagination
             return;
         }
 
-        $current_page    = $this->getCurrentPage();
+        $current_page    = $this->current_page;
         $max_pager_count = $this->max_pager_count;
 
         if ($last_page > $max_pager_count) {
@@ -80,28 +102,34 @@ class Pagination
         return range($start_page, $end_page);
     }
 
+    public function buildPageUrl($param_name, $page)
+    {
+        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$page}";
+    }
+
     public function getRecordOffset()
     {
-        return ($this->getCurrentPage() - 1) * $this->page_item_count;
+        return ($this->current_page - 1) * $this->page_item_count;
     }
 
     public function isFirstPage()
     {
-        return ($this->getCurrentPage() === 1);
+        return ($this->current_page === 1);
     }
 
     public function isLastPage()
     {
-        return ($this->getCurrentPage() === $this->getLastPage());
+        return ($this->current_page === $this->getLastPage());
     }
 
     public function isCurrentPage($page)
     {
-        return ($page === $this->getCurrentPage());
+        return ($page === $this->current_page);
     }
 
-    private function getCurrentPage()
+    private function setRecordCount($count)
     {
+<<<<<<< HEAD
         $page = (int) filter_input(INPUT_GET, 'page');
 
         $last_page = $this->getLastPage();
@@ -110,11 +138,13 @@ class Pagination
             $current_page = $page;
         } elseif ($page > $last_page) {
             $current_page = $last_page;
+=======
+        if ($count >= 1) {
+            $this->record_count = $count;
+>>>>>>> 35dc710... レビューの指摘箇所の修正
         } else {
-            $current_page = 1;
+            throw new InvalidArgumentException();
         }
-
-        return $current_page;
     }
 
     private function getLastPage()
