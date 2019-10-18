@@ -48,14 +48,14 @@ class Pagination
         }
     }
 
-    public function getPreviousPageUrl($param_name)
+    public function getPreviousPageUrl(string $param_name)
     {
         $previous_page = $this->current_page - 1;
 
         return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
     }
 
-    public function getNextPageUrl($param_name)
+    public function getNextPageUrl(string $param_name)
     {
         $next_page = $this->current_page + 1;
 
@@ -102,7 +102,7 @@ class Pagination
         return range($start_page, $end_page);
     }
 
-    public function buildPageUrl($param_name, $page)
+    public function buildPageUrl(string $param_name, int $page)
     {
         return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$page}";
     }
@@ -122,12 +122,12 @@ class Pagination
         return ($this->current_page === $this->getLastPage());
     }
 
-    public function isCurrentPage($page)
+    public function isCurrentPage(int $page)
     {
         return ($page === $this->current_page);
     }
 
-    private function setRecordCount($count)
+    private function setRecordCount(int $count)
     {
 <<<<<<< HEAD
         $page = (int) filter_input(INPUT_GET, 'page');
