@@ -1,5 +1,6 @@
 <?php
 
+// ページ総数が1ページのときはページャを非表示
 class Pagination
 {
     private $record_count;
@@ -28,16 +29,11 @@ class Pagination
 
     public function setMaxPagerCount(int $count)
     {
-        // adv: setPageItemCountの方を直しちゃったけど、こっちも同様
-        //      無駄なifのネストがなくなるように落とせるもの（return/Exception)は先に持ってきましょう
-        //      早期リターンとかそんな感じの言葉
-        // adv: $max_pager_count が 1 ってありえるの？
-        //      良い悪いの話じゃなくて福田くんの設計したこのページャの仕様の話
-        if ($max_pager_count >= 1) {
-            $this->max_pager_count = $max_pager_count;
-        } else {
+        if ($max_pager_count < 1) {
             throw new InvalidArgumentException();
         }
+
+        $this->max_pager_count = $max_pager_count;
     }
 
     public function setCurrentPage(int $page)
@@ -134,18 +130,16 @@ class Pagination
 
     private function setRecordCount($count)
     {
-        // adv: 検索結果とか０件ってあり得ると思うけど
-        if ($record_count >= 1) {
-            $this->record_count = $record_count;
-        } else {
+        if ($record_count < 0) {
             throw new InvalidArgumentException();
         }
+
+        $this->record_count = $record_count;
     }
 
     private function getLastPage()
     {
-        // adv: このifはなんのためにあるの？
-        if ($this->record_count) {
+        if ($this->record_count > 0) {
             return (int) ceil($this->record_count / $this->page_item_count);
         } else {
             return 1;
