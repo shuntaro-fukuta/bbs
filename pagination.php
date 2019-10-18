@@ -14,11 +14,11 @@ class Pagination
 
     public function setPageItemCount(int $count)
     {
-        if ($count >= 1) {
-            $this->page_item_count = $count;
-        } else {
+        if ($page_item_count < 1) {
             throw new InvalidArgumentException();
         }
+
+        $this->page_item_count = $page_item_count;
     }
 
     public function getPageItemCount()
@@ -28,8 +28,13 @@ class Pagination
 
     public function setMaxPagerCount(int $count)
     {
-        if ($count >= 1) {
-            $this->max_pager_count = $count;
+        // adv: setPageItemCountの方を直しちゃったけど、こっちも同様
+        //      無駄なifのネストがなくなるように落とせるもの（return/Exception)は先に持ってきましょう
+        //      早期リターンとかそんな感じの言葉
+        // adv: $max_pager_count が 1 ってありえるの？
+        //      良い悪いの話じゃなくて福田くんの設計したこのページャの仕様の話
+        if ($max_pager_count >= 1) {
+            $this->max_pager_count = $max_pager_count;
         } else {
             throw new InvalidArgumentException();
         }
@@ -129,8 +134,9 @@ class Pagination
 
     private function setRecordCount($count)
     {
-        if ($count >= 1) {
-            $this->record_count = $count;
+        // adv: 検索結果とか０件ってあり得ると思うけど
+        if ($record_count >= 1) {
+            $this->record_count = $record_count;
         } else {
             throw new InvalidArgumentException();
         }
@@ -138,6 +144,7 @@ class Pagination
 
     private function getLastPage()
     {
+        // adv: このifはなんのためにあるの？
         if ($this->record_count) {
             return (int) ceil($this->record_count / $this->page_item_count);
         } else {
