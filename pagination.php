@@ -48,14 +48,14 @@ class Pagination
         }
     }
 
-    public function getPreviousPageUrl(string $param_name)
+    public function getPreviousPageUrl($param_name)
     {
         $previous_page = $this->current_page - 1;
 
         return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
     }
 
-    public function getNextPageUrl(string $param_name)
+    public function getNextPageUrl($param_name)
     {
         $next_page = $this->current_page + 1;
 
@@ -102,7 +102,7 @@ class Pagination
         return range($start_page, $end_page);
     }
 
-    public function buildPageUrl(string $param_name, int $page)
+    public function buildPageUrl($param_name, $page)
     {
         return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$page}";
     }
@@ -122,26 +122,15 @@ class Pagination
         return ($this->current_page === $this->getLastPage());
     }
 
-    public function isCurrentPage(int $page)
+    public function isCurrentPage($page)
     {
         return ($page === $this->current_page);
     }
 
-    private function setRecordCount(int $count)
+    private function setRecordCount($count)
     {
-<<<<<<< HEAD
-        $page = (int) filter_input(INPUT_GET, 'page');
-
-        $last_page = $this->getLastPage();
-
-        if (($page >= 1) && ($page <= $last_page)) {
-            $current_page = $page;
-        } elseif ($page > $last_page) {
-            $current_page = $last_page;
-=======
         if ($count >= 1) {
             $this->record_count = $count;
->>>>>>> 35dc710... レビューの指摘箇所の修正
         } else {
             throw new InvalidArgumentException();
         }
