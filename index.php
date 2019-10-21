@@ -4,7 +4,43 @@ require_once('dbconnect.php');
 require_once('functions.php');
 require_once('validations.php');
 
-$error_massages = [];
+$host     = 'localhost';
+$username = 'root';
+$password = 'root';
+$db_name  = 'bbs';
+$encoding = 'UTF-8';
+
+$mysqli = new mysqli($host, $username, $password, $db_name);
+
+if ($mysqli->connect_error) {
+    echo $mysqli->connect_error;
+    exit;
+}
+
+$mysqli->set_charset($encoding);
+
+$bbs_post_validation_settings = [
+    'title' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 32,
+        ],
+    ],
+    'comment' => [
+        'required' => true,
+        'length'   => [
+            'min' => 10,
+            'max' => 200,
+        ],
+    ],
+    'password' => [
+        'required' => false,
+        'digit'    => 4,
+    ],
+];
+
+$error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputs = [];
@@ -15,13 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title   = $inputs['title'];
     $comment = $inputs['comment'];
 
-    $error_massages = execute_validation($validations, $inputs);
+    if (empty($error_messages)) {
+        $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
 
-    if (empty($error_massages)) {
-        $title   = $mysqli->real_escape_string($title);
-        $comment = $mysqli->real_escape_string($comment);
+        $title    = $mysqli->real_escape_string($inputs['title']) ;
+        $comment  = $mysqli->real_escape_string($inputs['comment']);
+        $password = $mysqli->real_escape_string($password);
 
-        $mysqli->query("INSERT INTO posts (title, comment) VALUES ('{$title}', '{$comment}')");
+        $mysqli->query("INSERT INTO posts (title, comment, password) VALUES ('{$title}', '{$comment}', '{$password}')");
 
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
@@ -37,7 +74,7 @@ $mysqli->close();
 
 <html>
   <head>
-    <title>challnege2</title>
+    <title>challnege4</title>
   </head>
   <body>
     <?php if (!empty($error_massages)) : ?>
@@ -51,14 +88,39 @@ $mysqli->close();
       <input id="title" type="text" name="title" value="<?php echo isset($title) ? h($title) : '' ?>"><br>
       <label for="comment">Body</label><br>
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password"><br>
       <input type="submit" value="Submit">
     </form>
-    <?php foreach ($posts as $post) : ?>
-      <hr>
-      <?php echo h($post['title']) ?>
-      <br>
-      <?php echo nl2br(h($post['comment'])) ?>
-      <?php echo h($post['created_at']) ?>
-    <?php endforeach ?>
+    <?php if (!empty($posts)) : ?>
+      <?php foreach ($posts as $post) : ?>
+        <hr>
+        <?php echo h($post['title']) ?>
+        <br>
+        <?php echo nl2br(h($post['comment'])) ?>
+        <br>
+        <?php echo h($post['created_at']) ?>
+      <?php endforeach ?>
+    <?php endif ?>
+    <hr>
+    <div>
+      <?php if (isset($page_numbers)) : ?>
+        <?php if (!($pagination->isFirstPage())) : ?>
+          <a href="<?php echo $pagination->getPreviousPageUrl() ?>">&lt;</a>
+        <?php endif ?>
+
+        <?php foreach ($page_numbers as $page_number) : ?>
+          <?php if (!($pagination->isCurrentPage($page_number))) : ?>
+            <a href="<?php echo $pagination->buildPageUrl($page_number) ?>"><?php echo $page_number ?></a>
+          <?php else : ?>
+            <?php echo $page_number ?>
+          <?php endif ?>
+        <?php endforeach ?>
+
+        <?php if (!($pagination->isLastPage())) : ?>
+          <a href="<?php echo $pagination->getNextPageUrl() ?>">&gt;</a>
+        <?php endif ?>
+      <?php endif ?>
+    </div>
   </body>
 </html>

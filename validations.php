@@ -5,6 +5,7 @@ function execute_validations($validation_settings, $inputs) {
 
     foreach ($validation_settings as $attribute_name => $settings) {
 
+        // null合体演算子に
         if (isset($inputs[$attribute_name])) {
             $input = $inputs[$attribute_name];
         } else {
@@ -32,6 +33,13 @@ function execute_validations($validation_settings, $inputs) {
                     }
 
                     break;
+                case 'digit':
+                    $error_message = validate_digit($attribute_name, $input, $condition);
+
+                    if (isset($error_message)) {
+                        $error_messages[] = $error_message;
+                        continue 3;
+                    }
             }
 
         }
@@ -74,4 +82,16 @@ function validate_input_length($attribute_name, $input, $length_limits) {
     }
 
     return $error_message;
+}
+
+function validate_digit($attribute_name, $input, $digit) {
+    if (empty($input)) {
+        return;
+    }
+
+    if (!is_numeric($input) || (strlen($input) !== $digit)) {
+        return "{$attribute_name}は{$digit}桁の半角数字で入力してください";
+    }
+
+    return;
 }
