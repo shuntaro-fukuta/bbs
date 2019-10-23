@@ -13,7 +13,16 @@ class Paginator
         $this->setRecordCount($record_count);
     }
 
-    public function setPageItemCount(int $count)
+    private function setRecordCount(int $record_count)
+    {
+        if ($record_count < 0) {
+            throw new InvalidArgumentException();
+        }
+
+        $this->record_count = $record_count;
+    }
+
+    public function setPageItemCount(int $page_item_count)
     {
         if ($page_item_count < 1) {
             throw new InvalidArgumentException();
@@ -22,18 +31,13 @@ class Paginator
         $this->page_item_count = $page_item_count;
     }
 
-    public function getPageItemCount()
-    {
-        return $this->page_item_count;
-    }
-
     public function setMaxPagerCount(int $count)
     {
-        if ($max_pager_count < 1) {
+        if ($count < 1) {
             throw new InvalidArgumentException();
         }
 
-        $this->max_pager_count = $max_pager_count;
+        $this->max_pager_count = $count;
     }
 
     public function setCurrentPage(int $page)
@@ -49,23 +53,47 @@ class Paginator
         }
     }
 
+    private function getLastPage()
+    {
+        if ($this->record_count > 0) {
+            return (int) ceil($this->record_count / $this->page_item_count);
+        } else {
+            return 1;
+        }
+    }
+
+    public function getPageItemCount()
+    {
+        return $this->page_item_count;
+    }
+
     public function getCurrentPage()
     {
         return $this->current_page;
+    }
+
+    public function getPaginationParamName()
+    {
+        return $this->pagination_param_name;
+    }
+
+    public function getRecordOffset()
+    {
+        return ($this->current_page - 1) * $this->page_item_count;
     }
 
     public function getPreviousPageUrl()
     {
         $previous_page = $this->current_page - 1;
 
-        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
+        return "{$_SERVER['SCRIPT_NAME']}?page={$previous_page}";
     }
 
     public function getNextPageUrl($param_name)
     {
         $next_page = $this->current_page + 1;
 
-        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$next_page}";
+        return "{$_SERVER['SCRIPT_NAME']}?page={$next_page}";
     }
 
     public function getPageNumbers()
@@ -113,11 +141,6 @@ class Paginator
         return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$page}";
     }
 
-    public function getRecordOffset()
-    {
-        return ($this->current_page - 1) * $this->page_item_count;
-    }
-
     public function isFirstPage()
     {
         return ($this->current_page === 1);
@@ -131,23 +154,5 @@ class Paginator
     public function isCurrentPage($page)
     {
         return ($page === $this->current_page);
-    }
-
-    private function setRecordCount($count)
-    {
-        if ($record_count < 0) {
-            throw new InvalidArgumentException();
-        }
-
-        $this->record_count = $record_count;
-    }
-
-    private function getLastPage()
-    {
-        if ($this->record_count > 0) {
-            return (int) ceil($this->record_count / $this->page_item_count);
-        } else {
-            return 1;
-        }
     }
 }
