@@ -42,7 +42,7 @@ class Pagination
 
         // ebine
         // ここは個別のカッコはいらんよ
-        if (($page >= 1) && ($page <= $last_page)) {
+        if ($page >= 1 && $page <= $last_page) {
             $this->current_page = $page;
         } elseif ($page > $last_page) {
             $this->current_page = $last_page;
