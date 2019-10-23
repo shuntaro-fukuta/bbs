@@ -1,10 +1,19 @@
 <?php
 
+// ebine
+// ページャーで、クラスを作ったので、
+// これもクラスにしてみましょう。
+
 function execute_validations($validation_settings, $inputs) {
     $error_messages = [];
 
     foreach ($validation_settings as $attribute_name => $settings) {
         $input = $inputs[$attribute_name] ?? null;
+
+        // ebine
+        // これだと1つの入力に対して、1つのエラーメッセージしか出ない。
+        // 中には、複数のrルールがあって、2つ以上のルール違反が発生する可能性もある。
+        // その場合に、これだとユーザビリティが悪いので、実装を見直してみましょう。
 
         foreach ($settings as $validation_type => $condition) {
             if ($validation_type === 'required') {
