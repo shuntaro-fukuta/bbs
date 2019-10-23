@@ -26,8 +26,9 @@ if (
     exit;
 }
 
-// エスケープ
-$id                = $_POST['id'];
+$id = $_POST['id'];
+$id = $mysqli->real_escape_string($id);
+
 $previous_page_url = $_POST['previous_page_url'];
 
 $post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
