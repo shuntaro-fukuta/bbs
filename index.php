@@ -3,21 +3,17 @@
 require_once('dbconnect.php');
 require_once('functions.php');
 require_once('validations.php');
+require_once('pagination.php');
+require_once('db_setting.php');
 
-$host     = 'localhost';
-$username = 'root';
-$password = 'root';
-$db_name  = 'bbs';
-$encoding = 'UTF-8';
-
-$mysqli = new mysqli($host, $username, $password, $db_name);
+$mysqli = new mysqli($db_host, $db_username, $db_password, $db_name);
 
 if ($mysqli->connect_error) {
     echo $mysqli->connect_error;
     exit;
 }
 
-$mysqli->set_charset($encoding);
+$mysqli->set_charset($db_encoding);
 
 $bbs_post_validation_settings = [
     'title' => [
@@ -52,7 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comment = $inputs['comment'];
 
     if (empty($error_messages)) {
-        $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
+        if (!empty($inputs['password'])) {
+            $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
+        } else {
+            $password = null;
+        }
 
         $title    = $mysqli->real_escape_string($inputs['title']) ;
         $comment  = $mysqli->real_escape_string($inputs['comment']);
@@ -99,6 +99,13 @@ $mysqli->close();
         <br>
         <?php echo nl2br(h($post['comment'])) ?>
         <br>
+        <form method="post" action="delete.php">
+	      Pass
+          <input type="password" name="delete_password">
+          <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
+          <input type="hidden" name="previous_page_url" value="<?php echo $pagination->buildPageUrl($pagination->getCurrentPage()) ?>">
+	      <input type="submit" value="Del">
+        </form>
         <?php echo h($post['created_at']) ?>
       <?php endforeach ?>
     <?php endif ?>

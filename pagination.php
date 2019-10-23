@@ -49,7 +49,12 @@ class Pagination
         }
     }
 
-    public function getPreviousPageUrl($param_name)
+    public function getCurrentPage()
+    {
+        return $this->current_page;
+    }
+
+    public function getPreviousPageUrl()
     {
         $previous_page = $this->current_page - 1;
 
