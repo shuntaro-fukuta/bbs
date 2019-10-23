@@ -39,7 +39,7 @@ if (empty($post['password'])) {
     $is_wrong_password = true;
 }
 
-if (!isset($error_message) && isset($_POST['confirm'])) {
+if (!isset($error_message) && isset($_POST['do_delete'])) {
     $mysqli->query("DELETE FROM posts WHERE id = {$id}");
 
     header("Location: {$previous_page_url}");
@@ -74,7 +74,7 @@ $mysqli->close();
         <input type="hidden" name="id" value="<?php echo $id ?>">
         <input type="hidden" name="previous_page_url" value="<?php echo $previous_page_url ?>">
         <input type="hidden" name="delete_password" value="<?php echo $_POST['delete_password'] ?>">
-        <input type="submit" name="confirm" value="Yes">
+        <input type="submit" name="do_delete" value="Yes">
         <input type="button" value="Cancel" onclick="location.href='<?php echo $previous_page_url ?>'">
       </form>
     <?php endif ?>
