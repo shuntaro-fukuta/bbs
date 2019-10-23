@@ -16,9 +16,6 @@ class Validator
         foreach ($this->attribute_validation_rules as $attribute_name => $validation_rules) {
             $input = $inputs[$attribute_name] ?? null;
 
-            // ebine
-            // length のエラーメッセージは入力ないときいらないよね
-
             foreach ($validation_rules as $type => $rule) {
                 $error_message = null;
 
@@ -48,7 +45,7 @@ class Validator
 
     private function validateLength(string $name, string $input, $limits)
     {
-        if ($this->attribute_validation_rules[$name]['required'] === false && empty($input)) {
+        if (empty($input)) {
             return;
         }
 
@@ -71,7 +68,7 @@ class Validator
 
     private function validateDigit(string $name, string $input, int $digit)
     {
-        if ($this->attribute_validation_rules[$name]['required'] === false && empty($input)) {
+        if (empty($input)) {
             return;
         }
 
