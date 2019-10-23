@@ -12,18 +12,17 @@ if ($mysqli->connect_error) {
 
 $mysqli->set_charset($db_encoding);
 
-$invalid_request_message = '不正なリクエストです';
-$error_message           = null;
-$no_password             = false;
-$wrong_password          = false;
+$error_message     = null;
+$is_no_password    = false;
+$is_wrong_password = false;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo $invalid_request_message;
-    exit;
-}
-
-if (!isset($_POST['delete_password']) || !isset($_POST['id']) || !isset($_POST['previous_page_url'])) {
-    echo $invalid_request_message;
+if (
+    $_SERVER['REQUEST_METHOD'] !== 'POST'
+    || !isset($_POST['delete_password'])
+    || !isset($_POST['id'])
+    || !isset($_POST['previous_page_url'])
+    ) {
+    echo '不正なリクエストです';
     exit;
 }
 
@@ -34,10 +33,10 @@ $post = $mysqli->query("SELECT * FROM posts WHERE id={$id}")->fetch_assoc();
 
 if (empty($post['password'])) {
     $error_message = 'この投稿にはパスワードが設定されていないため、削除できません。';
-    $no_password   = true;
+    $is_no_password   = true;
 } elseif (!password_verify($_POST['delete_password'], $post['password'])) {
     $error_message  = 'パスワードが間違っています。もう一度入力してください';
-    $wrong_password = true;
+    $is_wrong_password = true;
 }
 
 if (!isset($error_message) && isset($_POST['confirm'])) {
@@ -59,9 +58,9 @@ $mysqli->close();
     <p><?php echo h($post['title']) ?></p>
     <p><?php echo h($post['comment']) ?></p>
     <p><?php echo h($post['created_at']) ?></p>
-    <?php if ($no_password) : ?>
+    <?php if ($is_no_password) : ?>
       <a href="<?php echo $previous_page_url ?>">前のページへ戻る</a>
-    <?php elseif ($wrong_password) : ?>
+    <?php elseif ($is_wrong_password) : ?>
       <form method="post" action="">
         Pass
         <input type="password" name="delete_password">
