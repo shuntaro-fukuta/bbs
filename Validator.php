@@ -1,8 +1,5 @@
 <?php
 
-// ebine
-// クラスファイルはクラス名に合わせて、Validator.php にすること。
-
 class Validator
 {
     private $attribute_validation_rules;

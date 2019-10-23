@@ -26,6 +26,7 @@ if (
     exit;
 }
 
+// エスケープ
 $id                = $_POST['id'];
 $previous_page_url = $_POST['previous_page_url'];
 

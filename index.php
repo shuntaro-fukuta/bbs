@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $validator = new Validator();
-    $validator->set_attribute_validation_rules($bbs_post_validation_rules);
+    $validator->setAttributeValidationRules($bbs_post_validation_rules);
     $error_messages = $validator->validate($inputs);
 
     if (empty($error_messages)) {
