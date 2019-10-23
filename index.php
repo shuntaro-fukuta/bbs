@@ -48,10 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comment = $inputs['comment'];
 
     if (empty($error_messages)) {
-        if (!empty($inputs['password'])) {
-            $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
-        } else {
+        if (empty($inputs['password'])) {
             $password = null;
+        } else {
+            $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
         }
 
         $title    = $mysqli->real_escape_string($inputs['title']) ;
