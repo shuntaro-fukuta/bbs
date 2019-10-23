@@ -33,12 +33,8 @@ $previous_page_url = $_POST['previous_page_url'];
 $post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
 
 if (empty($post['password'])) {
-    // ebine
-    // フラグだけあれば、HTMLの方でエラーメッセージかけるよね
-    $error_message = 'この投稿にはパスワードが設定されていないため、削除できません。';
     $is_no_password   = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {
-    $error_message  = 'パスワードが間違っています。もう一度入力してください';
     $is_wrong_password = true;
 }
 
@@ -55,8 +51,10 @@ $mysqli->close();
 
 <html>
   <body>
-    <?php if (isset($error_message)) : ?>
-      <?php echo $error_message ?>
+    <?php if ($is_no_password) : ?>
+      <p>この投稿にはパスワードが設定されていないため、削除できません。</p>
+    <?php elseif ($is_wrong_password) : ?>
+      <p>パスワードが間違っています。もう一度入力してください</p>
     <?php endif ?>
     <p><?php echo h($post['title']) ?></p>
     <p><?php echo h($post['comment']) ?></p>

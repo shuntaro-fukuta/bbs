@@ -149,7 +149,7 @@ $mysqli->close();
         <br>
         <form method="post" action="delete.php">
 	      Pass
-          <input type="password" name="delete_password">
+          <input type="password" name="password">
           <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
           <input type="hidden" name="previous_page_url" value="<?php echo $paginator->buildPageUrl($paginator->getCurrentPage()) ?>">
 	      <input type="submit" value="Del">
