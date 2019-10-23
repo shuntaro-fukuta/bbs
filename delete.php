@@ -3,14 +3,14 @@
 require_once('functions.php');
 require_once('db_setting.php');
 
-$mysqli = new mysqli($db_host, $db_username, $db_password, $db_name);
+$mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
 if ($mysqli->connect_error) {
     echo $mysqli->connect_error;
     exit;
 }
 
-$mysqli->set_charset($db_encoding);
+$mysqli->set_charset(DB_ENCODING);
 
 $error_message     = null;
 $is_no_password    = false;
