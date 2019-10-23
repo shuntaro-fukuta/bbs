@@ -18,7 +18,7 @@ $is_wrong_password = false;
 
 if (
     $_SERVER['REQUEST_METHOD'] !== 'POST'
-    || !isset($_POST['delete_password'])    // ebine delete_ いらない
+    || !isset($_POST['password'])
     || !isset($_POST['id'])
     || !isset($_POST['previous_page_url'])  // ebine これは必須じゃないと思うよ
     ) {
@@ -36,7 +36,7 @@ if (empty($post['password'])) {
     // フラグだけあれば、HTMLの方でエラーメッセージかけるよね
     $error_message = 'この投稿にはパスワードが設定されていないため、削除できません。';
     $is_no_password   = true;
-} elseif (!password_verify($_POST['delete_password'], $post['password'])) {
+} elseif (!password_verify($_POST['password'], $post['password'])) {
     $error_message  = 'パスワードが間違っています。もう一度入力してください';
     $is_wrong_password = true;
 }
@@ -65,7 +65,7 @@ $mysqli->close();
     <?php elseif ($is_wrong_password) : ?>
       <form method="post" action="">
         Pass
-        <input type="password" name="delete_password">
+        <input type="password" name="password">
         <input type="hidden" name="id" value="<?php echo $id ?>">
         <input type="hidden" name="previous_page_url" value="<?php echo $previous_page_url ?>">
         <input type="submit" value="Del">
@@ -75,7 +75,7 @@ $mysqli->close();
       <form method="post" action="">
         <input type="hidden" name="id" value="<?php echo $id ?>">
         <input type="hidden" name="previous_page_url" value="<?php echo $previous_page_url ?>">
-        <input type="hidden" name="delete_password" value="<?php echo $_POST['delete_password'] ?>">
+        <input type="hidden" name="password" value="<?php echo $_POST['password'] ?>">
         <input type="submit" name="do_delete" value="Yes">
         <input type="button" value="Cancel" onclick="location.href='<?php echo $previous_page_url ?>'">
       </form>
