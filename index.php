@@ -15,7 +15,7 @@ if ($mysqli->connect_error) {
 
 $mysqli->set_charset(DB_ENCODING);
 
-$bbs_post_validation_settings = [
+$bbs_post_validation_rules = [
     'title' => [
         'required' => true,
         'length'   => [
@@ -44,8 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs[$attribute_name] = mb_trim($input);
     }
 
-    $title   = $inputs['title'];
-    $comment = $inputs['comment'];
+    $validation = new Validation();
+    $validation->set_attribute_validation_rules($bbs_post_validation_rules);
+    $error_messages = $validation->validate($inputs);
 
     if (empty($error_messages)) {
         if (empty($inputs['password'])) {
