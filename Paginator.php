@@ -1,7 +1,7 @@
 <?php
 
 // ページ総数が1ページのときはページャを非表示
-class Pagination
+class Paginator
 {
     private $record_count;
     private $page_item_count = 10;

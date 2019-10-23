@@ -2,9 +2,9 @@
 
 require_once('dbconnect.php');
 require_once('functions.php');
-require_once('validation.php');
-require_once('pagination.php');
 require_once('db_setting.php');
+require_once('Validator.php');
+require_once('Paginator.php');
 
 /*
 
@@ -76,9 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs[$attribute_name] = mb_trim($input);
     }
 
-    $validation = new Validation();
-    $validation->set_attribute_validation_rules($bbs_post_validation_rules);
-    $error_messages = $validation->validate($inputs);
+    $validator = new Validator();
+    $validator->set_attribute_validation_rules($bbs_post_validation_rules);
+    $error_messages = $validator->validate($inputs);
 
     if (empty($error_messages)) {
         if (empty($inputs['password'])) {
@@ -98,8 +98,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results = $mysqli->query('SELECT * FROM posts ORDER BY id DESC');
-$posts   = $results->fetch_all(MYSQLI_ASSOC);
+$results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch_assoc();
+$total_post_count = (int) $results['count'];
+
+$paginator = new Paginator($total_post_count);
+
+$current_page = (int) filter_input(INPUT_GET, $paginator->getPaginationParamName());
+$paginator->setCurrentPage($current_page);
+
+$page_numbers = $paginator->getPageNumbers();
+
+$posts = $mysqli->query("
+    SELECT *
+    FROM posts
+    ORDER BY id DESC
+    LIMIT {$paginator->getPageItemCount()}
+    OFFSET {$paginator->getRecordOffset()}
+")->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
 
@@ -136,7 +151,7 @@ $mysqli->close();
 	      Pass
           <input type="password" name="delete_password">
           <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
-          <input type="hidden" name="previous_page_url" value="<?php echo $pagination->buildPageUrl($pagination->getCurrentPage()) ?>">
+          <input type="hidden" name="previous_page_url" value="<?php echo $paginator->buildPageUrl($paginator->getCurrentPage()) ?>">
 	      <input type="submit" value="Del">
         </form>
         <?php echo h($post['created_at']) ?>
@@ -145,20 +160,20 @@ $mysqli->close();
     <hr>
     <div>
       <?php if (isset($page_numbers)) : ?>
-        <?php if (!($pagination->isFirstPage())) : ?>
-          <a href="<?php echo $pagination->getPreviousPageUrl() ?>">&lt;</a>
+        <?php if (!($paginator->isFirstPage())) : ?>
+          <a href="<?php echo $paginator->getPreviousPageUrl() ?>">&lt;</a>
         <?php endif ?>
 
         <?php foreach ($page_numbers as $page_number) : ?>
-          <?php if (!($pagination->isCurrentPage($page_number))) : ?>
-            <a href="<?php echo $pagination->buildPageUrl($page_number) ?>"><?php echo $page_number ?></a>
+          <?php if (!($paginator->isCurrentPage($page_number))) : ?>
+            <a href="<?php echo $paginator->buildPageUrl($page_number) ?>"><?php echo $page_number ?></a>
           <?php else : ?>
             <?php echo $page_number ?>
           <?php endif ?>
         <?php endforeach ?>
 
-        <?php if (!($pagination->isLastPage())) : ?>
-          <a href="<?php echo $pagination->getNextPageUrl() ?>">&gt;</a>
+        <?php if (!($paginator->isLastPage())) : ?>
+          <a href="<?php echo $paginator->getNextPageUrl() ?>">&gt;</a>
         <?php endif ?>
       <?php endif ?>
     </div>
