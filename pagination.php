@@ -40,8 +40,6 @@ class Pagination
     {
         $last_page = $this->getLastPage();
 
-        // ebine
-        // ここは個別のカッコはいらんよ
         if ($page >= 1 && $page <= $last_page) {
             $this->current_page = $page;
         } elseif ($page > $last_page) {

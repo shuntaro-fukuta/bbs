@@ -18,9 +18,9 @@ $is_wrong_password = false;
 
 if (
     $_SERVER['REQUEST_METHOD'] !== 'POST'
-    || !isset($_POST['delete_password'])
+    || !isset($_POST['delete_password'])    // ebine delete_ いらない
     || !isset($_POST['id'])
-    || !isset($_POST['previous_page_url'])
+    || !isset($_POST['previous_page_url'])  // ebine これは必須じゃないと思うよ
     ) {
     echo '不正なリクエストです';
     exit;
@@ -29,9 +29,11 @@ if (
 $id                = $_POST['id'];
 $previous_page_url = $_POST['previous_page_url'];
 
-$post = $mysqli->query("SELECT * FROM posts WHERE id={$id}")->fetch_assoc();
+$post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
 
 if (empty($post['password'])) {
+    // ebine
+    // フラグだけあれば、HTMLの方でエラーメッセージかけるよね
     $error_message = 'この投稿にはパスワードが設定されていないため、削除できません。';
     $is_no_password   = true;
 } elseif (!password_verify($_POST['delete_password'], $post['password'])) {
