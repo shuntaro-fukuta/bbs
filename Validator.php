@@ -36,17 +36,17 @@ class Validator
         return $error_messages;
     }
 
-    private function validateRequired(string $name, $input, bool $rule)
+    private function validateRequired(string $name, ?string $input, bool $rule)
     {
         if ($rule === true && is_empty($input)) {
             return "{$name}を入力してください";
         }
     }
 
-    private function validateLength(string $name, $input, $limits)
+    private function validateLength(string $name, ?string $input, array $limits)
     {
         if ((isset($limits['min']) && $limits['min'] < 1) || (isset($limits['max']) && $limits['max'] < 2)) {
-            throw new InvalidArgumentException('Validation rules of length must be greater than or equal to (min->1, max->2)');
+            throw new InvalidArgumentException('Validation rules of length must be greater than or equal to ( min->1, max->2 )');
         }
 
         if (is_empty($input)) {
@@ -70,7 +70,7 @@ class Validator
         }
     }
 
-    private function validateDigit(string $name, $input, int $digit)
+    private function validateDigit(string $name, ?string $input, int $digit)
     {
         if ($digit < 1) {
             throw new InvalidArgumentException('Validation rules of digit must be greater than or equal to 1');

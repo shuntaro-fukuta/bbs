@@ -34,13 +34,13 @@ $bbs_post_validation_rules = [
         'required' => true,
         'length'   => [
             'min' => 10,
-            'max' => 32,
+            'max' => -32,
         ],
     ],
     'comment' => [
         'required' => true,
         'length'   => [
-            'min' => -10,
+            'min' => 10,
             'max' => 200,
         ],
     ],
@@ -61,8 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $validator->setAttributeValidationRules($bbs_post_validation_rules);
         $error_messages = $validator->validate($inputs);
     } catch (Exception $e) {
-        echo $e->getMessage();
-        echo " ({$e->getFile()} : {$e->getLine()})";
+        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
         exit;
     }
 
@@ -93,8 +92,7 @@ try {
 
     $page_numbers = $paginator->getPageNumbers();
 } catch (Exception $e) {
-    echo $e->getMessage();
-    echo " ({$e->getFile()} : {$e->getLine()})";
+    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
 

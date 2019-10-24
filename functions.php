@@ -9,12 +9,12 @@ function h($string) {
 }
 
 function is_empty($var) {
-    return ($var === '' || $var === null || $var === []);
+    return ($var === null || $var === '' || $var === []);
 }
 
 function get_input($key, $array) {
     if (!isset($array[$key])) {
-        return;
+        return null;
     }
 
     $input = mb_trim($array[$key]);
