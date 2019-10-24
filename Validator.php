@@ -36,14 +36,14 @@ class Validator
         return $error_messages;
     }
 
-    private function validateRequired(string $name, string $input, bool $rule)
+    private function validateRequired(string $name, $input, bool $rule)
     {
         if ($rule === true && is_empty($input)) {
             return "{$name}を入力してください";
         }
     }
 
-    private function validateLength(string $name, string $input, $limits)
+    private function validateLength(string $name, $input, $limits)
     {
         if (is_empty($input)) {
             return;
@@ -66,9 +66,11 @@ class Validator
         }
     }
 
-    private function validateDigit(string $name, string $input, int $digit)
+    // このメソッドはすべて数字かどうかを判定する処理だよね
+    // ここで桁数の確認を行う必要はありますか
+    private function validateDigit(string $name, $input, int $digit)
     {
-        if (empty($input)) {
+        if (is_empty($input)) {
             return;
         }
 

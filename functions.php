@@ -12,14 +12,13 @@ function is_empty($var) {
     return ($var === '' || $var === null || $var === []);
 }
 
-/*
 function get_input($key, $array) {
-    if (array_isset($key, $array)) {
-        $input = trim($array[$key]);
-        return ($input === '') ? null : $input;
-    } else {
-        return null;
+    if (!isset($array[$key])) {
+        return;
     }
+
+    $input = mb_trim($array[$key]);
+    return ($input === '') ? null : $input;
 }
 
 function get_inputs($keys, $array) {
@@ -30,4 +29,3 @@ function get_inputs($keys, $array) {
 
     return $inputs;
 }
-*/

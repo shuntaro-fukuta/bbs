@@ -27,6 +27,8 @@ $rows = $posts->select(...);
 
 $mysqli = connect_mysqli();
 
+$input_keys = ['title', 'comment' , 'password'];
+
 $bbs_post_validation_rules = [
     'title' => [
         'required' => true,
@@ -51,19 +53,14 @@ $bbs_post_validation_rules = [
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputs = [];
-    foreach ($_POST as $attribute_name => $input) {
-        $inputs[$attribute_name] = mb_trim($input);
-    }
+    $inputs = get_inputs($input_keys, $_POST);
 
     $validator = new Validator();
     $validator->setAttributeValidationRules($bbs_post_validation_rules);
     $error_messages = $validator->validate($inputs);
 
     if (empty($error_messages)) {
-        if (empty($inputs['password'])) {
-            $password = null;
-        } else {
+        if (!is_null($inputs['password'])) {
             $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
         }
 
@@ -146,7 +143,7 @@ $mysqli->close();
 
         <?php foreach ($page_numbers as $page_number) : ?>
           <?php if (!($paginator->isCurrentPage($page_number))) : ?>
-            <a href="<?php echo $paginator->buildPageUrl($page_number) ?>"><?php echo $page_number ?></a>
+            <a href="<?php echo $paginator->buildPageUrl('page', $page_number) ?>"><?php echo $page_number ?></a>
           <?php else : ?>
             <?php echo $page_number ?>
           <?php endif ?>

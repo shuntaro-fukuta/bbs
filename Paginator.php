@@ -82,18 +82,18 @@ class Paginator
         return ($this->current_page - 1) * $this->page_item_count;
     }
 
-    public function getPreviousPageUrl()
+    public function getPreviousPageUrl($param_name)
     {
         $previous_page = $this->current_page - 1;
 
-        return "{$_SERVER['SCRIPT_NAME']}?page={$previous_page}";
+        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
     }
 
     public function getNextPageUrl($param_name)
     {
         $next_page = $this->current_page + 1;
 
-        return "{$_SERVER['SCRIPT_NAME']}?page={$next_page}";
+        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$next_page}";
     }
 
     public function getPageNumbers()
