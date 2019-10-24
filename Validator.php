@@ -38,14 +38,14 @@ class Validator
 
     private function validateRequired(string $name, string $input, bool $rule)
     {
-        if ($rule === true && empty($input)) {
+        if ($rule === true && is_empty($input)) {
             return "{$name}を入力してください";
         }
     }
 
     private function validateLength(string $name, string $input, $limits)
     {
-        if (empty($input)) {
+        if (is_empty($input)) {
             return;
         }
 
