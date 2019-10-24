@@ -110,7 +110,7 @@ $mysqli->close();
 
 <html>
   <head>
-    <title>challnege4</title>
+    <title>challnege5</title>
   </head>
   <body>
     <?php if (!empty($error_massages)) : ?>
@@ -142,7 +142,7 @@ $mysqli->close();
           <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
 	      <input type="submit" value="Del">
         </form>
-        <form action="post" action="edit.php" style="display: inline-block;">
+        <form method="post" action="edit.php" style="display: inline-block;">
           <input type="submit" value="edit">
         </form>
         <?php echo h($post['created_at']) ?>
