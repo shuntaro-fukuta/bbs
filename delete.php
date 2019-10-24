@@ -1,7 +1,7 @@
 <?php
 
 require_once('functions.php');
-require_once('db_setting.php');
+require_once('db_connect.php');
 
 $mysqli = connect_mysqli();
 
