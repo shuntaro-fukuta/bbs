@@ -135,12 +135,15 @@ $mysqli->close();
         <br>
         <?php echo nl2br(h($post['comment'])) ?>
         <br>
-        <form method="post" action="delete.php">
+        <form method="post" action="delete.php" style="display: inline-block;">
 	      Pass
           <input type="password" name="password">
           <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
           <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
 	      <input type="submit" value="Del">
+        </form>
+        <form action="post" action="edit.php" style="display: inline-block;">
+          <input type="submit" value="edit">
         </form>
         <?php echo h($post['created_at']) ?>
       <?php endforeach ?>
