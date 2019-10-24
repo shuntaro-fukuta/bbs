@@ -20,19 +20,19 @@ if (
     $_SERVER['REQUEST_METHOD'] !== 'POST'
     || !isset($_POST['password'])
     || !isset($_POST['id'])
-    || !isset($_POST['previous_page_url'])  // ebine これは必須じゃないと思うよ
     ) {
     echo '不正なリクエストです';
     exit;
 }
 
-$id = $_POST['id'];
-$id = $mysqli->real_escape_string($id);
-
-$previous_page_url = $_POST['previous_page_url'];
+$id = $mysqli->real_escape_string($_POST['id']);
 
 $post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
 
+$previous_page     = isset($_POST['previous_page']) ? $_POST['previous_page'] : 1;
+$previous_page_url = "index.php?page={$previous_page}";
+
+echo $previous_page_url;
 if (empty($post['password'])) {
     $is_no_password   = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {
@@ -67,14 +67,14 @@ $mysqli->close();
         Pass
         <input type="password" name="password">
         <input type="hidden" name="id" value="<?php echo $id ?>">
-        <input type="hidden" name="previous_page_url" value="<?php echo $previous_page_url ?>">
+        <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
         <input type="submit" value="Del">
       </form>
     <?php else : ?>
       <p>削除してよろしいですか？</p>
       <form method="post" action="">
         <input type="hidden" name="id" value="<?php echo $id ?>">
-        <input type="hidden" name="previous_page_url" value="<?php echo $previous_page_url ?>">
+        <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
         <input type="hidden" name="password" value="<?php echo $_POST['password'] ?>">
         <input type="submit" name="do_delete" value="Yes">
         <input type="button" value="Cancel" onclick="location.href='<?php echo $previous_page_url ?>'">

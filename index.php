@@ -151,7 +151,7 @@ $mysqli->close();
 	      Pass
           <input type="password" name="password">
           <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
-          <input type="hidden" name="previous_page_url" value="<?php echo $paginator->buildPageUrl($paginator->getCurrentPage()) ?>">
+          <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
 	      <input type="submit" value="Del">
         </form>
         <?php echo h($post['created_at']) ?>
