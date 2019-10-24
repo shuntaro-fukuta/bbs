@@ -3,14 +3,7 @@
 require_once('functions.php');
 require_once('db_setting.php');
 
-$mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-if ($mysqli->connect_error) {
-    echo $mysqli->connect_error;
-    exit;
-}
-
-$mysqli->set_charset(DB_ENCODING);
+$mysqli = connect_mysqli();
 
 $error_message     = null;
 $is_no_password    = false;
@@ -32,7 +25,6 @@ $post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
 $previous_page     = isset($_POST['previous_page']) ? $_POST['previous_page'] : 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
-echo $previous_page_url;
 if (empty($post['password'])) {
     $is_no_password   = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {

@@ -5,7 +5,6 @@ require_once('functions.php');
 require_once('db_setting.php');
 require_once('Validator.php');
 require_once('Paginator.php');
-
 /*
 
 $posts = new Posts();
@@ -26,26 +25,7 @@ $rows = $posts->select(...);
 
 */
 
-// ebine
-// 下のコードはよく使うコード。なので毎回書きたくない。
-// なので関数にする。
-/*
-引数は全部オプショナル。もしくは配列でもいいかも。
-渡されなかったものは、定数を使えばいいよね。
-function connect_mysqli($host, $username, $password, $dbname, $charset) {
-
-}
-
-$mysqli = connect_mysql();
-*/
-$mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-if ($mysqli->connect_error) {
-    echo $mysqli->connect_error;
-    exit;
-}
-
-$mysqli->set_charset(DB_ENCODING);
+$mysqli = connect_mysqli();
 
 $bbs_post_validation_rules = [
     'title' => [
