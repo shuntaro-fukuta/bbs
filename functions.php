@@ -18,6 +18,7 @@ function get_input($key, $array) {
     }
 
     $input = mb_trim($array[$key]);
+
     return ($input === '') ? null : $input;
 }
 

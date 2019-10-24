@@ -45,6 +45,10 @@ class Validator
 
     private function validateLength(string $name, $input, $limits)
     {
+        if ((isset($limits['min']) && $limits['min'] < 1) || (isset($limits['max']) && $limits['max'] < 2)) {
+            throw new InvalidArgumentException('Validation rules of length must be greater than or equal to (min->1, max->2)');
+        }
+
         if (is_empty($input)) {
             return;
         }
@@ -68,12 +72,12 @@ class Validator
 
     private function validateDigit(string $name, $input, int $digit)
     {
-        if (is_empty($input)) {
-            return;
+        if ($digit < 1) {
+            throw new InvalidArgumentException('Validation rules of digit must be greater than or equal to 1');
         }
 
-        if ($digit < 1) {
-            throw new InvalidArgumentException('桁数のバリデーションには1以上の数値を指定してください。');
+        if (is_empty($input)) {
+            return;
         }
 
         if (!ctype_digit($input) || strlen($input) !== $digit) {
