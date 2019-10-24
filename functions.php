@@ -1,5 +1,11 @@
 <?php
 
+function debug($var) {
+    echo '<pre>';
+        echo $var;
+    echo '</pre>';
+}
+
 function mb_trim($string) {
     return preg_replace('/\A[\p{Z}]+|[\p{Z}]+\z/u', '', $string);
 }

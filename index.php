@@ -34,7 +34,7 @@ $bbs_post_validation_rules = [
         'required' => true,
         'length'   => [
             'min' => 10,
-            'max' => -32,
+            'max' => 32,
         ],
     ],
     'comment' => [
