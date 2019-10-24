@@ -56,8 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputs = get_inputs($input_keys, $_POST);
 
     $validator = new Validator();
-    $validator->setAttributeValidationRules($bbs_post_validation_rules);
-    $error_messages = $validator->validate($inputs);
+
+    try {
+        $validator->setAttributeValidationRules($bbs_post_validation_rules);
+        $error_messages = $validator->validate($inputs);
+    } catch (Exception $e) {
+        echo "{$e->getFile()}, Line:{$e->getLine()}";
+        echo '<br>';
+        echo $e->getMessage();
+        exit;
+    }
 
     if (empty($error_messages)) {
         if (!is_null($inputs['password'])) {
@@ -78,12 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch_assoc();
 $total_post_count = (int) $results['count'];
 
-$paginator = new Paginator($total_post_count);
+try {
+    $paginator = new Paginator($total_post_count);
 
-$current_page = (int) filter_input(INPUT_GET, $paginator->getPaginationParamName());
-$paginator->setCurrentPage($current_page);
+    $current_page = (int) filter_input(INPUT_GET, $paginator->getPaginationParamName());
+    $paginator->setCurrentPage($current_page);
 
-$page_numbers = $paginator->getPageNumbers();
+    $page_numbers = $paginator->getPageNumbers();
+} catch (Exception $e) {
+    echo "File:{$e->getFile()}, Line:{$e->getLine()}";
+    echo '<br>';
+    echo $e->getMessage();
+    exit;
+}
 
 $posts = $mysqli->query("
     SELECT *

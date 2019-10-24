@@ -66,15 +66,17 @@ class Validator
         }
     }
 
-    // このメソッドはすべて数字かどうかを判定する処理だよね
-    // ここで桁数の確認を行う必要はありますか
     private function validateDigit(string $name, $input, int $digit)
     {
         if (is_empty($input)) {
             return;
         }
 
-        if (!is_numeric($input) || strlen($input) !== $digit) {
+        if ($digit < 1) {
+            throw new InvalidArgumentException('桁数のバリデーションには1以上の数値を指定してください。');
+        }
+
+        if (!ctype_digit($input) || strlen($input) !== $digit) {
             return "{$name}は{$digit}桁の半角数字で入力してください";
         }
     }

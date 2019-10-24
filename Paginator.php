@@ -16,7 +16,7 @@ class Paginator
     private function setRecordCount(int $record_count)
     {
         if ($record_count < 0) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('不正なレコード数です');
         }
 
         $this->record_count = $record_count;
@@ -25,7 +25,7 @@ class Paginator
     public function setPageItemCount(int $page_item_count)
     {
         if ($page_item_count < 1) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('１ページあたりの表示数は１以上の数値を指定してください');
         }
 
         $this->page_item_count = $page_item_count;
@@ -33,8 +33,8 @@ class Paginator
 
     public function setMaxPagerCount(int $count)
     {
-        if ($count < 1) {
-            throw new InvalidArgumentException();
+        if ($max_pager_count < 1) {
+            throw new InvalidArgumentException('ページャーの数は１以上の数値を指定してください');
         }
 
         $this->max_pager_count = $count;
