@@ -6,7 +6,6 @@ require_once('Validator.php');
 
 $mysqli = connect_mysqli();
 
-$error_message     = null;
 $is_no_password    = false;
 $is_wrong_password = false;
 
@@ -53,7 +52,7 @@ if (is_empty($post['password'])) {
 
 $error_messages = [];
 
-if (!isset($error_message) && isset($_POST['do_edit'])) {
+if (!$is_no_password && !$is_wrong_password && isset($_POST['do_edit'])) {
     $inputs = get_trimmed_inputs($input_keys, $_POST);
 
     $validator = new Validator();

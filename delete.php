@@ -5,7 +5,6 @@ require_once('db_connect.php');
 
 $mysqli = connect_mysqli();
 
-$error_message     = null;
 $is_no_password    = false;
 $is_wrong_password = false;
 
@@ -31,7 +30,7 @@ if (empty($post['password'])) {
     $is_wrong_password = true;
 }
 
-if (!isset($error_message) && isset($_POST['do_delete'])) {
+if (!$is_no_password && !$is_wrong_password && isset($_POST['do_delete'])) {
     $mysqli->query("DELETE FROM posts WHERE id = {$id}");
 
     header("Location: {$previous_page_url}");
