@@ -2,8 +2,10 @@
 
 require_once('functions.php');
 require_once('db_connect.php');
+require_once('DatabaseOperator.php');
 
-$mysqli = connect_mysqli();
+$mysqli      = connect_mysqli();
+$db_operator = new DatabaseOperator($mysqli);
 
 $is_no_password    = false;
 $is_wrong_password = false;
@@ -25,13 +27,13 @@ $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
 if (empty($post['password'])) {
-    $is_no_password   = true;
+    $is_no_password = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {
     $is_wrong_password = true;
 }
 
 if (!$is_no_password && !$is_wrong_password && isset($_POST['do_delete'])) {
-    $mysqli->query("DELETE FROM posts WHERE id = {$id}");
+    $db_operator->delete("id = {$id}");
 
     header("Location: {$previous_page_url}");
     exit;

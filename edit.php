@@ -3,8 +3,10 @@
 require_once('functions.php');
 require_once('db_connect.php');
 require_once('Validator.php');
+require_once('DatabaseOperator.php');
 
-$mysqli = connect_mysqli();
+$mysqli      = connect_mysqli();
+$db_operator = new DatabaseOperator($mysqli);
 
 $is_no_password    = false;
 $is_wrong_password = false;
@@ -39,7 +41,7 @@ if (
 
 $id = $mysqli->real_escape_string($_POST['id']);
 
-$post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
+$post = $db_operator->select(['column_name' => '*', 'where' => "id = {$id}"])->fetch_assoc();
 
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
@@ -66,10 +68,10 @@ if (!$is_no_password && !$is_wrong_password && isset($_POST['do_edit'])) {
     }
 
     if (empty($error_messages)) {
-        $title    = $mysqli->real_escape_string($inputs['title']) ;
-        $comment  = $mysqli->real_escape_string($inputs['comment']);
-
-        $mysqli->query("UPDATE posts SET title = '{$title}', comment = '{$comment}' WHERE id = {$id}");
+        $db_operator->update("id = {$id}" , [
+            'title'   => $inputs['title'],
+            'comment' => $inputs['comment'],
+        ]);
 
         header("Location: {$previous_page_url}");
         exit;

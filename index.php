@@ -5,27 +5,10 @@ require_once('functions.php');
 require_once('db_connect.php');
 require_once('Validator.php');
 require_once('Paginator.php');
-/*
+require_once('DatabaseOperator.php');
 
-$posts = new Posts();
-
-$posts->insert([
-    'title' => $title,
-    'comment' => $comment,
-]);
-
-$posts->delete($where);
-$posts->deleteById($id);
-
-$posts->update($where, [
-
-]);
-
-$rows = $posts->select(...);
-
-*/
-
-$mysqli = connect_mysqli();
+$mysqli      = connect_mysqli();
+$db_operator = new DatabaseOperator($mysqli);
 
 $input_keys = ['title', 'comment' , 'password'];
 
@@ -70,19 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
         }
 
-        $title    = $mysqli->real_escape_string($inputs['title']) ;
-        $comment  = $mysqli->real_escape_string($inputs['comment']);
-        $password = $mysqli->real_escape_string($password);
-
-        $mysqli->query("INSERT INTO posts (title, comment, password) VALUES ('{$title}', '{$comment}', '{$password}')");
+        $db_operator->insert([
+            'title'    => $inputs['title'],
+            'comment'  => $inputs['comment'],
+            'password' => $password,
+        ]);
 
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
     }
 }
 
-$results          = $mysqli->query('SELECT COUNT(*) AS count FROM posts')->fetch_assoc();
-$total_post_count = (int) $results['count'];
+$results          = $db_operator->select(['column_name' => 'COUNT(*)'])->fetch_assoc();
+$total_post_count = (int) $results['COUNT(*)'];
 
 try {
     $paginator = new Paginator($total_post_count);
@@ -96,13 +79,12 @@ try {
     exit;
 }
 
-$posts = $mysqli->query("
-    SELECT *
-    FROM posts
-    ORDER BY id DESC
-    LIMIT {$paginator->getPageItemCount()}
-    OFFSET {$paginator->getRecordOffset()}
-")->fetch_all(MYSQLI_ASSOC);
+$posts = $db_operator->select([
+    'column_name' => '*',
+    'order_by'    => 'id DESC',
+    'limit'       => $paginator->getPageItemCount(),
+    'offset'      => $paginator->getRecordOffset(),
+])->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
 
