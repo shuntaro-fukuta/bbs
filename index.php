@@ -29,7 +29,7 @@ $mysqli = connect_mysqli();
 
 $input_keys = ['title', 'comment' , 'password'];
 
-$bbs_post_validation_rules = [
+$post_insert_validation_rules = [
     'title' => [
         'required' => true,
         'length'   => [
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $validator = new Validator();
 
     try {
-        $validator->setAttributeValidationRules($bbs_post_validation_rules);
+        $validator->setAttributeValidationRules($post_insert_validation_rules);
         $error_messages = $validator->validate($inputs);
     } catch (Exception $e) {
         echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
@@ -135,15 +135,13 @@ $mysqli->close();
         <br>
         <?php echo nl2br(h($post['comment'])) ?>
         <br>
-        <form method="post" action="delete.php" style="display: inline-block;">
+        <form method="post">
 	      Pass
           <input type="password" name="password">
           <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
           <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
-	      <input type="submit" value="Del">
-        </form>
-        <form method="post" action="edit.php" style="display: inline-block;">
-          <input type="submit" value="edit">
+          <input type="submit" formaction="delete.php" value="Del">
+          <input type="submit" formaction="edit.php" value="Edit">
         </form>
         <?php echo h($post['created_at']) ?>
       <?php endforeach ?>
