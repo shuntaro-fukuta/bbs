@@ -44,7 +44,7 @@ class DatabaseOperator
             $query .= "{$column_name},";
         }
 
-        $query = substr_replace($query, ')', -1, 1);
+        $query = substr_replace($query, ')', -1);
 
         $query .= " VALUES (";
 
@@ -53,7 +53,7 @@ class DatabaseOperator
             $query .= "'{$value}',";
         }
 
-        $query = substr_replace($query, ')', -1, 1);
+        $query = substr_replace($query, ')', -1);
 
         $this->db_instance->query($query);
     }
