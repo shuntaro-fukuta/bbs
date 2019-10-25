@@ -18,20 +18,10 @@ function is_empty($var) {
     return ($var === null || $var === '' || $var === []);
 }
 
-function get_input($key, $array) {
-    if (!isset($array[$key])) {
-        return null;
-    }
-
-    $input = mb_trim($array[$key]);
-
-    return ($input === '') ? null : $input;
-}
-
-function get_inputs($keys, $array) {
+function get_trimmed_inputs($keys, $array) {
     $inputs = [];
     foreach ($keys as $key) {
-        $inputs[$key] = get_input($key, $array);
+        $inputs[$key] = isset($array[$key]) ? mb_trim($array[$key]) : '';
     }
 
     return $inputs;

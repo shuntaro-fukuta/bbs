@@ -53,7 +53,7 @@ $bbs_post_validation_rules = [
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputs = get_inputs($input_keys, $_POST);
+    $inputs = get_trimmed_inputs($input_keys, $_POST);
 
     $validator = new Validator();
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error_messages)) {
-        if (!is_null($inputs['password'])) {
+        if (!is_empty($inputs['password'])) {
             $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
         }
 
