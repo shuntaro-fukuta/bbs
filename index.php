@@ -49,9 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error_messages)) {
-        if (!is_empty($inputs['password'])) {
-            $password = password_hash($inputs['password'], PASSWORD_BCRYPT);
-        }
+        $password = $inputs['password'] === '' ? null : password_hash($inputs['password'], PASSWORD_BCRYPT);
 
         $db_operator->insert([
             'title'    => $inputs['title'],

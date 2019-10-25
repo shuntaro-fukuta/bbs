@@ -26,7 +26,7 @@ $post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
-if (empty($post['password'])) {
+if (is_null($post['password'])) {
     $is_no_password = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {
     $is_wrong_password = true;
