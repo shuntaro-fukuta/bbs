@@ -46,8 +46,8 @@ $post = $db_operator->select(['column_name' => '*', 'where' => "id = {$id}"])->f
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
-if (is_null($post['password'])) {
-    $is_no_password   = true;
+if (is_empty($post['password'])) {
+    $is_no_password = true;
 } elseif (!password_verify($_POST['password'], $post['password'])) {
     $is_wrong_password = true;
 }
@@ -97,7 +97,7 @@ $mysqli->close();
         <input type="password" name="password">
         <input type="hidden" name="id" value="<?php echo $id ?>">
         <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
-        <input type="submit" value="Del">
+        <input type="submit" value="Edit">
       </form>
     <?php else : ?>
       <?php if (!empty($error_messages)) : ?>

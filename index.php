@@ -49,12 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error_messages)) {
-        $password = $inputs['password'] === '' ? null : password_hash($inputs['password'], PASSWORD_BCRYPT);
+        if ($inputs['password'] !== '') {
+            $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
+        }
 
         $db_operator->insert([
             'title'    => $inputs['title'],
             'comment'  => $inputs['comment'],
-            'password' => $password,
+            'password' => $inputs['password'],
         ]);
 
         header("Location: {$_SERVER['SCRIPT_NAME']}");
