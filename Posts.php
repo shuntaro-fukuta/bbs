@@ -2,8 +2,7 @@
 
 require_once('functions.php');
 
-// class名変える
-class DatabaseOperator
+class Posts
 {
     private $db_instance;
     private $table_name   = 'posts';

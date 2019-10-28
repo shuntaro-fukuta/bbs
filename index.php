@@ -5,10 +5,10 @@ require_once('functions.php');
 require_once('db_connect.php');
 require_once('Validator.php');
 require_once('Paginator.php');
-require_once('DatabaseOperator.php');
+require_once('Posts.php');
 
-$mysqli      = connect_mysqli();
-$db_operator = new DatabaseOperator($mysqli);
+$mysqli = connect_mysqli();
+$posts  = new Posts($mysqli);
 
 $input_keys = ['title', 'comment' , 'password'];
 
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            $db_operator->insert([
+            $posts->insert([
                 'title'    => $inputs['title'],
                 'comment'  => $inputs['comment'],
                 'password' => $inputs['password'],
@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results          = $db_operator->select('COUNT(*)')->fetch_assoc();
-$total_post_count = (int) $results['COUNT(*)'];
+$results            = $posts->select('COUNT(*)')->fetch_assoc();
+$total_record_count = (int) $results['COUNT(*)'];
 
 try {
-    $paginator = new Paginator($total_post_count);
+    $paginator = new Paginator($total_record_count);
 
     $current_page = (int) filter_input(INPUT_GET, $paginator->getPaginationParamName());
     $paginator->setCurrentPage($current_page);
@@ -84,7 +84,7 @@ try {
     exit;
 }
 
-$posts = $db_operator->select('*', [
+$records = $posts->select('*', [
     'order_by' => 'id DESC',
     'limit'    => $paginator->getPageItemCount(),
     'offset'   => $paginator->getRecordOffset(),
@@ -114,22 +114,22 @@ $mysqli->close();
       <input id="password" type="password" name="password"><br>
       <input type="submit" value="Submit">
     </form>
-    <?php if (!empty($posts)) : ?>
-      <?php foreach ($posts as $post) : ?>
+    <?php if (!empty($records)) : ?>
+      <?php foreach ($records as $record) : ?>
         <hr>
-        <?php echo h($post['title']) ?>
+        <?php echo h($record['title']) ?>
         <br>
-        <?php echo nl2br(h($post['comment'])) ?>
+        <?php echo nl2br(h($record['comment'])) ?>
         <br>
         <form method="post">
 	      Pass
           <input type="password" name="password">
-          <input type="hidden" name="id" value="<?php echo $post['id'] ?>">
+          <input type="hidden" name="id" value="<?php echo $record['id'] ?>">
           <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
           <input type="submit" formaction="delete.php" value="Del">
           <input type="submit" formaction="edit.php" value="Edit">
         </form>
-        <?php echo h($post['created_at']) ?>
+        <?php echo h($record['created_at']) ?>
       <?php endforeach ?>
     <?php endif ?>
     <hr>
