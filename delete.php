@@ -21,7 +21,7 @@ if (
 
 $id = $mysqli->real_escape_string($_POST['id']);
 
-$post = $mysqli->query("SELECT * FROM posts WHERE id = {$id}")->fetch_assoc();
+$post = $db_operator->select('*', ['where' => "id = {$id}"])->fetch_assoc();
 
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";

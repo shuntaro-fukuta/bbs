@@ -53,18 +53,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
         }
 
-        $db_operator->insert([
-            'title'    => $inputs['title'],
-            'comment'  => $inputs['comment'],
-            'password' => $inputs['password'],
-        ]);
+        try {
+            $db_operator->insert([
+                'title'    => $inputs['title'],
+                'comment'  => $inputs['comment'],
+                'password' => $inputs['password'],
+            ]);
+        } catch (Exception $e) {
+            echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+            exit;
+        }
 
         header("Location: {$_SERVER['SCRIPT_NAME']}");
         exit;
     }
 }
 
-$results          = $db_operator->select(['column_name' => 'COUNT(*)'])->fetch_assoc();
+$results          = $db_operator->select('COUNT(*)')->fetch_assoc();
 $total_post_count = (int) $results['COUNT(*)'];
 
 try {
@@ -79,11 +84,10 @@ try {
     exit;
 }
 
-$posts = $db_operator->select([
-    'column_name' => '*',
-    'order_by'    => 'id DESC',
-    'limit'       => $paginator->getPageItemCount(),
-    'offset'      => $paginator->getRecordOffset(),
+$posts = $db_operator->select('*', [
+    'order_by' => 'id DESC',
+    'limit'    => $paginator->getPageItemCount(),
+    'offset'   => $paginator->getRecordOffset(),
 ])->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
