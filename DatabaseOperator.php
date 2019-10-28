@@ -65,14 +65,9 @@ class DatabaseOperator
 
     public function update(string $where, array $column_values)
     {
-        $columns = implode(',', array_keys($column_values));
-
-        $place_holders = array_fill(0, count($column_values), '?');
-        $place_holders = implode(',', $place_holders);
-
         $query = "UPDATE {$this->table_name} SET ";
 
-        foreach ($column_values as $column => $value) {
+        foreach (array_keys($column_values) as $column) {
             $query .= "{$column}=?,";
         }
         $query = rtrim($query, ',');
