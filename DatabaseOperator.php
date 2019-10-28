@@ -68,9 +68,9 @@ class DatabaseOperator
         $query = "UPDATE {$this->table_name} SET ";
 
         foreach (array_keys($column_values) as $column) {
-            $query .= "{$column}=?,";
+            $query .= "{$column} = ?, ";
         }
-        $query = rtrim($query, ',');
+        $query = rtrim($query, ', ');
 
         $query .= " WHERE {$where}";
 
