@@ -33,7 +33,13 @@ if (is_empty($post['password'])) {
 }
 
 if (!$is_no_password && !$is_wrong_password && isset($_POST['do_delete'])) {
-    $db_operator->delete("id = {$id}");
+
+    try {
+        $db_operator->delete(['where' => ['id', '=', $id]]);
+    } catch (Exception $e) {
+        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+        exit;
+    }
 
     header("Location: {$previous_page_url}");
     exit;

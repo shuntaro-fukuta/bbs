@@ -2,14 +2,17 @@
 
 require_once('functions.php');
 
+// class名変える
 class DatabaseOperator
 {
     private $db_instance;
     private $table_name   = 'posts';
     private $column_types = [
-        'title'    => 's',
-        'comment'  => 's',
-        'password' => 's',
+        'id'         => 'i',
+        'title'      => 's',
+        'comment'    => 's',
+        'password'   => 's',
+        'created_at' => 's',
     ];
 
     public function __construct($db_instance)
@@ -58,6 +61,7 @@ class DatabaseOperator
 
         $stmt = $this->getParamBindedStatement($query, $column_values);
 
+        // 例外を使い分けるq
         if (!$stmt->execute()) {
             throw new Exception('Failed to insert records into table.');
         }
@@ -81,11 +85,39 @@ class DatabaseOperator
         }
     }
 
-    public function delete(string $where)
+    // $wheres = ['where' => ['id', '=', $id], 'AND' => ['created_at', '>', '2019'], ...];
+    public function delete(array $wheres = null)
     {
-        $query = "DELETE FROM {$this->table_name} WHERE {$where}";
+        $query = "DELETE FROM {$this->table_name}";
 
-        $this->db_instance->query($query);
+        if (isset($wheres)) {
+            $query .= ' WHERE';
+
+            // 変数名考える
+            $where_values = [];
+            foreach ($wheres as $key => $where) {
+                $column   = $where[0];
+                $operator = $where[1];
+                $value    = $where[2];
+
+                if ($key === 'AND') {
+                    $query .= ' AND';
+                }
+                if ($key === 'OR') {
+                    $query .= ' OR';
+                }
+
+                $query .= " {$column} {$operator} ?";
+                $where_values[$column] = $value;
+            }
+        }
+
+        $stmt = $this->getParamBindedStatement($query, $where_values);
+
+
+        if (!$stmt->execute()) {
+            throw new Exception('Failed to delete records.');
+        }
     }
 
     private function getParamBindedStatement(string $query, array $column_values)
