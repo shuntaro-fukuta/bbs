@@ -24,9 +24,10 @@ class Posts
         $this->table_name = $name;
     }
 
-    public function select(string $column, array $options = null)
+    public function select(array $column, array $options = null)
     {
-        $query = "SELECT {$column} FROM {$this->table_name}";
+        $column = implode(',', $column);
+        $query  = "SELECT {$column} FROM {$this->table_name}";
 
         if (isset($options)) {
             if (isset($options['where'])){
@@ -147,6 +148,8 @@ class Posts
             $columns[] = $column;
             $values[]  = $value;
         }
+
+        $where_parameters = [];
 
         $where_parameters['query']   = $query;
         $where_parameters['columns'] = $columns;

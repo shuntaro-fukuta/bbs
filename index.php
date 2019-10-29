@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results            = $posts->select('COUNT(*)')->fetch_assoc();
+$results            = $posts->select(['COUNT(*)'])->fetch_assoc();
 $total_record_count = (int) $results['COUNT(*)'];
 
 try {
@@ -84,7 +84,7 @@ try {
     exit;
 }
 
-$records = $posts->select('*', [
+$records = $posts->select(['*'], [
     'order_by' => 'id DESC',
     'limit'    => $paginator->getPageItemCount(),
     'offset'   => $paginator->getRecordOffset(),
