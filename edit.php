@@ -39,9 +39,7 @@ if (
     exit;
 }
 
-$id = $mysqli->real_escape_string($_POST['id']);
-
-$record = $posts ->select(['*'], ['where' => "id = {$id}"])->fetch_assoc();
+$record = $posts->select(['*'], ['where' => ['id', '=', $_POST['id']]])->fetch_assoc();
 
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
@@ -73,8 +71,8 @@ if (!$is_no_password && !$is_wrong_password && isset($_POST['do_edit'])) {
                 'title'   => $inputs['title'],
                 'comment' => $inputs['comment'],
             ],
-            ['where' => ['id', '=', $id]]
-            );
+            ['where' => ['id', '=', $_POST['id']]]
+        );
 
         header("Location: {$previous_page_url}");
         exit;
@@ -114,7 +112,7 @@ $mysqli->close();
         <input id="title" type="text" name="title" value="<?php echo $inputs['title'] ?? $record['title']?>"><br>
         <label for="comment">Body</label><br>
         <textarea id="comment" name="comment"><?php echo $inputs['comment'] ?? $record['comment']?></textarea><br>
-        <input type="hidden" name="id" value="<?php echo $id ?>">
+        <input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
         <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
         <input type="hidden" name="password" value="<?php echo $_POST['password'] ?>">
         <input type="submit" name="do_edit" value="Submit">

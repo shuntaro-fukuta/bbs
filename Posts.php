@@ -5,8 +5,8 @@ require_once('functions.php');
 class Posts
 {
     private $db_instance;
-    private $table_name   = 'posts';
-    private $column_types = [
+    private $table_name = 'posts';
+    private $bind_types = [
         'id'         => 'i',
         'title'      => 's',
         'comment'    => 's',
@@ -24,29 +24,56 @@ class Posts
         $this->table_name = $name;
     }
 
-    public function select(array $column, array $options = null)
+    public function select(array $columns, array $options = null)
     {
-        $column = implode(',', $column);
-        $query  = "SELECT {$column} FROM {$this->table_name}";
+        $columns = implode(',', $columns);
+        $query   = "SELECT {$columns} FROM {$this->table_name}";
 
         if (isset($options)) {
-            if (isset($options['where'])){
-                $query .= " WHERE {$options['where']}";
+            $types  = '';
+            $values = [];
+
+            if (isset($options['where'])) {
+                // adv: この名前変じゃない？
+                //      この名前だと $where_parameters = $options['where'] と同じでは
+                $where_parameters = $this->getWhereParameters(['where' => $options['where']]);
+
+                $query .= $where_parameters['query'];
+                $types .= $this->getBindTypes($where_parameters['columns']);
+                // adv: array_mergeいらなくない？
+                $values = array_merge($values, $where_parameters['values']);
             }
-            if (isset($options['order_by'])){
+            if (isset($options['order_by'])) {
                 $query .= " ORDER BY {$options['order_by']}";
             }
-            if (isset($options['limit'])){
-                $query .= " LIMIT {$options['limit']}";
+            if (isset($options['limit'])) {
+                // adv: 擬似コードだけど $query .= LIMIT int($options['limit']) みたいなのでいいのでは？
+                $query   .= " LIMIT ?";
+                $types   .= 'i';
+                $values[] = $options['limit'];
 
-                if (isset($options['offset'])){
-                    $query .= " OFFSET {$options['offset']}";
+                if (isset($options['offset'])) {
+                    $query   .= " OFFSET ?";
+                    $types   .= 'i';
+                    $values[] = $options['offset'];
                 }
             }
         }
 
-        // fetchまでやりたい
-        return $this->db_instance->query($query);
+        $stmt = $this->db_instance->prepare($query);
+
+        // adv: $types と $values が未定義な時があるよ
+        if (!is_empty($types) && !is_empty($values)) {
+            $stmt->bind_param($types, ...$values);
+            $stmt->execute();
+        }
+
+        if ($results = $stmt->get_result()) {
+            // adv: 使う側は結果のデータがほしいだけなのに取ってきた場所の情報とかを知らないといけないのは微妙
+            return $results;
+        } else {
+            throw new LogicException('Failed to select records from table.');
+        }
     }
 
     public function insert(array $column_values)
@@ -68,6 +95,11 @@ class Posts
         }
     }
 
+    // adv: 変数に入っている「物」がなんなのかを全然考えれられてないです
+    //      変数の中身のコードを説明はしているけど…
+    //      例えば $column_values はコード上カラム名と値が入っている名前にはなっているけど、
+    //      それが「なに」かっていう情報が入ってないよね
+    //      $column_with_placeholdersって更新する内容でも更新対象の条件でも同じ変数名にならない？
     public function update(array $column_values, array $wheres)
     {
         $columns = array_keys($column_values);
@@ -111,12 +143,19 @@ class Posts
         }
     }
 
+    private function getBindTypes(array $columns)
+    {
+        $types = '';
+        foreach ($columns as $column) {
+            $types .= $this->bind_types[$column];
+        }
+
+        return $types;
+    }
+
     private function getParamBindedStatement(string $query, array $columns, array $values)
     {
-        $types  = '';
-        foreach ($columns as $column) {
-            $types .= $this->column_types[$column];
-        }
+        $types = $this->getBindTypes($columns);
 
         $stmt = $this->db_instance->prepare($query);
         $stmt->bind_param($types, ...$values);

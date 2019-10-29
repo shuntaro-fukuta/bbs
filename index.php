@@ -79,16 +79,17 @@ try {
     $paginator->setCurrentPage($current_page);
 
     $page_numbers = $paginator->getPageNumbers();
+
+    $records = $posts->select(['*'], [
+        'order_by' => 'id DESC',
+        'limit'    => $paginator->getPageItemCount(),
+        'offset'   => $paginator->getRecordOffset(),
+    ])->fetch_all(MYSQLI_ASSOC);
+
 } catch (Exception $e) {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
-
-$records = $posts->select(['*'], [
-    'order_by' => 'id DESC',
-    'limit'    => $paginator->getPageItemCount(),
-    'offset'   => $paginator->getRecordOffset(),
-])->fetch_all(MYSQLI_ASSOC);
 
 $mysqli->close();
 

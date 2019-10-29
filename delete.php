@@ -19,9 +19,7 @@ if (
     exit;
 }
 
-$id = $mysqli->real_escape_string($_POST['id']);
-
-$record = $posts->select(['*'], ['where' => "id = {$id}"])->fetch_assoc();
+$record = $posts->select(['*'], ['where' => ['id', '=', $_POST['id']]])->fetch_assoc();
 
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
@@ -35,7 +33,7 @@ if (is_empty($record['password'])) {
 if (!$is_no_password && !$is_wrong_password && isset($_POST['do_delete'])) {
 
     try {
-        $posts->delete(['where' => ['id', '=', $id]]);
+        $posts->delete(['where' => ['id', '=', $_POST['id']]]);
     } catch (Exception $e) {
         echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
         exit;
@@ -65,14 +63,14 @@ $mysqli->close();
       <form method="post" action="">
         Pass
         <input type="password" name="password">
-        <input type="hidden" name="id" value="<?php echo $id ?>">
+        <input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
         <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
         <input type="submit" value="Del">
       </form>
     <?php else : ?>
       <p>削除してよろしいですか？</p>
       <form method="post" action="">
-        <input type="hidden" name="id" value="<?php echo $id ?>">
+        <input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
         <input type="hidden" name="previous_page" value="<?php echo $previous_page ?>">
         <input type="hidden" name="password" value="<?php echo $_POST['password'] ?>">
         <input type="submit" name="do_delete" value="Yes">
