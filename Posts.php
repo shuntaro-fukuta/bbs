@@ -50,7 +50,6 @@ class Posts
 
     public function insert(array $column_values)
     {
-        // ------- prepare型 ---------
         $columns = implode(',', array_keys($column_values));
 
         $place_holders = array_fill(0, count($column_values), '?');
@@ -60,9 +59,8 @@ class Posts
 
         $stmt = $this->getParamBindedStatement($query, $column_values);
 
-        // 例外を使い分けるq
         if (!$stmt->execute()) {
-            throw new Exception('Failed to insert records into table.');
+            throw new LogicException('Failed to insert records into table.');
         }
     }
 
@@ -80,7 +78,7 @@ class Posts
         $stmt = $this->getParamBindedStatement($query, $column_values);
 
         if (!$stmt->execute()) {
-            throw new Exception('Failed to update records.');
+            throw new LogicException('Failed to update records.');
         }
     }
 
@@ -115,7 +113,7 @@ class Posts
 
 
         if (!$stmt->execute()) {
-            throw new Exception('Failed to delete records.');
+            throw new LogicException('Failed to delete records.');
         }
     }
 
