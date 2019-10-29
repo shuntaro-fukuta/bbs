@@ -68,10 +68,13 @@ if (!$is_no_password && !$is_wrong_password && isset($_POST['do_edit'])) {
     }
 
     if (empty($error_messages)) {
-        $posts->update("id = {$id}" , [
-            'title'   => $inputs['title'],
-            'comment' => $inputs['comment'],
-        ]);
+        $posts->update(
+            [
+                'title'   => $inputs['title'],
+                'comment' => $inputs['comment'],
+            ],
+            ['where' => ['id', '=', $id]]
+            );
 
         header("Location: {$previous_page_url}");
         exit;

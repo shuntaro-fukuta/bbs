@@ -67,8 +67,7 @@ class Posts
         }
     }
 
-    // whereを配列で受け取る
-    public function update(string $where, array $column_values)
+    public function update(array $column_values, array $wheres)
     {
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
@@ -77,13 +76,15 @@ class Posts
         foreach ($columns as $column) {
             $column_with_placeholders[] = "{$column} = ?";
         }
-
         $column_with_placeholders = implode(', ', $column_with_placeholders);
 
         $query = "UPDATE {$this->table_name} SET {$column_with_placeholders}";
 
-        // whereのqueryを取得するメソッドをつくる
-        $query .= " WHERE {$where}";
+        $where_parameters = $this->getWhereParameters($wheres);
+
+        $query  .= $where_parameters['query'];
+        $columns = array_merge($columns, $where_parameters['columns']);
+        $values  = array_merge($values, $where_parameters['values']);
 
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
@@ -92,36 +93,15 @@ class Posts
         }
     }
 
-    // $wheres = ['where' => ['id', '=', $id], 'and' => ['created_at', '>', '2019'], ...];
-    public function delete(array $wheres = null)
+    public function delete(array $wheres)
     {
         $query = "DELETE FROM {$this->table_name}";
 
-        if (!isset($wheres)) {
-            $this->db_instance->query($query);
-        }
+        $where_parameters = $this->getWhereParameters($wheres);
 
-        $columns = [];
-        $values  = [];
-
-        foreach ($wheres as $key => $where) {
-            $column   = $where[0];
-            $operator = $where[1];
-            $value    = $where[2];
-
-            // 大文字小文字どっちも対応？
-            if ($key === 'where') {
-                $query .= ' WHERE ';
-            } elseif ($key === 'and') {
-                $query .= ' AND ';
-            } elseif ($key === 'or') {
-                $query .= ' OR ';
-            }
-            $query .= "{$column} {$operator} ?";
-
-            $columns[] = $column;
-            $values[]  = $value;
-        }
+        $query  .= $where_parameters['query'];
+        $columns = $where_parameters['columns'];
+        $values  = $where_parameters['values'];
 
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
@@ -136,9 +116,42 @@ class Posts
         foreach ($columns as $column) {
             $types .= $this->column_types[$column];
         }
+
         $stmt = $this->db_instance->prepare($query);
         $stmt->bind_param($types, ...$values);
 
         return $stmt;
+    }
+
+    // メソッド名
+    private function getWhereParameters(array $wheres)
+    {
+        $query   = '';
+        $columns = [];
+        $values  = [];
+
+        foreach ($wheres as $key => $where) {
+            $column   = $where[0];
+            $operator = $where[1];
+            $value    = $where[2];
+
+            if ($key === 'where') {
+                $query .= ' WHERE ';
+            } elseif ($key === 'and') {
+                $query .= ' AND ';
+            } elseif ($key === 'or') {
+                $query .= ' OR ';
+            }
+            $query .= "{$column} {$operator} ?";
+
+            $columns[] = $column;
+            $values[]  = $value;
+        }
+
+        $where_parameters['query']   = $query;
+        $where_parameters['columns'] = $columns;
+        $where_parameters['values']  = $values;
+
+        return $where_parameters;
     }
 }
