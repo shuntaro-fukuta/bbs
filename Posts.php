@@ -50,83 +50,92 @@ class Posts
 
     public function insert(array $column_values)
     {
-        $columns = implode(',', array_keys($column_values));
+        $columns = array_keys($column_values);
+        $values  = array_values($column_values);
 
-        $place_holders = array_fill(0, count($column_values), '?');
-        $place_holders = implode(',', $place_holders);
+        $query_columns = implode(', ', $columns);
 
-        $query = "INSERT INTO {$this->table_name} ({$columns}) VALUES ({$place_holders})";
+        $place_holders = array_fill(0, count($values), '?');
+        $place_holders = implode(', ', $place_holders);
 
-        $stmt = $this->getParamBindedStatement($query, $column_values);
+        $query = "INSERT INTO {$this->table_name} ({$query_columns}) VALUES ({$place_holders})";
+
+        $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to insert records into table.');
         }
     }
 
+    // whereを配列で受け取る
     public function update(string $where, array $column_values)
     {
-        $query = "UPDATE {$this->table_name} SET ";
+        $columns = array_keys($column_values);
+        $values  = array_values($column_values);
 
-        foreach (array_keys($column_values) as $column) {
-            $query .= "{$column} = ?, ";
+        $column_with_placeholders = [];
+        foreach ($columns as $column) {
+            $column_with_placeholders[] = "{$column} = ?";
         }
-        $query = rtrim($query, ', ');
 
+        $column_with_placeholders = implode(', ', $column_with_placeholders);
+
+        $query = "UPDATE {$this->table_name} SET {$column_with_placeholders}";
+
+        // whereのqueryを取得するメソッドをつくる
         $query .= " WHERE {$where}";
 
-        $stmt = $this->getParamBindedStatement($query, $column_values);
+        $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to update records.');
         }
     }
 
-    // $wheres = ['where' => ['id', '=', $id], 'AND' => ['created_at', '>', '2019'], ...];
+    // $wheres = ['where' => ['id', '=', $id], 'and' => ['created_at', '>', '2019'], ...];
     public function delete(array $wheres = null)
     {
         $query = "DELETE FROM {$this->table_name}";
 
-        if (isset($wheres)) {
-            $query .= ' WHERE';
-
-            // 変数名考える
-            $where_values = [];
-            foreach ($wheres as $key => $where) {
-                $column   = $where[0];
-                $operator = $where[1];
-                $value    = $where[2];
-
-                if ($key === 'AND') {
-                    $query .= ' AND';
-                }
-                if ($key === 'OR') {
-                    $query .= ' OR';
-                }
-
-                $query .= " {$column} {$operator} ?";
-                $where_values[$column] = $value;
-            }
+        if (!isset($wheres)) {
+            $this->db_instance->query($query);
         }
 
-        $stmt = $this->getParamBindedStatement($query, $where_values);
+        $columns = [];
+        $values  = [];
 
+        foreach ($wheres as $key => $where) {
+            $column   = $where[0];
+            $operator = $where[1];
+            $value    = $where[2];
+
+            // 大文字小文字どっちも対応？
+            if ($key === 'where') {
+                $query .= ' WHERE ';
+            } elseif ($key === 'and') {
+                $query .= ' AND ';
+            } elseif ($key === 'or') {
+                $query .= ' OR ';
+            }
+            $query .= "{$column} {$operator} ?";
+
+            $columns[] = $column;
+            $values[]  = $value;
+        }
+
+        $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to delete records.');
         }
     }
 
-    private function getParamBindedStatement(string $query, array $column_values)
+    private function getParamBindedStatement(string $query, array $columns, array $values)
     {
         $types  = '';
-        $values = [];
-
-        foreach ($column_values as $column => $value) {
-            $types   .= $this->column_types[$column];
-            $values[] = $value;
+        foreach ($columns as $column) {
+            $types .= $this->column_types[$column];
         }
-
         $stmt = $this->db_instance->prepare($query);
         $stmt->bind_param($types, ...$values);
 
