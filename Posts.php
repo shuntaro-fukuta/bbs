@@ -47,20 +47,21 @@ class Posts
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$this->table_name}";
 
-        $values = null;
         if (isset($options)) {
             if (isset($options['where'])) {
                 // adv: この名前変じゃない？
                 //      この名前だと $where_parameters = $options['where'] と同じでは
-                $where_parameters = $this->getWhereParameters(['where' => $options['where']]);
+                $where_parameters = $this->getWhereParameters($options['where']);
 
                 $query  .= $where_parameters['query'];
                 $columns = $where_parameters['columns'];
                 $values  = $where_parameters['values'];
             }
+
             if (isset($options['order_by'])) {
                 $query .= " ORDER BY {$options['order_by']}";
             }
+
             if (isset($options['limit'])) {
                 $query   .= ' LIMIT ' . (int) $options['limit'];
 
@@ -70,10 +71,10 @@ class Posts
             }
         }
 
-        if (is_null($values)) {
-            $stmt = $this->db_instance->prepare($query);
+        if (isset($options) && isset($options['where'])) {
+            $stmt = $this->getParamBindedStatement($query, $columns, $values);
         } else {
-            $stmt = getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->db_instance->prepare($query);
         }
 
         $stmt->execute();
