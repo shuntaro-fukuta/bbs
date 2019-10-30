@@ -35,11 +35,11 @@ class Posts
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
         $stmt->execute();
 
-        if ($results = $stmt->get_result()) {
-            return $results->fetch_assoc();
-        } else {
+        if (!($results = $stmt->get_result())) {
             throw new LogicException('Failed to select records from table.');
         }
+
+        return $results->fetch_assoc();
     }
 
     public function selectRecords(array $columns, array $options = null)
@@ -74,16 +74,18 @@ class Posts
         if (isset($options) && isset($options['where'])) {
             $stmt = $this->getParamBindedStatement($query, $columns, $values);
         } else {
-            $stmt = $this->db_instance->prepare($query);
+            if (!($stmt = $this->db_instance->prepare($query))) {
+                throw new LogicException('Failed to prepare statement.');
+            }
         }
 
         $stmt->execute();
 
-        if ($results = $stmt->get_result()) {
-            return $results->fetch_all(MYSQLI_ASSOC);
-        } else {
+        if (!($results = $stmt->get_result())) {
             throw new LogicException('Failed to select records from table.');
         }
+
+        return $results->fetch_all(MYSQLI_ASSOC);
     }
 
     public function count()
@@ -169,8 +171,13 @@ class Posts
             $types .= $this->bind_types[$column];
         }
 
-        $stmt = $this->db_instance->prepare($query);
-        $stmt->bind_param($types, ...$values);
+        if (!($stmt = $this->db_instance->prepare($query))) {
+            throw new LogicException('Failed to prepare statement.');
+        }
+
+        if (!$stmt->bind_param($types, ...$values)) {
+            throw new LogicException('Failed to bind param to statement.');
+        }
 
         return $stmt;
     }
