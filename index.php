@@ -69,10 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$results            = $posts->select(['COUNT(*)'])->fetch_assoc();
-$total_record_count = (int) $results['COUNT(*)'];
 
 try {
+    $results            = $posts->select(['COUNT(*)'])->fetch_assoc();
+    $total_record_count = (int) $results['COUNT(*)'];
+
     $paginator = new Paginator($total_record_count);
 
     $current_page = (int) filter_input(INPUT_GET, $paginator->getPaginationParamName());

@@ -29,18 +29,16 @@ class Posts
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$this->table_name}";
 
-        $types  = '';
-        $values = [];
+        $values = null;
         if (isset($options)) {
-
             if (isset($options['where'])) {
                 // adv: この名前変じゃない？
                 //      この名前だと $where_parameters = $options['where'] と同じでは
                 $where_parameters = $this->getWhereParameters(['where' => $options['where']]);
 
-                $query .= $where_parameters['query'];
-                $types .= $this->getBindTypes($where_parameters['columns']);
-                $values = $where_parameters['values'];
+                $query  .= $where_parameters['query'];
+                $columns = $where_parameters['columns'];
+                $values  = $where_parameters['values'];
             }
             if (isset($options['order_by'])) {
                 $query .= " ORDER BY {$options['order_by']}";
@@ -56,10 +54,11 @@ class Posts
 
         $stmt = $this->db_instance->prepare($query);
 
-        if (!is_empty($types) && !is_empty($values)) {
-            $stmt->bind_param($types, ...$values);
-            $stmt->execute();
+        if (!is_null($values)) {
+            $stmt = getParamBindedStatement($query, $columns, $values);
         }
+
+        $stmt->execute();
 
         if ($results = $stmt->get_result()) {
             // adv: 使う側は結果のデータがほしいだけなのに取ってきた場所の情報とかを知らないといけないのは微妙
