@@ -5,7 +5,13 @@ require_once('db_connect.php');
 require_once('Validator.php');
 require_once('Posts.php');
 
-$mysqli = connect_mysqli();
+try {
+    $mysqli = connect_mysqli();
+} catch (Exception $e) {
+    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+    exit;
+}
+
 $posts  = new Posts($mysqli);
 
 $is_no_password    = false;

@@ -7,7 +7,13 @@ require_once('Validator.php');
 require_once('Paginator.php');
 require_once('Posts.php');
 
-$mysqli = connect_mysqli();
+try {
+    $mysqli = connect_mysqli();
+} catch (Exception $e) {
+    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+    exit;
+}
+
 $posts  = new Posts($mysqli);
 
 $input_keys = ['title', 'comment' , 'password'];

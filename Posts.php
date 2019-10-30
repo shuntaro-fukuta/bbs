@@ -17,7 +17,7 @@ class Posts
 
     public function __construct(mysqli $db_instance)
     {
-        $this->setDatabaseInstance($db_instance);
+        $this->db_instance = $db_instance;
     }
 
     public function selectRecord(array $columns, array $where)
@@ -25,15 +25,14 @@ class Posts
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$this->table_name}";
 
-        // adv: この名前変じゃない？
-        //      この名前だと $where_parameters = $options['where'] と同じでは
-        $where_parameters = $this->getWhereParameters($where);
+        $where_bind_items = $this->getWhereBindItems($where);
 
-        $query  .= $where_parameters['query'];
-        $columns = $where_parameters['columns'];
-        $values  = $where_parameters['values'];
+        $query        .= $where_bind_items['query'];
+        $where_columns = $where_bind_items['columns'];
+        $where_values  = $where_bind_items['values'];
 
-        $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        $stmt = $this->getParamBindedStatement($query, $where_columns, $where_values);
+
         $stmt->execute();
 
         if (!($results = $stmt->get_result())) {
@@ -50,13 +49,11 @@ class Posts
 
         if (isset($options)) {
             if (isset($options['where'])) {
-                // adv: この名前変じゃない？
-                //      この名前だと $where_parameters = $options['where'] と同じでは
-                $where_parameters = $this->getWhereParameters($options['where']);
+                $where_bind_items = $this->getWhereBindItems($options['where']);
 
-                $query  .= $where_parameters['query'];
-                $columns = $where_parameters['columns'];
-                $values  = $where_parameters['values'];
+                $query        .= $where_bind_items['query'];
+                $where_columns = $where_bind_items['columns'];
+                $where_values  = $where_bind_items['values'];
             }
 
             if (isset($options['order_by'])) {
@@ -73,7 +70,7 @@ class Posts
         }
 
         if (isset($options) && isset($options['where'])) {
-            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->getParamBindedStatement($query, $where_columns, $where_values);
         } else {
             if (!($stmt = $this->db_instance->prepare($query))) {
                 throw new LogicException('Failed to prepare statement.');
@@ -135,11 +132,11 @@ class Posts
 
         $query = "UPDATE {$this->table_name} SET {$column_with_placeholders}";
 
-        $where_parameters = $this->getWhereParameters($wheres);
+        $where_bind_items = $this->getWhereBindItems($wheres);
 
-        $query  .= $where_parameters['query'];
-        $columns = array_merge($columns, $where_parameters['columns']);
-        $values  = array_merge($values, $where_parameters['values']);
+        $query  .= $where_bind_items['query'];
+        $columns = array_merge($columns, $where_bind_items['columns']);
+        $values  = array_merge($values, $where_bind_items['values']);
 
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
@@ -152,11 +149,11 @@ class Posts
     {
         $query = "DELETE FROM {$this->table_name}";
 
-        $where_parameters = $this->getWhereParameters($wheres);
+        $where_bind_items = $this->getWhereBindItems($wheres);
 
-        $query  .= $where_parameters['query'];
-        $columns = $where_parameters['columns'];
-        $values  = $where_parameters['values'];
+        $query  .= $where_bind_items['query'];
+        $columns = $where_bind_items['columns'];
+        $values  = $where_bind_items['values'];
 
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
@@ -183,8 +180,7 @@ class Posts
         return $stmt;
     }
 
-    // メソッド名
-    private function getWhereParameters(array $wheres)
+    private function getWhereBindItems(array $wheres)
     {
         $query   = '';
         $columns = [];
@@ -208,12 +204,12 @@ class Posts
             $values[]  = $value;
         }
 
-        $where_parameters = [];
+        $where_bind_items = [];
 
-        $where_parameters['query']   = $query;
-        $where_parameters['columns'] = $columns;
-        $where_parameters['values']  = $values;
+        $where_bind_items['query']   = $query;
+        $where_bind_items['columns'] = $columns;
+        $where_bind_items['values']  = $values;
 
-        return $where_parameters;
+        return $where_bind_items;
     }
 }

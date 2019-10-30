@@ -9,15 +9,10 @@ function connect_mysqli(array $db_settings = null) {
     $db_name  = isset($db_settings['db_name']) ? $db_settings['db_name'] : DB_NAME;
     $encoding = isset($db_settings['encoding']) ? $db_settings['encoding'] : DB_ENCODING;
 
-    try {
-        $mysqli = new mysqli($host, $username, $password, $db_name);
+    $mysqli = new mysqli($host, $username, $password, $db_name);
 
-        if ($mysqli->connect_error) {
-            throw new Exception("DB接続エラー: {$mysqli->connect_error}");
-        }
-    } catch (Exception $e) {
-        echo $e->getMessage();
-        exit;
+    if ($mysqli->connect_error) {
+        throw new Exception("DB接続エラー: {$mysqli->connect_error}");
     }
 
     $mysqli->set_charset($encoding);
