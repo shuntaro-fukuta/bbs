@@ -69,10 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-
 try {
-    $results            = $posts->select(['COUNT(*)'])->fetch_assoc();
-    $total_record_count = (int) $results['COUNT(*)'];
+    $total_record_count = $posts->count();
 
     $paginator = new Paginator($total_record_count);
 
@@ -81,12 +79,11 @@ try {
 
     $page_numbers = $paginator->getPageNumbers();
 
-    $records = $posts->select(['*'], [
+    $records = $posts->selectRecords(['*'], [
         'order_by' => 'id DESC',
         'limit'    => $paginator->getPageItemCount(),
         'offset'   => $paginator->getRecordOffset(),
-    ])->fetch_all(MYSQLI_ASSOC);
-
+    ]);
 } catch (Exception $e) {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;

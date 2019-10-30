@@ -19,12 +19,30 @@ class Posts
         $this->db_instance = $db_instance;
     }
 
-    public function setTableName(string $name)
+    public function selectRecord(array $columns, array $where)
     {
-        $this->table_name = $name;
+        $columns = implode(',', $columns);
+        $query   = "SELECT {$columns} FROM {$this->table_name}";
+
+        // adv: この名前変じゃない？
+        //      この名前だと $where_parameters = $options['where'] と同じでは
+        $where_parameters = $this->getWhereParameters($where);
+
+        $query  .= $where_parameters['query'];
+        $columns = $where_parameters['columns'];
+        $values  = $where_parameters['values'];
+
+        $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        $stmt->execute();
+
+        if ($results = $stmt->get_result()) {
+            return $results->fetch_assoc();
+        } else {
+            throw new LogicException('Failed to select records from table.');
+        }
     }
 
-    public function select(array $columns, array $options = null)
+    public function selectRecords(array $columns, array $options = null)
     {
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$this->table_name}";
@@ -47,25 +65,33 @@ class Posts
                 $query   .= ' LIMIT ' . (int) $options['limit'];
 
                 if (isset($options['offset'])) {
-                    $query   .= ' OFFSET ' . (int) $options['limit'];
+                    $query   .= ' OFFSET ' . (int) $options['offset'];
                 }
             }
         }
 
-        $stmt = $this->db_instance->prepare($query);
-
-        if (!is_null($values)) {
+        if (is_null($values)) {
+            $stmt = $this->db_instance->prepare($query);
+        } else {
             $stmt = getParamBindedStatement($query, $columns, $values);
         }
 
         $stmt->execute();
 
         if ($results = $stmt->get_result()) {
-            // adv: 使う側は結果のデータがほしいだけなのに取ってきた場所の情報とかを知らないといけないのは微妙
-            return $results;
+            return $results->fetch_all(MYSQLI_ASSOC);
         } else {
             throw new LogicException('Failed to select records from table.');
         }
+    }
+
+    public function count()
+    {
+        $query = "SELECT COUNT(*) FROM {$this->table_name}";
+
+        $count = (int) $this->db_instance->query($query)->fetch_assoc()['COUNT(*)'];
+
+        return $count;
     }
 
     public function insert(array $column_values)
@@ -135,19 +161,12 @@ class Posts
         }
     }
 
-    private function getBindTypes(array $columns)
+    private function getParamBindedStatement(string $query, array $columns, array $values)
     {
         $types = '';
         foreach ($columns as $column) {
             $types .= $this->bind_types[$column];
         }
-
-        return $types;
-    }
-
-    private function getParamBindedStatement(string $query, array $columns, array $values)
-    {
-        $types = $this->getBindTypes($columns);
 
         $stmt = $this->db_instance->prepare($query);
         $stmt->bind_param($types, ...$values);

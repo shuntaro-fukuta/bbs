@@ -39,7 +39,12 @@ if (
     exit;
 }
 
-$record = $posts->select(['*'], ['where' => ['id', '=', $_POST['id']]])->fetch_assoc();
+try {
+    $record = $posts->selectRecord(['*'], ['where' => ['id', '=', $_POST['id']]]);
+} catch (Exception $e) {
+    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+    exit;
+}
 
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
