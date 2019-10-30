@@ -16,6 +16,20 @@ class Posts
 
     public function __construct($db_instance)
     {
+        $this->setDatabaseInstance($db_instance);
+    }
+
+    private function setDatabaseInstance($db_instance)
+    {
+        try {
+            if (!($db_instance instanceof mysqli)) {
+                throw new InvalidArgumentException('Argument of ' . __FUNCTION__ . ' must be an instance of mysqli class. (' . __FILE__ . ' : ' . __LINE__ . ')');
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
         $this->db_instance = $db_instance;
     }
 
@@ -36,7 +50,7 @@ class Posts
         $stmt->execute();
 
         if (!($results = $stmt->get_result())) {
-            throw new LogicException('Failed to select records from table.');
+            throw new LogicException('Failed to select record from table.');
         }
 
         return $results->fetch_assoc();

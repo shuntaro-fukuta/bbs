@@ -11,15 +11,16 @@ function connect_mysqli(array $db_settings = null) {
 
     try {
         $mysqli = new mysqli($host, $username, $password, $db_name);
+
         if ($mysqli->connect_error) {
             throw new Exception("DB接続エラー: {$mysqli->connect_error}");
         }
-
-        $mysqli->set_charset($encoding);
-
-        return $mysqli;
     } catch (Exception $e) {
         echo $e->getMessage();
         exit;
     }
+
+    $mysqli->set_charset($encoding);
+
+    return $mysqli;
 }
