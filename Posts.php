@@ -2,6 +2,7 @@
 
 require_once('functions.php');
 
+// adv: 例えばユーザー情報を扱うテーブルが増えたときにどうなるか考えましょう
 class Posts
 {
     private $db_instance;
@@ -21,6 +22,10 @@ class Posts
 
     private function setDatabaseInstance($db_instance)
     {
+        // adv: 説明を聞いても意味がわからなかったけど、ここと他の例外の違いはなんなの？
+        //      ここも他もこのクラスからしたら違いはなくて、このクラスのしごとがこれ以上できないから例外を吐いているはず
+        //      その例外をどう扱うかは使う側の責任
+        // adv: instanceof 使うなら引数の型指定すればいいのでは？
         try {
             if (!($db_instance instanceof mysqli)) {
                 throw new InvalidArgumentException('Argument of ' . __FUNCTION__ . ' must be an instance of mysqli class. (' . __FILE__ . ' : ' . __LINE__ . ')');
