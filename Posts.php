@@ -29,9 +29,9 @@ class Posts
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$this->table_name}";
 
+        $types  = '';
+        $values = [];
         if (isset($options)) {
-            $types  = '';
-            $values = [];
 
             if (isset($options['where'])) {
                 // adv: この名前変じゃない？
@@ -40,29 +40,22 @@ class Posts
 
                 $query .= $where_parameters['query'];
                 $types .= $this->getBindTypes($where_parameters['columns']);
-                // adv: array_mergeいらなくない？
-                $values = array_merge($values, $where_parameters['values']);
+                $values = $where_parameters['values'];
             }
             if (isset($options['order_by'])) {
                 $query .= " ORDER BY {$options['order_by']}";
             }
             if (isset($options['limit'])) {
-                // adv: 擬似コードだけど $query .= LIMIT int($options['limit']) みたいなのでいいのでは？
-                $query   .= " LIMIT ?";
-                $types   .= 'i';
-                $values[] = $options['limit'];
+                $query   .= ' LIMIT ' . (int) $options['limit'];
 
                 if (isset($options['offset'])) {
-                    $query   .= " OFFSET ?";
-                    $types   .= 'i';
-                    $values[] = $options['offset'];
+                    $query   .= ' OFFSET ' . (int) $options['limit'];
                 }
             }
         }
 
         $stmt = $this->db_instance->prepare($query);
 
-        // adv: $types と $values が未定義な時があるよ
         if (!is_empty($types) && !is_empty($values)) {
             $stmt->bind_param($types, ...$values);
             $stmt->execute();
