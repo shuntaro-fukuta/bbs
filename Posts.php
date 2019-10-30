@@ -15,27 +15,9 @@ class Posts
         'created_at' => 's',
     ];
 
-    public function __construct($db_instance)
+    public function __construct(mysqli $db_instance)
     {
         $this->setDatabaseInstance($db_instance);
-    }
-
-    private function setDatabaseInstance($db_instance)
-    {
-        // adv: 説明を聞いても意味がわからなかったけど、ここと他の例外の違いはなんなの？
-        //      ここも他もこのクラスからしたら違いはなくて、このクラスのしごとがこれ以上できないから例外を吐いているはず
-        //      その例外をどう扱うかは使う側の責任
-        // adv: instanceof 使うなら引数の型指定すればいいのでは？
-        try {
-            if (!($db_instance instanceof mysqli)) {
-                throw new InvalidArgumentException('Argument of ' . __FUNCTION__ . ' must be an instance of mysqli class. (' . __FILE__ . ' : ' . __LINE__ . ')');
-            }
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            exit;
-        }
-
-        $this->db_instance = $db_instance;
     }
 
     public function selectRecord(array $columns, array $where)
