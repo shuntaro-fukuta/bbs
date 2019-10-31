@@ -33,7 +33,7 @@ class Paginator
 
     public function setMaxPagerCount(int $count)
     {
-        if ($max_pager_count < 1) {
+        if ($count < 1) {
             throw new InvalidArgumentException('Argument must be integer greater than or equal to 1');
         }
 

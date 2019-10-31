@@ -141,7 +141,7 @@ $mysqli->close();
     <div>
       <?php if (isset($page_numbers)) : ?>
         <?php if (!($paginator->isFirstPage())) : ?>
-          <a href="<?php echo $paginator->getPreviousPageUrl() ?>">&lt;</a>
+          <a href="<?php echo $paginator->getPreviousPageUrl('page') ?>">&lt;</a>
         <?php endif ?>
 
         <?php foreach ($page_numbers as $page_number) : ?>
@@ -153,7 +153,7 @@ $mysqli->close();
         <?php endforeach ?>
 
         <?php if (!($paginator->isLastPage())) : ?>
-          <a href="<?php echo $paginator->getNextPageUrl() ?>">&gt;</a>
+          <a href="<?php echo $paginator->getNextPageUrl('page') ?>">&gt;</a>
         <?php endif ?>
       <?php endif ?>
     </div>

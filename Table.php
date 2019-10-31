@@ -103,7 +103,7 @@ abstract class Table
     //      例えば $column_values はコード上カラム名と値が入っている名前にはなっているけど、
     //      それが「なに」かっていう情報が入ってないよね
     //      $column_with_placeholdersって更新する内容でも更新対象の条件でも同じ変数名にならない？
-    public function update(array $column_values, array $wheres)
+    public function update(array $column_values, array $wheres = null)
     {
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
@@ -116,30 +116,38 @@ abstract class Table
 
         $query = "UPDATE {$this->table_name} SET {$column_with_placeholders}";
 
-        $where_bind_items = $this->getWhereBindItems($wheres);
+        if (is_null($wheres)) {
+            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        } else {
+            $where_bind_items = $this->getWhereBindItems($wheres);
 
-        $query  .= $where_bind_items['query'];
-        $columns = array_merge($columns, $where_bind_items['columns']);
-        $values  = array_merge($values, $where_bind_items['values']);
+            $query  .= $where_bind_items['query'];
+            $columns = array_merge($columns, $where_bind_items['columns']);
+            $values  = array_merge($values, $where_bind_items['values']);
 
-        $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        }
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to update records.');
         }
     }
 
-    public function delete(array $wheres)
+    public function delete(array $wheres = null)
     {
         $query = "DELETE FROM {$this->table_name}";
 
-        $where_bind_items = $this->getWhereBindItems($wheres);
+        if (is_null($wheres)) {
+            $stmt = $this->db_instance->prepare($query);
+        } else {
+            $where_bind_items = $this->getWhereBindItems($wheres);
 
-        $query  .= $where_bind_items['query'];
-        $columns = $where_bind_items['columns'];
-        $values  = $where_bind_items['values'];
+            $query  .= $where_bind_items['query'];
+            $columns = $where_bind_items['columns'];
+            $values  = $where_bind_items['values'];
 
-        $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        }
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to delete records.');
@@ -170,6 +178,10 @@ abstract class Table
         $columns = [];
         $values  = [];
 
+        if (is_empty($wheres)) {
+            throw new LogicException('Where condition must be required.');
+        }
+
         foreach ($wheres as $key => $where) {
             $column   = $where[0];
             $operator = $where[1];
@@ -185,13 +197,14 @@ abstract class Table
                 throw new LogicException("Argument of where's third condition must be string or number.");
             }
 
-            if ($key === 'where') {
-                $query .= ' WHERE ';
-            } elseif ($key === 'and') {
-                $query .= ' AND ';
-            } elseif ($key === 'or') {
-                $query .= ' OR ';
+            // doi: $keyが where,and,or以外の場合のチェックはなくて大丈夫？
+            // doi: strtoupper関数で大文字に変換できるよ。
+            if ($key === 'where' || $key === 'and' || $key === 'or') {
+                $query .= ' ' . strtoupper($key) . ' ';
+            } else {
+                throw new LogicException("SQL option of where condition must be 'where' or 'and' or 'or'.");
             }
+
             $query .= "{$column} {$operator} ?";
 
             $columns[] = $column;
