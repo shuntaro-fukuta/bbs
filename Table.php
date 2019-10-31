@@ -6,24 +6,14 @@ abstract class Table
 
     public function selectRecord(array $columns, array $where)
     {
-        $columns = implode(',', $columns);
-        $query   = "SELECT {$columns} FROM {$this->table_name}";
+        $options = [];
 
-        $where_bind_items = $this->getWhereBindItems($where);
+        $options['where'] = $where;
+        $options['limit'] = 1;
 
-        $query        .= $where_bind_items['query'];
-        $where_columns = $where_bind_items['columns'];
-        $where_values  = $where_bind_items['values'];
+        $results = $this->selectRecords($columns, $options);
 
-        $stmt = $this->getParamBindedStatement($query, $where_columns, $where_values);
-
-        $stmt->execute();
-
-        if (!($results = $stmt->get_result())) {
-            throw new LogicException('Failed to select record from table.');
-        }
-
-        return $results->fetch_assoc();
+        return $results[0];
     }
 
     public function selectRecords(array $columns, array $options = null)
