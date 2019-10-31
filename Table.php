@@ -175,6 +175,16 @@ abstract class Table
             $operator = $where[1];
             $value    = $where[2];
 
+            if (!is_string($column)) {
+                throw new LogicException("Argument of where's first condition must be string.");
+            }
+            if (!in_array($operator, ['<', '>', '=', '<=', '=>'])) {
+                throw new LogicException("Argument of where's second condition must be one of these ( <, >, =, <=, >=  )");
+            }
+            if (!is_string($value) || !is_numeric($value)) {
+                throw new LogicException("Argument of where's third condition must be string or number.");
+            }
+
             if ($key === 'where') {
                 $query .= ' WHERE ';
             } elseif ($key === 'and') {

@@ -77,13 +77,18 @@ if (!$is_no_password && !$is_wrong_password && isset($_POST['do_edit'])) {
     }
 
     if (empty($error_messages)) {
-        $posts->update(
-            [
-                'title'   => $inputs['title'],
-                'comment' => $inputs['comment'],
-            ],
-            ['where' => ['id', '=', $_POST['id']]]
-        );
+        try {
+            $posts->update(
+                [
+                    'title'   => $inputs['title'],
+                    'comment' => $inputs['comment'],
+                ],
+                ['where' => ['id', '=', $_POST['id']]]
+            );
+        } catch (Exception $e) {
+            echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+            exit;
+        }
 
         header("Location: {$previous_page_url}");
         exit;
