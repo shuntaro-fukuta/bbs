@@ -1,5 +1,7 @@
 <?php
 
+require_once('functions.php');
+
 abstract class Table
 {
     protected $db_instance;
@@ -95,23 +97,18 @@ abstract class Table
         }
     }
 
-    // adv: 変数に入っている「物」がなんなのかを全然考えれられてないです
-    //      変数の中身のコードを説明はしているけど…
-    //      例えば $column_values はコード上カラム名と値が入っている名前にはなっているけど、
-    //      それが「なに」かっていう情報が入ってないよね
-    //      $column_with_placeholdersって更新する内容でも更新対象の条件でも同じ変数名にならない？
     public function update(array $column_values, array $wheres = null)
     {
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
 
-        $column_with_placeholders = [];
+        $update_columns = [];
         foreach ($columns as $column) {
-            $column_with_placeholders[] = "{$column} = ?";
+            $update_columns[] = "{$column} = ?";
         }
-        $column_with_placeholders = implode(', ', $column_with_placeholders);
+        $update_columns = implode(', ', $update_columns);
 
-        $query = "UPDATE {$this->table_name} SET {$column_with_placeholders}";
+        $query = "UPDATE {$this->table_name} SET {$update_columns}";
 
         if (is_null($wheres)) {
             $stmt = $this->getParamBindedStatement($query, $columns, $values);
@@ -171,13 +168,28 @@ abstract class Table
 
     protected function getWhereBindItems(array $wheres)
     {
+        if (is_empty($wheres)) {
+            throw new LogicException('Where condition is required.');
+        }
+
+        // whereのフォーマットチェック
+        $where_keys = array_keys($wheres);
+        $key_count  = count($where_keys);
+        for ($i = 0; $i < $key_count; $i++) {
+            if ($i === 0) {
+                if ($where_keys[$i] !== 'where') {
+                    throw new LogicException("Where condition's first key must be 'where'.");
+                }
+            } else {
+                if ($where_keys[$i] !== 'or' || $where_keys[$i] !== 'and') {
+                    throw new LogicException("Where condition's second and later keys must be 'and' or 'or'.");
+                }
+            }
+        }
+
         $query   = '';
         $columns = [];
         $values  = [];
-
-        if (is_empty($wheres)) {
-            throw new LogicException('Where condition must be required.');
-        }
 
         foreach ($wheres as $key => $where) {
             $column   = $where[0];
@@ -194,12 +206,8 @@ abstract class Table
                 throw new LogicException("Argument of where's third condition must be string or number.");
             }
 
-            // doi: $keyが where,and,or以外の場合のチェックはなくて大丈夫？
-            // doi: strtoupper関数で大文字に変換できるよ。
             if ($key === 'where' || $key === 'and' || $key === 'or') {
                 $query .= ' ' . strtoupper($key) . ' ';
-            } else {
-                throw new LogicException("SQL option of where condition must be 'where' or 'and' or 'or'.");
             }
 
             $query .= "{$column} {$operator} ?";
