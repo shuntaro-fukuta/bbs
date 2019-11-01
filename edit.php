@@ -4,10 +4,10 @@ require_once('functions.php');
 require_once('Validator.php');
 require_once('Posts.php');
 
-$posts = new Posts();
-
-$exists_password     = false;
-$is_correct_password = false;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
+    echo '不正なリクエストです';
+    exit;
+}
 
 $input_keys = ['title', 'comment'];
 
@@ -28,12 +28,7 @@ $post_edit_validation_rules = [
     ],
 ];
 
-// ebine
-// これ一番最初に書くべきよね
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
-    echo '不正なリクエストです';
-    exit;
-}
+$posts = new Posts();
 
 try {
     $record = $posts->selectRecord(['*'], ['where' => ['id', '=', $_POST['id']]]);
@@ -45,20 +40,23 @@ try {
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
+$exists_password     = false;
+$is_correct_password = false;
+
 if (!is_null($record['password'])) {
     $exists_password = true;
+
+    if (password_verify($_POST['password'], $record['password'])) {
+        $is_correct_password = true;
+    }
 }
 
-if (password_verify($_POST['password'], $record['password'])) {
-    $is_correct_password = true;
-}
-
-$error_messages = [];
-
-if ($exists_password && $is_correct_password && isset($_POST['do_edit'])) {
+if ($is_correct_password && isset($_POST['do_edit'])) {
     $inputs = trim_values($input_keys, $_POST);
 
     $validator = new Validator();
+
+    $error_messages = [];
 
     try {
         $validator->setAttributeValidationRules($post_edit_validation_rules);
