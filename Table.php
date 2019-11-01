@@ -56,12 +56,12 @@ abstract class Table
             }
         }
 
+        if (!($stmt = $this->mysqli->prepare($query))) {
+            throw new LogicException('Failed to prepare statement.');
+        }
+
         if (isset($options) && isset($options['where'])) {
-            $stmt = $this->getParamBindedStatement($query, $where_columns, $where_values);
-        } else {
-            if (!($stmt = $this->mysqli->prepare($query))) {
-                throw new LogicException('Failed to prepare statement.');
-            }
+            $stmt = $this->bindParams($stmt, $where_columns, $where_values);
         }
 
         $stmt->execute();
@@ -97,7 +97,8 @@ abstract class Table
 
         $query = "INSERT INTO {$this->table_name} ({$insert_columns}) VALUES ({$place_holders})";
 
-        $stmt = $this->getParamBindedStatement($query, $columns, $values);
+        $stmt = $this->mysqli->prepare($query);
+        $stmt = $this->bindParams($stmt, $columns, $values);
 
         if (!$stmt->execute()) {
             throw new LogicException('Failed to insert records into table.');
@@ -118,7 +119,8 @@ abstract class Table
         $query = "UPDATE {$this->table_name} SET {$update_columns}";
 
         if (is_null($wheres)) {
-            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->mysqli->prepare($query);
+            $stmt = $this->bindParams($stmt, $columns, $values);
         } else {
             $where_bind_items = $this->getWhereBindItems($wheres);
 
@@ -126,13 +128,8 @@ abstract class Table
             $columns = array_merge($columns, $where_bind_items['columns']);
             $values  = array_merge($values, $where_bind_items['values']);
 
-            // ebine
-            /*
             $stmt = $this->mysqli->prepare($query);
-            $this->bindParams($stmt, $column, $values);
-            */
-
-            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->bindParams($stmt, $columns, $values);
         }
 
         if (!$stmt->execute()) {
@@ -153,7 +150,8 @@ abstract class Table
             $columns = $where_bind_items['columns'];
             $values  = $where_bind_items['values'];
 
-            $stmt = $this->getParamBindedStatement($query, $columns, $values);
+            $stmt = $this->mysqli->prepare($query);
+            $stmt = $this->bindParams($stmt, $columns, $values);
         }
 
         if (!$stmt->execute()) {
@@ -161,19 +159,15 @@ abstract class Table
         }
     }
 
-    // ebine
-    // 仕事が多すぎで、そのためにメソッドもよくわからんことになってる
-    protected function getParamBindedStatement(string $query, array $columns, array $values)
+    protected function bindParams(mysqli_stmt $stmt, array $columns, array $values)
     {
         $types = '';
         foreach ($columns as $column) {
-            // ebine
-            // $this->bind_types[$column] って100%はないよね
-            $types .= $this->bind_types[$column];
-        }
+            if (!isset($this->bind_types[$column])) {
+                throw new InvalidArgumentException("{$column} column doesn't exist.");
+            }
 
-        if (!($stmt = $this->mysqli->prepare($query))) {
-            throw new LogicException('Failed to prepare statement.');
+            $types .= $this->bind_types[$column];
         }
 
         if (!$stmt->bind_param($types, ...$values)) {
