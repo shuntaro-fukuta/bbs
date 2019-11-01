@@ -95,6 +95,7 @@ try {
     exit;
 }
 
+
 $mysqli->close();
 
 ?>

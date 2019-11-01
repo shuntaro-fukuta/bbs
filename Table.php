@@ -83,12 +83,12 @@ abstract class Table
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
 
-        $query_columns = implode(', ', $columns);
+        $insert_columns = implode(', ', $columns);
 
         $place_holders = array_fill(0, count($values), '?');
         $place_holders = implode(', ', $place_holders);
 
-        $query = "INSERT INTO {$this->table_name} ({$query_columns}) VALUES ({$place_holders})";
+        $query = "INSERT INTO {$this->table_name} ({$insert_columns}) VALUES ({$place_holders})";
 
         $stmt = $this->getParamBindedStatement($query, $columns, $values);
 
@@ -168,8 +168,8 @@ abstract class Table
 
     protected function getWhereBindItems(array $wheres)
     {
-        if (is_empty($wheres)) {
-            throw new LogicException('Where condition is required.');
+        if ($wheres === []) {
+            throw new InvalidArgumentException('Where condition is required.');
         }
 
         // wheresのキーのチェック
@@ -181,11 +181,11 @@ abstract class Table
         for ($i = 0; $i < $keys_count; $i++) {
             if ($i === 0) {
                 if ($where_keys[$i] !== 'where') {
-                    throw new LogicException("Where condition's first key must be 'where'.");
+                    throw new InvalidArgumentException("Where condition's first key must be 'where'.");
                 }
             } else {
                 if (!in_array($where_keys[$i], $available_options)) {
-                    throw new LogicException("Where condition's second and later keys must be one of these [" . implode(', ' ,$available_options) . '].');
+                    throw new InvalidArgumentException("Avalable where options are these [" . implode(', ' ,$available_options) . '].');
                 }
             }
         }
@@ -195,21 +195,25 @@ abstract class Table
         $values  = [];
 
         foreach ($wheres as $key => $where) {
+            if (!is_array($where)) {
+                throw new InvalidArgumentException("Where's conditions must be array.");
+            }
+
             $column   = $where[0] ?? null;
             $operator = $where[1] ?? null;
             $value    = $where[2] ?? null;
 
             if (!is_string($column)) {
-                throw new LogicException("Where's first parameter must be string.");
+                throw new InvalidArgumentException("Where's first parameter must be string.");
             }
-            if (!in_array($operator, ['<', '>', '=', '<=', '=>'])) {
-                throw new LogicException("Where's second parameter must be one of these [<, >, =, <=, >=].");
+            if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>='])) {
+                throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=].");
             }
             if (!is_string($value) && !is_numeric($value)) {
-                throw new LogicException("Where's third parameter must be string or integer.");
+                throw new InvalidArgumentException("Where's third parameter must be string or integer.");
             }
 
-            if ($key === 'where' || $key === 'and' || $key === 'or') {
+            if ($key === 'where' || in_array($key, $available_options)) {
                 $query .= ' ' . strtoupper($key) . ' ';
             }
 
