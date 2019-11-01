@@ -1,7 +1,5 @@
 <?php
 
-require_once('functions.php');
-
 abstract class Table
 {
     protected $db_instance;
