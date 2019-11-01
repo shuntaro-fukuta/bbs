@@ -64,7 +64,7 @@ if (password_verify($_POST['password'], $record['password'])) {
 $error_messages = [];
 
 if ($exists_password && $is_correct_password && isset($_POST['do_edit'])) {
-    $inputs = get_trimmed_inputs($input_keys, $_POST);
+    $inputs = trim_values($input_keys, $_POST);
 
     $validator = new Validator();
 

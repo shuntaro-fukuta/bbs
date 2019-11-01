@@ -42,7 +42,7 @@ $post_insert_validation_rules = [
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputs = get_trimmed_inputs($input_keys, $_POST);
+    $inputs = trim_values($input_keys, $_POST);
 
     $validator = new Validator();
 
