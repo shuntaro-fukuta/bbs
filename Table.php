@@ -170,7 +170,7 @@ abstract class Table
             throw new InvalidArgumentException('Where condition is required.');
         }
 
-        // wheresのキーのチェック
+        // wheresのキーのフォーマットチェック
         $available_options = ['and', 'or'];
 
         $where_keys = array_keys($wheres);

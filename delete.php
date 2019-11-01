@@ -83,7 +83,7 @@ $mysqli->close();
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="hidden" name="password" value="<?php echo h($_POST['password']) ?>">
         <input type="submit" name="do_delete" value="Yes">
-        <input type="button" value="Cancel" onclick="location.href='<?php echo $previous_page_url ?>'">
+        <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
       </form>
     <?php endif ?>
   </body>
