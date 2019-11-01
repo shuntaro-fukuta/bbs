@@ -57,9 +57,7 @@ abstract class Table
             }
         }
 
-        if (!($stmt = $this->mysqli->prepare($query))) {
-            throw new LogicException('Failed to prepare statement.');
-        }
+        $stmt = $this->prepareStatement($query);
 
         if (isset($options) && isset($options['where'])) {
             $stmt = $this->bindParams($stmt, $where_columns, $where_values);
@@ -98,7 +96,7 @@ abstract class Table
 
         $query = "INSERT INTO {$this->table_name} ({$insert_columns}) VALUES ({$place_holders})";
 
-        $stmt = $this->mysqli->prepare($query);
+        $stmt = $this->prepareStatement($query);
         $stmt = $this->bindParams($stmt, $columns, $values);
 
         if (!$stmt->execute()) {
@@ -120,7 +118,7 @@ abstract class Table
         $query = "UPDATE {$this->table_name} SET {$update_columns}";
 
         if (is_null($wheres)) {
-            $stmt = $this->mysqli->prepare($query);
+            $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $columns, $values);
         } else {
             $where_bind_items = $this->getWhereBindItems($wheres);
@@ -129,7 +127,7 @@ abstract class Table
             $columns = array_merge($columns, $where_bind_items['columns']);
             $values  = array_merge($values, $where_bind_items['values']);
 
-            $stmt = $this->mysqli->prepare($query);
+            $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $columns, $values);
         }
 
@@ -151,12 +149,12 @@ abstract class Table
             $columns = $where_bind_items['columns'];
             $values  = $where_bind_items['values'];
 
-            $stmt = $this->mysqli->prepare($query);
+            $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $columns, $values);
         }
 
         if (!$stmt->execute()) {
-            throw new LogicException('Failed to delete records.');
+            throw new RuntimeException('Failed to delete records.');
         }
     }
 
@@ -172,7 +170,16 @@ abstract class Table
         }
 
         if (!$stmt->bind_param($types, ...$values)) {
-            throw new LogicException('Failed to bind param to statement.');
+            throw new LogicException('Failed to bind params to statement.');
+        }
+
+        return $stmt;
+    }
+
+    protected function prepareStatement(string $query)
+    {
+        if (!($stmt = $this->mysqli->prepare($query))) {
+            throw new LogicException('Failed to prepare statement.');
         }
 
         return $stmt;
