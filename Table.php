@@ -2,7 +2,14 @@
 
 abstract class Table
 {
-    abstract public function __construct(mysqli $db_instance);
+    protected $db_instance;
+    protected $table_name;
+    protected $bind_types;
+
+    public function __construct(mysqli $db_instance)
+    {
+        $this->db_instance = $db_instance;
+    }
 
     public function selectRecord(array $columns, array $where)
     {
