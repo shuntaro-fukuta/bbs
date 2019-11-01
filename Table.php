@@ -1,5 +1,6 @@
 <?php
 
+require_once('functions.php');
 require_once('db_connect.php');
 
 abstract class Table
@@ -67,7 +68,7 @@ abstract class Table
         $stmt->execute();
 
         if (!($results = $stmt->get_result())) {
-            throw new LogicException('Failed to select records from table.');
+            throw new RuntimeException('Failed to select records from table.');
         }
 
         return $results->fetch_all(MYSQLI_ASSOC);
@@ -101,7 +102,7 @@ abstract class Table
         $stmt = $this->bindParams($stmt, $columns, $values);
 
         if (!$stmt->execute()) {
-            throw new LogicException('Failed to insert records into table.');
+            throw new RuntimeException('Failed to insert records into table.');
         }
     }
 
@@ -133,7 +134,7 @@ abstract class Table
         }
 
         if (!$stmt->execute()) {
-            throw new LogicException('Failed to update records.');
+            throw new RuntimeException('Failed to update records.');
         }
     }
 
