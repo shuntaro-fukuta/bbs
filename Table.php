@@ -200,13 +200,13 @@ abstract class Table
             $value    = $where[2] ?? null;
 
             if (!is_string($column)) {
-                throw new LogicException("Argument of where's first condition must be string.");
+                throw new LogicException("Where's first parameter must be string.");
             }
             if (!in_array($operator, ['<', '>', '=', '<=', '=>'])) {
-                throw new LogicException("Argument of where's second condition must be one of these ( <, >, =, <=, >=  )");
+                throw new LogicException("Where's second parameter must be one of these [<, >, =, <=, >=].");
             }
             if (!is_string($value) && !is_numeric($value)) {
-                throw new LogicException("Argument of where's third condition must be string or number.");
+                throw new LogicException("Where's third parameter must be string or integer.");
             }
 
             if ($key === 'where' || $key === 'and' || $key === 'or') {
