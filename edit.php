@@ -32,6 +32,11 @@ $posts = new Posts();
 
 try {
     $record = $posts->selectRecord(['*'], ['where' => ['id', '=', $_POST['id']]]);
+
+    if (is_null($record)) {
+        echo 'レコードが見つかりませんでした。';
+        exit();
+    }
 } catch (Exception $e) {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;

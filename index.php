@@ -6,8 +6,6 @@ require_once('Validator.php');
 require_once('Paginator.php');
 require_once('Posts.php');
 
-$posts = new Posts();
-
 $input_keys = ['title', 'comment' , 'password'];
 
 $post_insert_validation_rules = [
@@ -30,6 +28,8 @@ $post_insert_validation_rules = [
         'digit'    => 4,
     ],
 ];
+
+$posts = new Posts();
 
 $error_messages = [];
 

@@ -20,11 +20,13 @@ abstract class Table
         $options['where'] = $where;
         $options['limit'] = 1;
 
-        $results = $this->selectRecords($columns, $options);
+        $records = $this->selectRecords($columns, $options);
 
-        // ebine
-        // 100% あるとは限らないからこのコードはだめ
-        return $results[0];
+        if ($records === []) {
+            return null;
+        }
+
+        return $records[0];
     }
 
     public function selectRecords(array $columns, array $options = null)
