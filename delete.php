@@ -1,17 +1,9 @@
 <?php
 
 require_once('functions.php');
-require_once('db_connect.php');
 require_once('Posts.php');
 
-try {
-    $mysqli = connect_mysqli();
-} catch (Exception $e) {
-    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-    exit;
-}
-
-$posts  = new Posts($mysqli);
+$posts = new Posts();
 
 // ebine
 // 書く場所わるい
@@ -58,8 +50,6 @@ if ($exists_password && $is_correct_password && isset($_POST['do_delete'])) {
     header("Location: {$previous_page_url}");
     exit;
 }
-
-$mysqli->close();
 
 ?>
 

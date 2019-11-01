@@ -2,19 +2,11 @@
 
 require_once('dbconnect.php');
 require_once('functions.php');
-require_once('db_connect.php');
 require_once('Validator.php');
 require_once('Paginator.php');
 require_once('Posts.php');
 
-try {
-    $mysqli = connect_mysqli();
-} catch (Exception $e) {
-    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-    exit;
-}
-
-$posts = new Posts($mysqli);
+$posts = new Posts();
 
 $input_keys = ['title', 'comment' , 'password'];
 
@@ -94,8 +86,6 @@ try {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
-
-$mysqli->close();
 
 ?>
 

@@ -11,8 +11,13 @@ function connect_mysqli(array $db_settings = null) {
 
     $mysqli = new mysqli($host, $username, $password, $db_name);
 
-    if ($mysqli->connect_error) {
-        throw new Exception("DB接続エラー: {$mysqli->connect_error}");
+    try {
+        if ($mysqli->connect_error) {
+            throw new Exception("DB接続エラー: {$mysqli->connect_error}");
+        }
+    } catch (Exception $e) {
+        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+        exit;
     }
 
     $mysqli->set_charset($encoding);

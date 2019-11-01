@@ -1,18 +1,10 @@
 <?php
 
 require_once('functions.php');
-require_once('db_connect.php');
 require_once('Validator.php');
 require_once('Posts.php');
 
-try {
-    $mysqli = connect_mysqli();
-} catch (Exception $e) {
-    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-    exit;
-}
-
-$posts = new Posts($mysqli);
+$posts = new Posts();
 
 $exists_password     = false;
 $is_correct_password = false;
@@ -94,8 +86,6 @@ if ($exists_password && $is_correct_password && isset($_POST['do_edit'])) {
         exit;
     }
 }
-
-$mysqli->close();
 
 ?>
 

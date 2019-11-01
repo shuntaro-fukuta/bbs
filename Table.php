@@ -1,20 +1,16 @@
 <?php
 
+require_once('db_connect.php');
+
 abstract class Table
 {
-    // ebine
-    // mysqli のインスタンスなんだから $mysqli とかにしておいたほうがわかりやすいよ
-    protected $db_instance;
+    protected $mysqli;
     protected $table_name;
     protected $bind_types;
 
-    // ebine
-    // なぜ mysqli を渡す形にした？
-    // ということで特に理由がないのであれば、
-    // ここで connect_mysqli() を実行したらいいよね。
-    public function __construct(mysqli $db_instance)
+    public function __construct()
     {
-        $this->db_instance = $db_instance;
+        $this->mysqli = connect_mysqli();
     }
 
     public function selectRecord(array $columns, array $where)
@@ -61,7 +57,7 @@ abstract class Table
         if (isset($options) && isset($options['where'])) {
             $stmt = $this->getParamBindedStatement($query, $where_columns, $where_values);
         } else {
-            if (!($stmt = $this->db_instance->prepare($query))) {
+            if (!($stmt = $this->mysqli->prepare($query))) {
                 throw new LogicException('Failed to prepare statement.');
             }
         }
@@ -82,7 +78,7 @@ abstract class Table
     {
         $query = "SELECT COUNT(*) FROM {$this->table_name}";
 
-        $count = (int) $this->db_instance->query($query)->fetch_assoc()['COUNT(*)'];
+        $count = (int) $this->mysqli->query($query)->fetch_assoc()['COUNT(*)'];
 
         return $count;
     }
@@ -130,7 +126,7 @@ abstract class Table
 
             // ebine
             /*
-            $stmt = $this->db_instance->prepare($query);
+            $stmt = $this->mysqli->prepare($query);
             $this->bindParams($stmt, $column, $values);
             */
 
@@ -147,7 +143,7 @@ abstract class Table
         $query = "DELETE FROM {$this->table_name}";
 
         if (is_null($wheres)) {
-            $stmt = $this->db_instance->prepare($query);
+            $stmt = $this->mysqli->prepare($query);
         } else {
             $where_bind_items = $this->getWhereBindItems($wheres);
 
@@ -174,7 +170,7 @@ abstract class Table
             $types .= $this->bind_types[$column];
         }
 
-        if (!($stmt = $this->db_instance->prepare($query))) {
+        if (!($stmt = $this->mysqli->prepare($query))) {
             throw new LogicException('Failed to prepare statement.');
         }
 
