@@ -55,38 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error_messages)) {
+        if (!is_null($inputs['password'])) {
+            $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
+        }
+
         try {
-            // ebine
-            // 余計なコード
-            // DB に password = null って入ってもかまわん（同じよね）
-
-            // ebine
-            // いまの実装だと、入力がなければ空文字列で入る。
-            // でも、「データがない」っていうのを表すには、通常、null である。
-            // そうしとかないと、
-            // 例えば福田くんの実装箇所では空文字列が入る。
-            // 他の人の実装箇所では null が入る。
-            // じゃあ、DBからデータをひっぱるとき、「空以外」としたいとき、
-            // 通常であれば、column_name IS NOT NULL って書くところを、
-            // (column_name IS NOT NULL AND column_name <> '')
-            // って書かなきゃいけない。
-            // 「データがない」ってのは、常に null 　にするべき。
-            // それは、プログラムも、DBも。
-
-            if ($inputs['password'] === '') {
-                $posts->insert([
-                    'title'    => $inputs['title'],
-                    'comment'  => $inputs['comment'],
-                ]);
-            } else {
-                $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
-
-                $posts->insert([
-                    'title'    => $inputs['title'],
-                    'comment'  => $inputs['comment'],
-                    'password' => $inputs['password'],
-                ]);
-            }
+            $posts->insert([
+                'title'    => $inputs['title'],
+                'comment'  => $inputs['comment'],
+                'password' => $inputs['password'],
+            ]);
         } catch (Exception $e) {
             echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
             exit;
