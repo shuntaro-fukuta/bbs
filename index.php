@@ -129,8 +129,8 @@ $mysqli->close();
         <form method="post">
 	      Pass
           <input type="password" name="password">
-          <input type="hidden" name="id" value="<?php echo $record['id'] ?>">
-          <input type="hidden" name="previous_page" value="<?php echo $paginator->getCurrentPage() ?>">
+          <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+          <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
           <input type="submit" formaction="delete.php" value="Del">
           <input type="submit" formaction="edit.php" value="Edit">
         </form>
