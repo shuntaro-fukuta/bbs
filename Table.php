@@ -2,10 +2,16 @@
 
 abstract class Table
 {
+    // ebine
+    // mysqli のインスタンスなんだから $mysqli とかにしておいたほうがわかりやすいよ
     protected $db_instance;
     protected $table_name;
     protected $bind_types;
 
+    // ebine
+    // なぜ mysqli を渡す形にした？
+    // ということで特に理由がないのであれば、
+    // ここで connect_mysqli() を実行したらいいよね。
     public function __construct(mysqli $db_instance)
     {
         $this->db_instance = $db_instance;
@@ -20,6 +26,8 @@ abstract class Table
 
         $results = $this->selectRecords($columns, $options);
 
+        // ebine
+        // 100% あるとは限らないからこのコードはだめ
         return $results[0];
     }
 
@@ -67,6 +75,9 @@ abstract class Table
         return $results->fetch_all(MYSQLI_ASSOC);
     }
 
+    // ebine
+    // これってなんで where 受け取らないの？
+    // 使いものにならない
     public function count()
     {
         $query = "SELECT COUNT(*) FROM {$this->table_name}";
@@ -117,6 +128,12 @@ abstract class Table
             $columns = array_merge($columns, $where_bind_items['columns']);
             $values  = array_merge($values, $where_bind_items['values']);
 
+            // ebine
+            /*
+            $stmt = $this->db_instance->prepare($query);
+            $this->bindParams($stmt, $column, $values);
+            */
+
             $stmt = $this->getParamBindedStatement($query, $columns, $values);
         }
 
@@ -146,10 +163,14 @@ abstract class Table
         }
     }
 
+    // ebine
+    // 仕事が多すぎで、そのためにメソッドもよくわからんことになってる
     protected function getParamBindedStatement(string $query, array $columns, array $values)
     {
         $types = '';
         foreach ($columns as $column) {
+            // ebine
+            // $this->bind_types[$column] って100%はないよね
             $types .= $this->bind_types[$column];
         }
 
@@ -169,6 +190,19 @@ abstract class Table
         if ($wheres === []) {
             throw new InvalidArgumentException('Where condition is required.');
         }
+
+        // ebine
+        // 実装がきたない
+        // options の where, and, or が並列で考えられてるよね
+        // options[where] が条件式で、and, or はその中の話
+        // イメージ(例)
+        /*
+        $options['where'] = [
+            ['id', '>=', 10],
+            ['age', '<=', 60, 'OR'],
+        ];
+        id >= 10 OR age <= 60
+        */
 
         // wheresのキーのフォーマットチェック
         $available_options = ['and', 'or'];

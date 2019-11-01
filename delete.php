@@ -13,6 +13,8 @@ try {
 
 $posts  = new Posts($mysqli);
 
+// ebine
+// 書く場所わるい
 $exists_password     = false;
 $is_correct_password = false;
 
@@ -31,14 +33,19 @@ try {
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
-if (!is_empty($record['password'])) {
+if (!is_null($record['password'])) {
     $exists_password = true;
 }
 
+// ebine
+// ここって、
+// if ($exists_password) {
 if (password_verify($_POST['password'], $record['password'])) {
     $is_correct_password = true;
 }
 
+// ebine
+// $is_correct_password だけあればいいよね
 if ($exists_password && $is_correct_password && isset($_POST['do_delete'])) {
 
     try {

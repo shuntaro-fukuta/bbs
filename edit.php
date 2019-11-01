@@ -36,6 +36,8 @@ $post_edit_validation_rules = [
     ],
 ];
 
+// ebine
+// これ一番最初に書くべきよね
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     echo '不正なリクエストです';
     exit;
@@ -51,7 +53,7 @@ try {
 $previous_page     = $_POST['previous_page'] ?? 1;
 $previous_page_url = "index.php?page={$previous_page}";
 
-if (!is_empty($record['password'])) {
+if (!is_null($record['password'])) {
     $exists_password = true;
 }
 
