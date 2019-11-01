@@ -172,17 +172,20 @@ abstract class Table
             throw new LogicException('Where condition is required.');
         }
 
-        // whereのフォーマットチェック
+        // wheresのキーのチェック
+        $available_options = ['and', 'or'];
+
         $where_keys = array_keys($wheres);
-        $key_count  = count($where_keys);
-        for ($i = 0; $i < $key_count; $i++) {
+        $keys_count = count($where_keys);
+
+        for ($i = 0; $i < $keys_count; $i++) {
             if ($i === 0) {
                 if ($where_keys[$i] !== 'where') {
                     throw new LogicException("Where condition's first key must be 'where'.");
                 }
             } else {
-                if ($where_keys[$i] !== 'or' || $where_keys[$i] !== 'and') {
-                    throw new LogicException("Where condition's second and later keys must be 'and' or 'or'.");
+                if (!in_array($where_keys[$i], $available_options)) {
+                    throw new LogicException("Where condition's second and later keys must be one of these [" . implode(', ' ,$available_options) . '].');
                 }
             }
         }
@@ -192,9 +195,9 @@ abstract class Table
         $values  = [];
 
         foreach ($wheres as $key => $where) {
-            $column   = $where[0];
-            $operator = $where[1];
-            $value    = $where[2];
+            $column   = $where[0] ?? null;
+            $operator = $where[1] ?? null;
+            $value    = $where[2] ?? null;
 
             if (!is_string($column)) {
                 throw new LogicException("Argument of where's first condition must be string.");
@@ -202,7 +205,7 @@ abstract class Table
             if (!in_array($operator, ['<', '>', '=', '<=', '=>'])) {
                 throw new LogicException("Argument of where's second condition must be one of these ( <, >, =, <=, >=  )");
             }
-            if (!is_string($value) || !is_numeric($value)) {
+            if (!is_string($value) && !is_numeric($value)) {
                 throw new LogicException("Argument of where's third condition must be string or number.");
             }
 
