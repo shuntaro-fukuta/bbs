@@ -49,10 +49,10 @@ abstract class Table
             }
 
             if (isset($options['limit'])) {
-                $query   .= ' LIMIT ' . (int) $options['limit'];
+                $query .= ' LIMIT ' . (int) $options['limit'];
 
                 if (isset($options['offset'])) {
-                    $query   .= ' OFFSET ' . (int) $options['offset'];
+                    $query .= ' OFFSET ' . (int) $options['offset'];
                 }
             }
         }
@@ -104,7 +104,7 @@ abstract class Table
         }
     }
 
-    public function update(array $column_values, array $wheres = null)
+    public function update(array $column_values, array $where = null)
     {
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
@@ -117,11 +117,11 @@ abstract class Table
 
         $query = "UPDATE {$this->table_name} SET {$update_columns}";
 
-        if (is_null($wheres)) {
+        if (is_null($where)) {
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $columns, $values);
         } else {
-            $where_bind_items = $this->getWhereBindItems($wheres);
+            $where_bind_items = $this->getWhereBindItems($where);
 
             $query  .= $where_bind_items['query'];
             $columns = array_merge($columns, $where_bind_items['columns']);
@@ -136,14 +136,14 @@ abstract class Table
         }
     }
 
-    public function delete(array $wheres = null)
+    public function delete(array $where = null)
     {
         $query = "DELETE FROM {$this->table_name}";
 
-        if (is_null($wheres)) {
-            $stmt = $this->mysqli->prepare($query);
+        if (is_null($where)) {
+            $stmt = $this->prepareStatement($query);
         } else {
-            $where_bind_items = $this->getWhereBindItems($wheres);
+            $where_bind_items = $this->getWhereBindItems($where);
 
             $query  .= $where_bind_items['query'];
             $columns = $where_bind_items['columns'];
