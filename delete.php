@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isse
 $posts = new Posts();
 
 try {
-    $record = $posts->selectRecord(['*'], ['where' => ['id', '=', $_POST['id']]]);
+    $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
     if (is_null($record)) {
         echo 'レコードが見つかりませんでした。';
@@ -36,7 +36,7 @@ if (!is_null($record['password'])) {
 
         if (isset($_POST['do_delete'])) {
             try {
-                $posts->delete(['where' => ['id', '=', $_POST['id']]]);
+                $posts->delete([['id', '=', $_POST['id']]]);
             } catch (Exception $e) {
                 echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
                 exit;

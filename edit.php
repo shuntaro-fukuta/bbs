@@ -29,7 +29,7 @@ $post_edit_validation_rules = [
 $posts = new Posts();
 
 try {
-    $record = $posts->selectRecord(['*'], ['where' => ['id', '=', $_POST['id']]]);
+    $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
     if (is_null($record)) {
         echo 'レコードが見つかりませんでした。';
@@ -74,7 +74,7 @@ if (!is_null($record['password'])) {
                             'title'   => $inputs['title'],
                             'comment' => $inputs['comment'],
                         ],
-                        ['where' => ['id', '=', $_POST['id']]]
+                        [['id', '=', $_POST['id']]]
                     );
                 } catch (Exception $e) {
                     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
