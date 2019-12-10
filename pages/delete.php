@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../functions.php');
+require_once(dirname(__FILE__) . '/../functions/general.php');
 require_once(dirname(__FILE__) . '/../classes/Posts.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
