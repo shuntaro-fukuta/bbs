@@ -15,6 +15,7 @@ try {
 
     if (is_null($record)) {
         echo 'レコードが見つかりませんでした。';
+
         exit;
     }
 
@@ -42,7 +43,6 @@ try {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
-
 
 ?>
 

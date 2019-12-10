@@ -137,19 +137,16 @@ abstract class Table
 
         $query = "UPDATE {$this->table_name} SET {$update_columns}";
 
-        if (is_null($where)) {
-            $stmt = $this->prepareStatement($query);
-            $stmt = $this->bindParams($stmt, $columns, $values);
-        } else {
+        if (!is_null($where)) {
             $where_bind_items = $this->getWhereBindItems($where);
 
             $query  .= $where_bind_items['query'];
             $columns = array_merge($columns, $where_bind_items['columns']);
             $values  = array_merge($values, $where_bind_items['values']);
-
-            $stmt = $this->prepareStatement($query);
-            $stmt = $this->bindParams($stmt, $columns, $values);
         }
+
+        $stmt = $this->prepareStatement($query);
+        $stmt = $this->bindParams($stmt, $columns, $values);
 
         if (!$stmt->execute()) {
             throw new RuntimeException('Failed to update records.');
