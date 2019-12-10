@@ -72,14 +72,34 @@ abstract class Table
         return $results->fetch_all(MYSQLI_ASSOC);
     }
 
-    // ebine
-    // これってなんで where 受け取らないの？
-    // 使いものにならない
-    public function count()
+    public function count(array $where = null)
     {
         $query = "SELECT COUNT(*) FROM {$this->table_name}";
 
-        $count = (int) $this->mysqli->query($query)->fetch_assoc()['COUNT(*)'];
+        if (!is_null($where)) {
+            $where_bind_items = $this->getWhereBindItems($where);
+
+            $query        .= $where_bind_items['query'];
+            $where_columns = $where_bind_items['columns'];
+            $where_values  = $where_bind_items['values'];
+
+            $stmt = $this->prepareStatement($query);
+            $stmt = $this->bindParams($stmt, $where_columns, $where_values);
+
+            if (!$stmt->execute()) {
+                throw new LogicException('Failed to execute statement.');
+            }
+
+            $results = $stmt->get_result();
+        } else {
+            $results = $this->mysqli->query($query);
+        }
+
+        if ($results === false) {
+            throw new RuntimeException('Failed to select count from table.');
+        }
+
+        $count = (int) $results->fetch_assoc()['COUNT(*)'];
 
         return $count;
     }

@@ -35,7 +35,7 @@ try {
 
     if (is_null($record)) {
         echo 'レコードが見つかりませんでした。';
-        exit();
+        exit;
     }
 } catch (Exception $e) {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
