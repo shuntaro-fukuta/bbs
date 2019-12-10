@@ -18,7 +18,7 @@ function is_empty($var) {
     return ($var === null || $var === '' || $var === []);
 }
 
-function trim_values($keys, $values) {
+function trim_values(array $keys, array $values) {
     $trimmed_values = [];
 
     foreach ($keys as $key) {

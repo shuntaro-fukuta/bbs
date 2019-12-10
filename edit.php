@@ -9,8 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isse
     exit;
 }
 
-$input_keys = ['title', 'comment'];
-
 $post_edit_validation_rules = [
     'title' => [
         'required' => true,
@@ -55,7 +53,7 @@ if (!is_null($record['password'])) {
         $is_correct_password = true;
 
         if (isset($_POST['do_edit'])) {
-            $inputs = trim_values($input_keys, $_POST);
+            $inputs = trim_values(['title', 'comment'], $_POST);
 
             $validator = new Validator();
 

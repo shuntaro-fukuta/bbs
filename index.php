@@ -6,8 +6,6 @@ require_once('Validator.php');
 require_once('Paginator.php');
 require_once('Posts.php');
 
-$input_keys = ['title', 'comment' , 'password'];
-
 $post_insert_validation_rules = [
     'title' => [
         'required' => true,
@@ -34,7 +32,7 @@ $posts = new Posts();
 $error_messages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputs = trim_values($input_keys, $_POST);
+    $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
     $validator = new Validator();
 
