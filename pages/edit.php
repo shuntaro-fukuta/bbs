@@ -101,11 +101,15 @@ try {
           <br>
         <?php endforeach ?>
       <?php endif ?>
-      <form method="POST" action="">
+      <form method="POST" action="" enctype="multipart/form-data">
         <label for="title">Title</label><br>
         <input id="title" type="text" name="title" value="<?php echo isset($inputs['title']) ? h($inputs['title']) : h($record['title']) ?>"><br>
         <label for="comment">Body</label><br>
         <textarea id="comment" name="comment"><?php echo isset($inputs['comment']) ? h($inputs['comment']) : h($record['comment']) ?></textarea><br>
+        <input type="checkbox">Delete Imaege
+        <br>
+        <input type="file">
+        <br>
         <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="hidden" name="password" value="<?php echo h($_POST['password']) ?>">
