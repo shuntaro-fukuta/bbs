@@ -4,7 +4,7 @@ require_once('functions.php');
 require_once('Posts.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
-    echo '不正なリクエストです';
+    header('HTTP/1.0 400 Bad Request');
     exit;
 }
 
@@ -14,8 +14,7 @@ try {
     $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
     if (is_null($record)) {
-        echo 'レコードが見つかりませんでした。';
-
+        header('HTTP/1.0 404 Not Found');
         exit;
     }
 

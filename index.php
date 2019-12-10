@@ -78,7 +78,6 @@ try {
     exit;
 }
 
-
 ?>
 
 <html>
