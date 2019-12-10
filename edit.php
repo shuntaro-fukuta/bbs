@@ -53,42 +53,43 @@ if (!is_null($record['password'])) {
 
     if (password_verify($_POST['password'], $record['password'])) {
         $is_correct_password = true;
-    }
-}
 
-if ($is_correct_password && isset($_POST['do_edit'])) {
-    $inputs = trim_values($input_keys, $_POST);
+        if (isset($_POST['do_edit'])) {
+            $inputs = trim_values($input_keys, $_POST);
 
-    $validator = new Validator();
+            $validator = new Validator();
 
-    $error_messages = [];
+            $error_messages = [];
 
-    try {
-        $validator->setAttributeValidationRules($post_edit_validation_rules);
-        $error_messages = $validator->validate($inputs);
-    } catch (Exception $e) {
-        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-        exit;
-    }
+            try {
+                $validator->setAttributeValidationRules($post_edit_validation_rules);
+                $error_messages = $validator->validate($inputs);
+            } catch (Exception $e) {
+                echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+                exit;
+            }
 
-    if (empty($error_messages)) {
-        try {
-            $posts->update(
-                [
-                    'title'   => $inputs['title'],
-                    'comment' => $inputs['comment'],
-                ],
-                ['where' => ['id', '=', $_POST['id']]]
-            );
-        } catch (Exception $e) {
-            echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-            exit;
+            if (empty($error_messages)) {
+                try {
+                    $posts->update(
+                        [
+                            'title'   => $inputs['title'],
+                            'comment' => $inputs['comment'],
+                        ],
+                        ['where' => ['id', '=', $_POST['id']]]
+                    );
+                } catch (Exception $e) {
+                    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+                    exit;
+                }
+
+                header("Location: {$previous_page_url}");
+                exit;
+            }
         }
-
-        header("Location: {$previous_page_url}");
-        exit;
     }
 }
+
 
 ?>
 

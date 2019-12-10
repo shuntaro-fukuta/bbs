@@ -33,20 +33,21 @@ if (!is_null($record['password'])) {
 
     if (password_verify($_POST['password'], $record['password'])) {
         $is_correct_password = true;
+
+        if (isset($_POST['do_delete'])) {
+            try {
+                $posts->delete(['where' => ['id', '=', $_POST['id']]]);
+            } catch (Exception $e) {
+                echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+                exit;
+            }
+
+            header("Location: {$previous_page_url}");
+            exit;
+        }
     }
 }
 
-if ($is_correct_password && isset($_POST['do_delete'])) {
-    try {
-        $posts->delete(['where' => ['id', '=', $_POST['id']]]);
-    } catch (Exception $e) {
-        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-        exit;
-    }
-
-    header("Location: {$previous_page_url}");
-    exit;
-}
 
 ?>
 
