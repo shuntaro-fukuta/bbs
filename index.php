@@ -45,13 +45,7 @@ try {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
             }
 
-            // inputs渡せばいいのでは？
-            $posts->insert([
-                'title'    => $inputs['title'],
-                'comment'  => $inputs['comment'],
-                'password' => $inputs['password'],
-                ]);
-                // $posts->insert($inputs);
+            $posts->insert($inputs);
 
             header("Location: {$_SERVER['SCRIPT_NAME']}");
             exit;

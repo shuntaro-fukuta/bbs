@@ -59,13 +59,7 @@ try {
                 $error_messages = $validator->validate($inputs);
 
                 if (empty($error_messages)) {
-                    $posts->update(
-                        [
-                            'title'   => $inputs['title'],
-                            'comment' => $inputs['comment'],
-                        ],
-                        [['id', '=', $_POST['id']]]
-                    );
+                    $posts->update($inputs, [['id', '=', $_POST['id']]]);
 
                     header("Location: {$previous_page_url}");
                     exit;
@@ -77,8 +71,6 @@ try {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
-
-
 
 ?>
 
