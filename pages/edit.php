@@ -1,8 +1,8 @@
 <?php
 
-require_once('functions.php');
-require_once('Validator.php');
-require_once('Posts.php');
+require_once(dirname(__FILE__) . '/../functions.php');
+require_once(dirname(__FILE__) . '/../classes/Validator.php');
+require_once(dirname(__FILE__) . '/../classes/Posts.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');

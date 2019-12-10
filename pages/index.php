@@ -1,10 +1,9 @@
 <?php
 
-require_once('dbconnect.php');
-require_once('functions.php');
-require_once('Validator.php');
-require_once('Paginator.php');
-require_once('Posts.php');
+require_once(dirname(__FILE__) . '/../functions.php');
+require_once(dirname(__FILE__) . '/../classes/Validator.php');
+require_once(dirname(__FILE__) . '/../classes/Paginator.php');
+require_once(dirname(__FILE__) . '/../classes/Posts.php');
 
 $post_insert_validation_rules = [
     'title' => [

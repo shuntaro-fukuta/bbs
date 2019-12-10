@@ -1,6 +1,6 @@
 <?php
 
-require_once('db_config.php');
+require_once(dirname(__FILE__) . '/../config/database.php');
 
 function connect_mysqli(array $db_settings = null) {
     $host     = $db_settings['host']     ?? DB_HOST;

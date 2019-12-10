@@ -1,6 +1,6 @@
 <?php
 
-require_once('Table.php');
+require_once(dirname(__FILE__) . '/Table.php');
 
 class Posts extends Table
 {
