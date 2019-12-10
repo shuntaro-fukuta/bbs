@@ -31,41 +31,40 @@ $posts = new Posts();
 
 $error_messages = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
+try {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
-    $validator = new Validator();
+        $validator = new Validator();
 
-    try {
         $validator->setAttributeValidationRules($post_insert_validation_rules);
         $error_messages = $validator->validate($inputs);
-    } catch (Exception $e) {
-        echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-        exit;
-    }
 
-    if (empty($error_messages)) {
-        if (!is_null($inputs['password'])) {
-            $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
-        }
+        if (empty($error_messages)) {
+            if (!is_null($inputs['password'])) {
+                $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
+            }
 
-        try {
+            // inputs渡せばいいのでは？
             $posts->insert([
                 'title'    => $inputs['title'],
                 'comment'  => $inputs['comment'],
                 'password' => $inputs['password'],
-            ]);
-        } catch (Exception $e) {
-            echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+                ]);
+                // $posts->insert($inputs);
+
+            header("Location: {$_SERVER['SCRIPT_NAME']}");
             exit;
+        } else {
+            if (isset($inputs['title'])) {
+                $title = $inputs['title'];
+            }
+            if (isset($inputs['comment'])) {
+                $comment = $inputs['comment'];
+            }
         }
-
-        header("Location: {$_SERVER['SCRIPT_NAME']}");
-        exit;
     }
-}
 
-try {
     $total_record_count = $posts->count();
 
     $paginator = new Paginator($total_record_count);
@@ -84,6 +83,7 @@ try {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
     exit;
 }
+
 
 ?>
 

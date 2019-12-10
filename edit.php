@@ -35,40 +35,30 @@ try {
         echo 'レコードが見つかりませんでした。';
         exit;
     }
-} catch (Exception $e) {
-    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-    exit;
-}
 
-$previous_page     = $_POST['previous_page'] ?? 1;
-$previous_page_url = "index.php?page={$previous_page}";
+    $previous_page     = $_POST['previous_page'] ?? 1;
+    $previous_page_url = "index.php?page={$previous_page}";
 
-$exists_password     = false;
-$is_correct_password = false;
+    $exists_password     = false;
+    $is_correct_password = false;
 
-if (!is_null($record['password'])) {
-    $exists_password = true;
+    if (!is_null($record['password'])) {
+        $exists_password = true;
 
-    if (password_verify($_POST['password'], $record['password'])) {
-        $is_correct_password = true;
+        if (password_verify($_POST['password'], $record['password'])) {
+            $is_correct_password = true;
 
-        if (isset($_POST['do_edit'])) {
-            $inputs = trim_values(['title', 'comment'], $_POST);
+            if (isset($_POST['do_edit'])) {
+                $inputs = trim_values(['title', 'comment'], $_POST);
 
-            $validator = new Validator();
+                $validator = new Validator();
 
-            $error_messages = [];
+                $error_messages = [];
 
-            try {
                 $validator->setAttributeValidationRules($post_edit_validation_rules);
                 $error_messages = $validator->validate($inputs);
-            } catch (Exception $e) {
-                echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
-                exit;
-            }
 
-            if (empty($error_messages)) {
-                try {
+                if (empty($error_messages)) {
                     $posts->update(
                         [
                             'title'   => $inputs['title'],
@@ -76,17 +66,18 @@ if (!is_null($record['password'])) {
                         ],
                         [['id', '=', $_POST['id']]]
                     );
-                } catch (Exception $e) {
-                    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+
+                    header("Location: {$previous_page_url}");
                     exit;
                 }
-
-                header("Location: {$previous_page_url}");
-                exit;
             }
         }
     }
+} catch (Exception $e) {
+    echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
+    exit;
 }
+
 
 
 ?>
