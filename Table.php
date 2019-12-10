@@ -191,73 +191,38 @@ abstract class Table
             throw new InvalidArgumentException('Where condition is required.');
         }
 
-        // ebine
-        // 実装がきたない
-        // options の where, and, or が並列で考えられてるよね
-        // options[where] が条件式で、and, or はその中の話
-        // イメージ(例)
-        /*
-        $options['where'] = [
-            ['id', '>=', 10],
-            ['age', '<=', 60, 'OR'],
-        ];
-        id >= 10 OR age <= 60
-        */
-
-        // wheresのキーのフォーマットチェック
-        $available_options = ['and', 'or'];
-
-        $where_keys = array_keys($wheres);
-        $keys_count = count($where_keys);
-
-        for ($i = 0; $i < $keys_count; $i++) {
-            if ($i === 0) {
-                if ($where_keys[$i] !== 'where') {
-                    throw new InvalidArgumentException("Where condition's first key must be 'where'.");
-                }
-            } else {
-                if (!in_array($where_keys[$i], $available_options)) {
-                    throw new InvalidArgumentException("Avalable where options are these [" . implode(', ' ,$available_options) . '].');
-                }
-            }
-        }
-
-        $query   = '';
+        $queries = [];
         $columns = [];
         $values  = [];
 
-        foreach ($wheres as $key => $where) {
+        foreach ($wheres as $where) {
             if (!is_array($where)) {
-                throw new InvalidArgumentException("Where's conditions must be array.");
+                throw new InvalidArgumentException("Where's condition format must be array.");
             }
 
-            $column   = $where[0] ?? null;
-            $operator = $where[1] ?? null;
-            $value    = $where[2] ?? null;
-
+            $column = $where[0] ?? null;
             if (!is_string($column)) {
                 throw new InvalidArgumentException("Where's first parameter must be string.");
             }
-            if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>='])) {
-                throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=].");
+
+            $operator = $where[1] ?? null;
+            if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>=', '<>'])) {
+                throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=, <>].");
             }
+
+            $value = $where[2] ?? null;
             if (!is_string($value) && !is_numeric($value)) {
-                throw new InvalidArgumentException("Where's third parameter must be string or integer.");
+                throw new InvalidArgumentException("Where's third parameter must be string or number.");
             }
 
-            if ($key === 'where' || in_array($key, $available_options)) {
-                $query .= ' ' . strtoupper($key) . ' ';
-            }
-
-            $query .= "{$column} {$operator} ?";
-
+            $queries[] = "{$column} {$operator} ?";
             $columns[] = $column;
             $values[]  = $value;
         }
 
         $where_bind_items = [];
 
-        $where_bind_items['query']   = $query;
+        $where_bind_items['query']   = ' WHERE ' . implode(' AND ', $queries);
         $where_bind_items['columns'] = $columns;
         $where_bind_items['values']  = $values;
 
