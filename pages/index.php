@@ -45,7 +45,11 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
-        $inputs['image'] = $_FILES['image']['tmp_name'] ?? null;
+        if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
+            $inputs['image'] = $_FILES['image']['tmp_name'];
+        } else {
+            $inputs['image'] = null;
+        }
 
         $validator = new Validator();
 
@@ -53,35 +57,35 @@ try {
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
+
+            if (!is_null($inputs['password'])) {
+                $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
+            }
+
             if (!is_null($inputs['image'])) {
                 // pathを作成
                 $mime_type = mime_content_type($inputs['image']);
 
                 $arrowed_mimetypes = [
-                    'jepg' => 'image/jpeg',
-                    'jpg' => 'image/jpeg',
-                    'png' => 'image/png',
-                    'gif' => 'image/gif',
+                    'jpeg' => 'image/jpeg',
+                    'jpg'  => 'image/jpeg',
+                    'png'  => 'image/png',
+                    'gif'  => 'image/gif',
                 ];
-
-                echo filesize($inputs['image']);
 
                 $extension = array_search($mime_type, $arrowed_mimetypes);
 
                 $path = dirname(__FILE__) . '/../uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
 
                 move_uploaded_file($inputs['image'], $path);
-                // pathをDBに保存
+
+                $inputs['image'] = $path;
             }
 
-            if (!is_null($inputs['password'])) {
-                $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
-            }
+            $posts->insert($inputs);
 
-            // $posts->insert($inputs);
-
-            // header("Location: {$_SERVER['SCRIPT_NAME']}");
-            // exit;
+            header("Location: {$_SERVER['SCRIPT_NAME']}");
+            exit;
         } else {
             if (isset($inputs['title'])) {
                 $title = $inputs['title'];
