@@ -20,7 +20,6 @@ $post_insert_validation_rules = [
             'max' => 200,
         ],
     ],
-    // TODO: 画像のバリデーション(ざっくり)
     // 'image' => [
     //     'mime_type' => [
     //         'image/jpeg',
@@ -47,8 +46,8 @@ try {
 
         if (!is_empty($_FILES['image']['tmp_name'])) {
             $inputs['image'] = $_FILES['image']['tmp_name'];
-            // mime_content_type($inputs['image']);
-            // filesize($inputs['image']);
+
+            debug($_FILES);
         }
 
         $validator = new Validator();
@@ -58,8 +57,21 @@ try {
 
         if (empty($error_messages)) {
             if (isset($inputs['image'])) {
-                // move_uploaded_file
-                // 保存したパスをDBに保存？
+                // pathを作成
+                $mime_type = mime_content_type($inputs['image']);
+
+                $arrowed_mimetypes = [
+                    'gif' => 'image/gif',
+                    'jpg' => 'image/jpeg',
+                    'png' => 'image/png',
+                ];
+
+                $extension = array_search($mime_type, $arrowed_mimetypes);
+
+                $path = dirname(__FILE__) . '/../uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+
+                move_uploaded_file($inputs['image'], $path);
+                // pathをDBに保存
             }
 
             if (!is_null($inputs['password'])) {
