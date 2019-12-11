@@ -70,6 +70,8 @@ class Validator
         }
     }
 
+    // private function validateMimetype(string $name, array )
+
     private function validateDigit(string $name, ?string $input, int $digit)
     {
         if ($digit < 1) {

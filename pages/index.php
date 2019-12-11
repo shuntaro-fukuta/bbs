@@ -20,6 +20,17 @@ $post_insert_validation_rules = [
             'max' => 200,
         ],
     ],
+    // TODO: 画像のバリデーション(ざっくり)
+    // 'image' => [
+    //     'mime_type' => [
+    //         'image/jpeg',
+    //         'image/png',
+    //         'image/gif',
+    //     ],
+    //     'image_size' => [
+    //         'max' => 1000000,
+    //     ],
+    // ],
     'password' => [
         'required' => false,
         'digit'    => 4,
@@ -34,20 +45,31 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
+        if (!is_empty($_FILES['image']['tmp_name'])) {
+            $inputs['image'] = $_FILES['image']['tmp_name'];
+            // mime_content_type($inputs['image']);
+            // filesize($inputs['image']);
+        }
+
         $validator = new Validator();
 
         $validator->setAttributeValidationRules($post_insert_validation_rules);
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
+            if (isset($inputs['image'])) {
+                // move_uploaded_file
+                // 保存したパスをDBに保存？
+            }
+
             if (!is_null($inputs['password'])) {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
             }
 
-            $posts->insert($inputs);
+            // $posts->insert($inputs);
 
-            header("Location: {$_SERVER['SCRIPT_NAME']}");
-            exit;
+            // header("Location: {$_SERVER['SCRIPT_NAME']}");
+            // exit;
         } else {
             if (isset($inputs['title'])) {
                 $title = $inputs['title'];
@@ -95,7 +117,7 @@ try {
       <input id="title" type="text" name="title" value="<?php echo isset($title) ? h($title) : '' ?>"><br>
       <label for="comment">Body</label><br>
       <textarea id="comment" name="comment"><?php echo isset($comment) ? h($comment) : '' ?></textarea><br>
-      <input type="file">
+      <input type="file" name="image">
       <br>
       <label for="password">Password</label>
       <input id="password" type="password" name="password"><br>

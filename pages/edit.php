@@ -106,7 +106,7 @@ try {
         <input id="title" type="text" name="title" value="<?php echo isset($inputs['title']) ? h($inputs['title']) : h($record['title']) ?>"><br>
         <label for="comment">Body</label><br>
         <textarea id="comment" name="comment"><?php echo isset($inputs['comment']) ? h($inputs['comment']) : h($record['comment']) ?></textarea><br>
-        <input type="checkbox">Delete Imaege
+        <input type="checkbox" name="delete_value">Delete Imaege
         <br>
         <input type="file">
         <br>
