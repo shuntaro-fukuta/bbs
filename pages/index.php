@@ -75,7 +75,9 @@ try {
 
                 $extension = array_search($mime_type, $arrowed_mimetypes);
 
-                $path = dirname(__FILE__) . '/../uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+                $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+
+                echo $path;
 
                 move_uploaded_file($inputs['image'], $path);
 
@@ -146,6 +148,9 @@ try {
         <br>
         <?php echo nl2br(h($record['comment'])) ?>
         <br>
+        <?php if (isset($record['image'])) : ?>
+          <img src="<?php echo $record['image'] ?>">
+        <?php endif ?>
         <form method="post">
 	      Pass
           <input type="password" name="password">
