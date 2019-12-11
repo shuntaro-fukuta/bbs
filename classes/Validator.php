@@ -23,6 +23,10 @@ class Validator
                     $error_message = $this->validateRequired($attribute_name, $input, $rule);
                 } elseif ($type === 'length') {
                     $error_message = $this->validateLength($attribute_name, $input, $rule);
+                } elseif ($type === 'mime_types') {
+                    $error_message = $this->validateMimetype($attribute_name, $input, $rule);
+                } elseif ($type === 'file_size') {
+                    $error_message = $this->validateFileSize($attribute_name, $input, $rule);
                 } elseif ($type === 'digit') {
                     $error_message = $this->validateDigit($attribute_name, $input, $rule);
                 }
@@ -70,7 +74,60 @@ class Validator
         }
     }
 
-    // private function validateMimetype(string $name, array )
+    private function validateMimetype(string $name, ?string $tmp_name, array $mime_types) {
+        if (is_empty($tmp_name)) {
+            return null;
+        }
+
+        if (!file_exists($tmp_name)) {
+            throw new LogicException("{$tmp_name} file doesn't exist.");
+        }
+
+        // TODO: $mime_typesのチェック
+
+        if (!($mime_type = mime_content_type($tmp_name))) {
+            throw new RuntimeException('Failed to get mime type from file');
+        }
+
+        if (!array_search($mime_type, $mime_types)) {
+            return "{$name}の種類は" . implode(", ", array_keys($mime_types)) . 'のいずれかにしてください';
+        }
+
+        return null;
+    }
+
+    private function validateFileSize(string $name, ?string $tmp_name, array $limits)
+    {
+        foreach ($limits as $category => $byte) {
+            if (!in_array($category, ['min', 'max'])) {
+                throw new LogicException('file_size validation category must be min or max');
+            }
+
+            if (($category === 'min' && $byte < 1) || ($category === 'max' && $byte < 2)) {
+                throw new LogicException('file_size validation value is invalid.');
+            }
+        }
+
+        if (is_empty($tmp_name)) {
+            return null;
+        }
+
+        $file_size = filesize($tmp_name);
+
+        if ($file_size === false) {
+            throw new RuntimeException('Failed to get filesize.');
+        }
+
+        if (isset($limits['min']) && isset($limits['max'])) {
+            if ($file_size < $limits['min'] || $file_size > $limits['max']) {
+                return "{$name}のサイズは{$limits['min']}バイト以上{$limits['max']}バイト以下のファイルにしてください";
+            }
+        } elseif (isset($limits['min']) && $file_size < $limits['min']) {
+            return "{$name}のサイズは{$limits['min']}バイト以上にしてください";
+        } elseif (isset($limits['max']) && $file_size > $limits['max']) {
+            return "{$name}のサイズは{$limits['max']}バイト以下にしてください";
+        }
+    }
 
     private function validateDigit(string $name, ?string $input, int $digit)
     {

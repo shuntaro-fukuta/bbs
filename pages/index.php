@@ -20,16 +20,17 @@ $post_insert_validation_rules = [
             'max' => 200,
         ],
     ],
-    // 'image' => [
-    //     'mime_type' => [
-    //         'image/jpeg',
-    //         'image/png',
-    //         'image/gif',
-    //     ],
-    //     'image_size' => [
-    //         'max' => 1000000,
-    //     ],
-    // ],
+    'image' => [
+        'mime_types' => [
+            'jpeg' => 'image/jpeg',
+            'jpg'  => 'image/jpeg',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
+        ],
+        'file_size' => [
+            'max' => 1000000,
+        ],
+    ],
     'password' => [
         'required' => false,
         'digit'    => 4,
@@ -44,11 +45,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
-        if (!is_empty($_FILES['image']['tmp_name'])) {
-            $inputs['image'] = $_FILES['image']['tmp_name'];
-
-            debug($_FILES);
-        }
+        $inputs['image'] = $_FILES['image']['tmp_name'] ?? null;
 
         $validator = new Validator();
 
@@ -56,15 +53,18 @@ try {
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
-            if (isset($inputs['image'])) {
+            if (!is_null($inputs['image'])) {
                 // pathを作成
                 $mime_type = mime_content_type($inputs['image']);
 
                 $arrowed_mimetypes = [
-                    'gif' => 'image/gif',
+                    'jepg' => 'image/jpeg',
                     'jpg' => 'image/jpeg',
                     'png' => 'image/png',
+                    'gif' => 'image/gif',
                 ];
+
+                echo filesize($inputs['image']);
 
                 $extension = array_search($mime_type, $arrowed_mimetypes);
 
