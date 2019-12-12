@@ -23,7 +23,6 @@ class ImageUploader
 
     public function upload(array $file)
     {
-        var_dump($file);
         if ($file === [] || !isset($file['tmp_name']) || $file['tmp_name'] === '') {
             return false;
         }

@@ -73,12 +73,12 @@ try {
 
                 $update_values['image_path'] = null;
             } else {
-                $uploader = new ImageUploader();
+                if (!is_null($inputs['image_file'])) {
+                    $uploader = new ImageUploader();
 
-                if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
-                    $update_values['image_path'] = $uploaded_path;
-                } else {
-                    $update_values['image_path'] = null;
+                    if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
+                        $update_values['image_path'] = $uploaded_path;
+                    }
                 }
             }
 

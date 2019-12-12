@@ -61,12 +61,12 @@ try {
                 'password' => $inputs['password'],
             ];
 
-            $uploader = new ImageUploader();
+            if (!is_null($inputs['image_file'])) {
+                $uploader = new ImageUploader();
 
-            if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
-                $insert_values['image_path'] = $uploaded_path;
-            } else {
-                $insert_values['image_path'] = null;
+                if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
+                    $insert_values['image_path'] = $uploaded_path;
+                }
             }
 
             $posts->insert($insert_values);
