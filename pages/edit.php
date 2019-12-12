@@ -57,13 +57,8 @@ try {
     $do_edit             = isset($_POST['do_edit']);
 
     if ($exists_password && $is_correct_password && $do_edit) {
-        $inputs = trim_values(['title', 'comment'], $_POST);
-
-        if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
-            $inputs['image_path'] = $_FILES['image']['tmp_name'];
-        } else {
-            $inputs['image_path'] = null;
-        }
+        $inputs               = trim_values(['title', 'comment'], $_POST);
+        $inputs['image_path'] = get_uploaded_file_tmp_name('image');
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_edit_validation_rules);

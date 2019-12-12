@@ -43,17 +43,10 @@ $posts = new Posts();
 
 $error_messages = [];
 
-debug($_FILES);
-
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
-
-        if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
-            $inputs['image_path'] = $_FILES['image']['tmp_name'];
-        } else {
-            $inputs['image_path'] = null;
-        }
+        $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
+        $inputs['image_path'] = get_uploaded_file_tmp_name('image');
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);
