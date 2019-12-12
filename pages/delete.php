@@ -26,6 +26,7 @@ try {
     $do_delete           = isset($_POST['do_delete']);
 
     if ($exists_password && $is_correct_password && $do_delete) {
+        unlink($record['image_path']);
         $posts->delete([['id', '=', $_POST['id']]]);
 
         header("Location: {$previous_page_url}");

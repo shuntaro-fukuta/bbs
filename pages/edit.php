@@ -53,7 +53,7 @@ try {
 
     $exists_password     = isset($record['password']);
     $is_correct_password = password_verify($_POST['password'], $record['password']);
-    $do_edit             = isset($_POST['edit']);
+    $do_edit             = isset($_POST['do_edit']);
 
     if ($exists_password && $is_correct_password && $do_edit) {
         $inputs = trim_values(['title', 'comment'], $_POST);
