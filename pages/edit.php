@@ -51,66 +51,59 @@ try {
     $previous_page     = $_POST['previous_page'] ?? 1;
     $previous_page_url = "index.php?page={$previous_page}";
 
-    $exists_password     = false;
-    $is_correct_password = false;
+    $exists_password     = isset($record['password']);
+    $is_correct_password = password_verify($_POST['password'], $record['password']);
+    $do_edit             = isset($_POST['edit']);
 
-    if (!is_null($record['password'])) {
-        $exists_password = true;
+    if ($exists_password && $is_correct_password && $do_edit) {
+        $inputs = trim_values(['title', 'comment'], $_POST);
 
-        if (password_verify($_POST['password'], $record['password'])) {
-            $is_correct_password = true;
+        if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
+            $inputs['image_path'] = $_FILES['image']['tmp_name'];
+        } else {
+            $inputs['image_path'] = null;
+        }
 
-            if (isset($_POST['do_edit'])) {
-                $inputs = trim_values(['title', 'comment'], $_POST);
+        $validator = new Validator();
 
-                if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
-                    $inputs['image_path'] = $_FILES['image']['tmp_name'];
-                } else {
-                    $inputs['image_path'] = null;
+        $error_messages = [];
+
+        $validator->setAttributeValidationRules($post_edit_validation_rules);
+        $error_messages = $validator->validate($inputs);
+
+        if (empty($error_messages)) {
+            if ($_POST['delete_image']) {
+                // 画像を削除する
+                unlink($record['image_path']);
+
+                $inputs['image_path'] = null;
+            } elseif (!is_null($inputs['image_path'])) {
+                // パスをつくる
+                $mime_type = mime_content_type($inputs['image_path']);
+
+                $arrowed_mimetypes = [
+                    'jpeg' => 'image/jpeg',
+                    'jpg'  => 'image/jpeg',
+                    'png'  => 'image/png',
+                    'gif'  => 'image/gif',
+                ];
+
+                $extension = array_search($mime_type, $arrowed_mimetypes);
+
+                $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+
+                // 保存する
+                if (!move_uploaded_file($inputs['image_path'], $path)) {
+                    throw new Exception('失敗');
                 }
 
-                $validator = new Validator();
-
-                $error_messages = [];
-
-                $validator->setAttributeValidationRules($post_edit_validation_rules);
-                $error_messages = $validator->validate($inputs);
-
-                if (empty($error_messages)) {
-                    if ($_POST['delete_image']) {
-                        // 画像を削除する
-                        unlink($record['image_path']);
-
-                        $inputs['image_path'] = null;
-                    } elseif (!is_null($inputs['image_path'])) {
-                        // パスをつくる
-                        $mime_type = mime_content_type($inputs['image_path']);
-
-                        $arrowed_mimetypes = [
-                            'jpeg' => 'image/jpeg',
-                            'jpg'  => 'image/jpeg',
-                            'png'  => 'image/png',
-                            'gif'  => 'image/gif',
-                        ];
-
-                        $extension = array_search($mime_type, $arrowed_mimetypes);
-
-                        $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
-
-                        // 保存する
-                        if (!move_uploaded_file($inputs['image_path'], $path)) {
-                            throw new Exception('失敗');
-                        }
-
-                        $inputs['image_path'] = $path;
-                    }
-
-                    $posts->update($inputs, [['id', '=', $_POST['id']]]);
-
-                    header("Location: {$previous_page_url}");
-                    exit;
-                }
+                $inputs['image_path'] = $path;
             }
+
+            $posts->update($inputs, [['id', '=', $_POST['id']]]);
+
+            header("Location: {$previous_page_url}");
+            exit;
         }
     }
 } catch (Exception $e) {

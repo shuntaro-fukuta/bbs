@@ -21,22 +21,15 @@ try {
     $previous_page     = $_POST['previous_page'] ?? 1;
     $previous_page_url = "index.php?page={$previous_page}";
 
-    $exists_password     = false;
-    $is_correct_password = false;
+    $exists_password     = isset($record['password']);
+    $is_correct_password = password_verify($_POST['password'], $record['password']);
+    $do_delete           = isset($_POST['do_delete']);
 
-    if (!is_null($record['password'])) {
-        $exists_password = true;
+    if ($exists_password && $is_correct_password && $do_delete) {
+        $posts->delete([['id', '=', $_POST['id']]]);
 
-        if (password_verify($_POST['password'], $record['password'])) {
-            $is_correct_password = true;
-
-            if (isset($_POST['do_delete'])) {
-                $posts->delete([['id', '=', $_POST['id']]]);
-
-                header("Location: {$previous_page_url}");
-                exit;
-            }
-        }
+        header("Location: {$previous_page_url}");
+        exit;
     }
 } catch (Exception $e) {
     echo "{$e->getMessage()} ({$e->getFile()} : {$e->getLine()})";
