@@ -3,6 +3,7 @@
 require_once(dirname(__FILE__) . '/../functions/general.php');
 require_once(dirname(__FILE__) . '/../classes/Validator.php');
 require_once(dirname(__FILE__) . '/../classes/Posts.php');
+require_once(dirname(__FILE__) . '/../classes/ImageUploader.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
@@ -65,9 +66,6 @@ try {
         }
 
         $validator = new Validator();
-
-        $error_messages = [];
-
         $validator->setAttributeValidationRules($post_edit_validation_rules);
         $error_messages = $validator->validate($inputs);
 
@@ -78,26 +76,11 @@ try {
 
                 $inputs['image_path'] = null;
             } elseif (!is_null($inputs['image_path'])) {
-                // パスをつくる
-                $mime_type = mime_content_type($inputs['image_path']);
+                $uploader = new ImageUploader();
 
-                $arrowed_mimetypes = [
-                    'jpeg' => 'image/jpeg',
-                    'jpg'  => 'image/jpeg',
-                    'png'  => 'image/png',
-                    'gif'  => 'image/gif',
-                ];
+                $uploaded_path = $uploader->upload($inputs['image_path']);
 
-                $extension = array_search($mime_type, $arrowed_mimetypes);
-
-                $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
-
-                // 保存する
-                if (!move_uploaded_file($inputs['image_path'], $path)) {
-                    throw new Exception('失敗');
-                }
-
-                $inputs['image_path'] = $path;
+                $inputs['image_path'] = $uploaded_path;
             }
 
             $posts->update($inputs, [['id', '=', $_POST['id']]]);

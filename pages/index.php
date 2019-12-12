@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/../functions/general.php');
 require_once(dirname(__FILE__) . '/../classes/Validator.php');
 require_once(dirname(__FILE__) . '/../classes/Paginator.php');
 require_once(dirname(__FILE__) . '/../classes/Posts.php');
+require_once(dirname(__FILE__) . '/../classes/ImageUploader.php');
 
 $post_insert_validation_rules = [
     'title' => [
@@ -42,6 +43,8 @@ $posts = new Posts();
 
 $error_messages = [];
 
+debug($_FILES);
+
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
@@ -53,38 +56,20 @@ try {
         }
 
         $validator = new Validator();
-
         $validator->setAttributeValidationRules($post_insert_validation_rules);
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
-
             if (!is_null($inputs['password'])) {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
             }
 
             if (!is_null($inputs['image_path'])) {
-                // パスをつくる
-                $mime_type = mime_content_type($inputs['image_path']);
+                $uploader = new ImageUploader();
 
-                $arrowed_mimetypes = [
-                    'jpeg' => 'image/jpeg',
-                    'jpg'  => 'image/jpeg',
-                    'png'  => 'image/png',
-                    'gif'  => 'image/gif',
-                ];
+                $uploaded_path = $uploader->upload($inputs['image_path']);
 
-                $extension = array_search($mime_type, $arrowed_mimetypes);
-
-                $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
-
-
-                // 保存する
-                if (!move_uploaded_file($inputs['image_path'], $path)) {
-                    throw new Exception('失敗');
-                }
-
-                $inputs['image_path'] = $path;
+                $inputs['image_path'] = $uploaded_path;
             }
 
             $posts->insert($inputs);
