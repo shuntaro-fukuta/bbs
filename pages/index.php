@@ -77,8 +77,6 @@ try {
 
                 $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
 
-                echo $path;
-
                 move_uploaded_file($inputs['image'], $path);
 
                 $inputs['image'] = $path;
