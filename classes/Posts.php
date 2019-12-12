@@ -9,7 +9,7 @@ class Posts extends Table
         'id'         => 'i',
         'title'      => 's',
         'comment'    => 's',
-        'image'      => 's',
+        'image_path' => 's',
         'password'   => 's',
         'created_at' => 's',
     ];

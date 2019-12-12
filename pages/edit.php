@@ -24,6 +24,17 @@ $post_edit_validation_rules = [
             'max' => 200,
         ],
     ],
+    'image' => [
+        'mime_types' => [
+            'jpeg' => 'image/jpeg',
+            'jpg'  => 'image/jpeg',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
+        ],
+        'file_size' => [
+            'max' => 1000000,
+        ],
+    ],
 ];
 
 $posts = new Posts();
@@ -51,6 +62,12 @@ try {
             if (isset($_POST['do_edit'])) {
                 $inputs = trim_values(['title', 'comment'], $_POST);
 
+                if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
+                    $inputs['image_path'] = $_FILES['image']['tmp_name'];
+                } else {
+                    $inputs['image_path'] = null;
+                }
+
                 $validator = new Validator();
 
                 $error_messages = [];
@@ -59,6 +76,29 @@ try {
                 $error_messages = $validator->validate($inputs);
 
                 if (empty($error_messages)) {
+                    if (!is_null($inputs['image_path'])) {
+                        // パスをつくる
+                        $mime_type = mime_content_type($inputs['image_path']);
+
+                        $arrowed_mimetypes = [
+                            'jpeg' => 'image/jpeg',
+                            // 'jpg'  => 'image/jpeg',
+                            'png'  => 'image/png',
+                            'gif'  => 'image/gif',
+                        ];
+
+                        $extension = array_search($mime_type, $arrowed_mimetypes);
+
+                        $to_path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+
+                        // 保存する
+                        if (!move_uploaded_file($inputs['image_path'], $to_path)) {
+                            throw new Exception('失敗');
+                        }
+
+                        $inputs['image_path'] = $to_path;
+                    }
+
                     $posts->update($inputs, [['id', '=', $_POST['id']]]);
 
                     header("Location: {$previous_page_url}");
@@ -80,12 +120,18 @@ try {
       <p>この投稿にはパスワードが設定されていないため、削除できません。</p>
       <p><?php echo h($record['title']) ?></p>
       <p><?php echo h($record['comment']) ?></p>
+      <?php if (isset($record['image_path'])) : ?>
+        <img src="<?php echo $record['image_path'] ?>"><br>
+      <?php endif ?>
       <p><?php echo h($record['created_at']) ?></p>
       <a href="<?php echo $previous_page_url ?>">前のページへ戻る</a>
     <?php elseif (!$is_correct_password) : ?>
       <p>パスワードが間違っています。もう一度入力してください</p>
       <p><?php echo h($record['title']) ?></p>
       <p><?php echo h($record['comment']) ?></p>
+      <?php if (isset($record['image_path'])) : ?>
+        <img src="<?php echo $record['image_path'] ?>"><br>
+      <?php endif ?>
       <p><?php echo h($record['created_at']) ?></p>
       <form method="post" action="">
         Pass
@@ -106,6 +152,10 @@ try {
         <input id="title" type="text" name="title" value="<?php echo isset($inputs['title']) ? h($inputs['title']) : h($record['title']) ?>"><br>
         <label for="comment">Body</label><br>
         <textarea id="comment" name="comment"><?php echo isset($inputs['comment']) ? h($inputs['comment']) : h($record['comment']) ?></textarea><br>
+        <?php if (isset($record['image_path'])) : ?>
+          <img src="<?php echo $record['image_path'] ?>"><br>
+        <?php endif ?>
+        <input type="file" name="image"><br>
         <input type="checkbox" name="delete_value">Delete Imaege
         <br>
         <input type="file">

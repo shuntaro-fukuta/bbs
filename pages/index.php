@@ -46,9 +46,9 @@ try {
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
         if (isset($_FILES['image']['tmp_name']) && $_FILES['image']['tmp_name'] !== '') {
-            $inputs['image'] = $_FILES['image']['tmp_name'];
+            $inputs['image_path'] = $_FILES['image']['tmp_name'];
         } else {
-            $inputs['image'] = null;
+            $inputs['image_path'] = null;
         }
 
         $validator = new Validator();
@@ -62,9 +62,9 @@ try {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
             }
 
-            if (!is_null($inputs['image'])) {
-                // pathを作成
-                $mime_type = mime_content_type($inputs['image']);
+            if (!is_null($inputs['image_path'])) {
+                // パスをつくる
+                $mime_type = mime_content_type($inputs['image_path']);
 
                 $arrowed_mimetypes = [
                     'jpeg' => 'image/jpeg',
@@ -77,9 +77,13 @@ try {
 
                 $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
 
-                move_uploaded_file($inputs['image'], $path);
 
-                $inputs['image'] = $path;
+                // 保存する
+                if (!move_uploaded_file($inputs['image_path'], $path)) {
+                    throw new Exception('失敗');
+                }
+
+                $inputs['image_path'] = $path;
             }
 
             $posts->insert($inputs);
@@ -146,8 +150,8 @@ try {
         <br>
         <?php echo nl2br(h($record['comment'])) ?>
         <br>
-        <?php if (isset($record['image'])) : ?>
-          <img src="<?php echo $record['image'] ?>">
+        <?php if (isset($record['image_path'])) : ?>
+          <img src="<?php echo $record['image_path'] ?>">
         <?php endif ?>
         <form method="post">
 	      Pass
