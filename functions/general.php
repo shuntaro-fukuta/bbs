@@ -38,9 +38,9 @@ function trim_values(array $keys, array $values) {
     return $trimmed_values;
 }
 
-function get_uploaded_file_tmp_name($field_name) {
-    if (isset($_FILES[$field_name]) && $_FILES[$field_name]['tmp_name'] !== '') {
-        return $_FILES[$field_name]['tmp_name'];
+function get_uploaded_file($field_name) {
+    if (isset($_FILES[$field_name])) {
+        return $_FILES[$field_name];
     }
 
     return null;

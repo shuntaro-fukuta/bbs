@@ -9,9 +9,9 @@ class ImageUploader
         'gif'  => 'image/gif',
     ];
 
-    private function buildUniquePath($image_path)
+    private function buildUniquePath($tmp_name)
     {
-        $mime_type = mime_content_type($image_path);
+        $mime_type = mime_content_type($tmp_name);
 
         $extension = array_search($mime_type, $this->mimetypes);
 
@@ -21,12 +21,19 @@ class ImageUploader
         return $unique_path;
     }
 
-    public function upload($image_path)
+    public function upload(array $file)
     {
-        $upload_path = $this->buildUniquePath($image_path);
+        var_dump($file);
+        if ($file === [] || !isset($file['tmp_name']) || $file['tmp_name'] === '') {
+            return false;
+        }
 
-        if (!move_uploaded_file($image_path, $upload_path)) {
-            throw new RuntimeException('Failed to upload image');
+        $tmp_name = $file['tmp_name'];
+
+        $upload_path = $this->buildUniquePath($tmp_name);
+
+        if (!move_uploaded_file($tmp_name, $upload_path)) {
+            throw new RuntimeException('Failed to upload file');
         }
 
         return $upload_path;

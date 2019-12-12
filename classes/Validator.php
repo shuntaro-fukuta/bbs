@@ -74,8 +74,14 @@ class Validator
         }
     }
 
-    private function validateMimetype(string $name, ?string $tmp_name, array $mime_types) {
-        if (is_empty($tmp_name)) {
+    private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types) {
+        if (is_empty($uploaded_file)) {
+            return null;
+        }
+
+        $tmp_name = $uploaded_file['tmp_name'];
+
+        if ($tmp_name === '') {
             return null;
         }
 
@@ -96,7 +102,7 @@ class Validator
         return null;
     }
 
-    private function validateFileSize(string $name, ?string $tmp_name, array $limits)
+    private function validateFileSize(string $name, ?array $uploaded_file, array $limits)
     {
         foreach ($limits as $category => $byte) {
             if (!in_array($category, ['min', 'max'])) {
@@ -108,7 +114,13 @@ class Validator
             }
         }
 
-        if (is_empty($tmp_name)) {
+        if (is_empty($uploaded_file)) {
+            return null;
+        }
+
+        $tmp_name = $uploaded_file['tmp_name'];
+
+        if ($tmp_name === '') {
             return null;
         }
 

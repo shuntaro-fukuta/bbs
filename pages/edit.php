@@ -25,9 +25,8 @@ $post_edit_validation_rules = [
             'max' => 200,
         ],
     ],
-    'image' => [
+    'image_file' => [
         'mime_types' => [
-            'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
             'png'  => 'image/png',
             'gif'  => 'image/gif',
@@ -56,33 +55,34 @@ try {
     $do_edit             = isset($_POST['do_edit']);
 
     if ($exists_password && $is_correct_password && $do_edit) {
-        $inputs          = trim_values(['title', 'comment'], $_POST);
-        $inputs['image'] = get_uploaded_file_tmp_name('image');
+        $inputs               = trim_values(['title', 'comment'], $_POST);
+        $inputs['image_file'] = get_uploaded_file('image');
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_edit_validation_rules);
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
-            $values = [
+            $update_values = [
                 'title'   => $inputs['title'],
                 'comment' => $inputs['comment'],
             ];
 
             if (isset($_POST['delete_image'])) {
-                // 画像を削除する
                 unlink($record['image_path']);
 
-                $values['image_path'] = null;
-            } elseif (!is_null($inputs['image'])) {
+                $update_values['image_path'] = null;
+            } else {
                 $uploader = new ImageUploader();
 
-                $uploaded_path = $uploader->upload($inputs['image']);
-
-                $values['image_path'] = $uploaded_path;
+                if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
+                    $update_values['image_path'] = $uploaded_path;
+                } else {
+                    $update_values['image_path'] = null;
+                }
             }
 
-            $posts->update($values, [['id', '=', $_POST['id']]]);
+            $posts->update($update_values, [['id', '=', $_POST['id']]]);
 
             header("Location: {$previous_page_url}");
             exit;
