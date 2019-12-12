@@ -21,8 +21,7 @@ $post_insert_validation_rules = [
             'max' => 200,
         ],
     ],
-    // TODO: カラム名に関する修正
-    'image_path' => [
+    'image' => [
         'mime_types' => [
             'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
@@ -45,8 +44,8 @@ $error_messages = [];
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
-        $inputs['image_path'] = get_uploaded_file_tmp_name('image');
+        $inputs          = trim_values(['title', 'comment' , 'password'], $_POST);
+        $inputs['image'] = get_uploaded_file_tmp_name('image');
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);
@@ -57,15 +56,21 @@ try {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
             }
 
-            if (!is_null($inputs['image_path'])) {
+            $values = [
+                'title'    => $inputs['title'],
+                'comment'  => $inputs['comment'],
+                'password' => $inputs['password'],
+            ];
+
+            if (!is_null($inputs['image'])) {
                 $uploader = new ImageUploader();
 
-                $uploaded_path = $uploader->upload($inputs['image_path']);
+                $uploaded_path = $uploader->upload($inputs['image']);
 
-                $inputs['image_path'] = $uploaded_path;
+                $values['image_path'] = $uploaded_path;
             }
 
-            $posts->insert($inputs);
+            $posts->insert($values);
 
             header("Location: {$_SERVER['SCRIPT_NAME']}");
             exit;

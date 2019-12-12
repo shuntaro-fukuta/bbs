@@ -25,8 +25,7 @@ $post_edit_validation_rules = [
             'max' => 200,
         ],
     ],
-    // TODO: カラム名に関する修正
-    'image_path' => [
+    'image' => [
         'mime_types' => [
             'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
@@ -57,28 +56,33 @@ try {
     $do_edit             = isset($_POST['do_edit']);
 
     if ($exists_password && $is_correct_password && $do_edit) {
-        $inputs               = trim_values(['title', 'comment'], $_POST);
-        $inputs['image_path'] = get_uploaded_file_tmp_name('image');
+        $inputs          = trim_values(['title', 'comment'], $_POST);
+        $inputs['image'] = get_uploaded_file_tmp_name('image');
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_edit_validation_rules);
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
-            if ($_POST['delete_image']) {
+            $values = [
+                'title'   => $inputs['title'],
+                'comment' => $inputs['comment'],
+            ];
+
+            if (isset($_POST['delete_image'])) {
                 // 画像を削除する
                 unlink($record['image_path']);
 
-                $inputs['image_path'] = null;
-            } elseif (!is_null($inputs['image_path'])) {
+                $values['image_path'] = null;
+            } elseif (!is_null($inputs['image'])) {
                 $uploader = new ImageUploader();
 
-                $uploaded_path = $uploader->upload($inputs['image_path']);
+                $uploaded_path = $uploader->upload($inputs['image']);
 
-                $inputs['image_path'] = $uploaded_path;
+                $values['image_path'] = $uploaded_path;
             }
 
-            $posts->update($inputs, [['id', '=', $_POST['id']]]);
+            $posts->update($values, [['id', '=', $_POST['id']]]);
 
             header("Location: {$previous_page_url}");
             exit;
