@@ -20,7 +20,8 @@ $post_insert_validation_rules = [
             'max' => 200,
         ],
     ],
-    'image' => [
+    // TODO: カラム名に関する修正
+    'image_path' => [
         'mime_types' => [
             'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',

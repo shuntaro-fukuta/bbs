@@ -24,7 +24,8 @@ $post_edit_validation_rules = [
             'max' => 200,
         ],
     ],
-    'image' => [
+    // TODO: カラム名に関する修正
+    'image_path' => [
         'mime_types' => [
             'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
@@ -76,27 +77,32 @@ try {
                 $error_messages = $validator->validate($inputs);
 
                 if (empty($error_messages)) {
-                    if (!is_null($inputs['image_path'])) {
+                    if ($_POST['delete_image']) {
+                        // 画像を削除する
+                        unlink($record['image_path']);
+
+                        $inputs['image_path'] = null;
+                    } elseif (!is_null($inputs['image_path'])) {
                         // パスをつくる
                         $mime_type = mime_content_type($inputs['image_path']);
 
                         $arrowed_mimetypes = [
                             'jpeg' => 'image/jpeg',
-                            // 'jpg'  => 'image/jpeg',
+                            'jpg'  => 'image/jpeg',
                             'png'  => 'image/png',
                             'gif'  => 'image/gif',
                         ];
 
                         $extension = array_search($mime_type, $arrowed_mimetypes);
 
-                        $to_path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
+                        $path = './uploads/' . uniqid(mt_rand(), true) . ".{$extension}";
 
                         // 保存する
-                        if (!move_uploaded_file($inputs['image_path'], $to_path)) {
+                        if (!move_uploaded_file($inputs['image_path'], $path)) {
                             throw new Exception('失敗');
                         }
 
-                        $inputs['image_path'] = $to_path;
+                        $inputs['image_path'] = $path;
                     }
 
                     $posts->update($inputs, [['id', '=', $_POST['id']]]);
@@ -154,11 +160,9 @@ try {
         <textarea id="comment" name="comment"><?php echo isset($inputs['comment']) ? h($inputs['comment']) : h($record['comment']) ?></textarea><br>
         <?php if (isset($record['image_path'])) : ?>
           <img src="<?php echo $record['image_path'] ?>"><br>
+          <input type="checkbox" name="delete_image">Delete Imaege<br>
         <?php endif ?>
         <input type="file" name="image"><br>
-        <input type="checkbox" name="delete_value">Delete Imaege
-        <br>
-        <input type="file">
         <br>
         <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
