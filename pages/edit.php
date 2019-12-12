@@ -74,7 +74,7 @@ try {
                 $update_values['image_path'] = null;
             } else {
                 if (!is_null($inputs['image_file'])) {
-                    $uploader = new ImageUploader();
+                    $uploader = new ImageUploader('./uploads');
 
                     if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
                         $update_values['image_path'] = $uploaded_path;

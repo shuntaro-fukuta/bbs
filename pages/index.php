@@ -62,7 +62,7 @@ try {
             ];
 
             if (!is_null($inputs['image_file'])) {
-                $uploader = new ImageUploader();
+                $uploader = new ImageUploader('./uploads');
 
                 if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
                     $insert_values['image_path'] = $uploaded_path;
