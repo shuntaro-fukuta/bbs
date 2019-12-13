@@ -2,7 +2,7 @@
 
 class ImageUploader
 {
-    private $directory_path;
+    private $upload_path;
     private $mimetypes = [
         'jpeg' => 'image/jpeg',
         'jpg'  => 'image/jpeg',
@@ -10,18 +10,18 @@ class ImageUploader
         'gif'  => 'image/gif',
     ];
 
-    public function __construct($directory_path)
+    public function __construct($upload_path)
     {
-        $this->setDirectoryPath($directory_path);
+        $this->setUploadPath($upload_path);
     }
 
-    private function setDirectoryPath($directory_path)
+    private function setUploadPath($upload_path)
     {
-        if (!file_exists($directory_path)) {
-            mkdir($directory_path, 0774, true);
+        if (!file_exists($upload_path)) {
+            mkdir($upload_path, 0774, true);
         }
 
-        $this->directory_path = $directory_path;
+        $this->upload_path = $upload_path;
     }
 
     private function buildUniquePath($tmp_name)
@@ -32,7 +32,7 @@ class ImageUploader
 
         $file_name = uniqid(mt_rand(), true) . '.' . $extension;
 
-        $file_path = $this->directory_path . '/' . $file_name;
+        $file_path = $this->upload_path . '/' . $file_name;
 
         return $file_path;
     }
