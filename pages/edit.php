@@ -56,7 +56,7 @@ try {
 
     if ($exists_password && $is_correct_password && $do_edit) {
         $inputs               = trim_values(['title', 'comment'], $_POST);
-        $inputs['image_file'] = get_uploaded_file('image');
+        $inputs['image_file'] = is_empty_file($_FILES['image']) ? null : $_FILES['image'];
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_edit_validation_rules);

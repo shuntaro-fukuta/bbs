@@ -18,6 +18,8 @@ class ImageUploader
     private function setUploadPath($path)
     {
         if (!file_exists($path)) {
+            // hamaco: ディレクトリの権限が4(Read)だと中身見れないよ
+            //         1(Exec)がないとディレクトリの中身見れないかな
             mkdir($path, 0774, true);
         }
 

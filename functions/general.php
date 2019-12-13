@@ -38,10 +38,26 @@ function trim_values(array $keys, array $values) {
     return $trimmed_values;
 }
 
-function get_uploaded_file($field_name) {
-    if (isset($_FILES[$field_name])) {
-        return $_FILES[$field_name];
-    }
+function is_valid_uploaded_file(array $file)
+    {
+        if (
+            !isset($file['name'])     ||
+            !isset($file['type'])     ||
+            !isset($file['tmp_name']) ||
+            !isset($file['error'])    ||
+            !isset($file['size'])
+        ) {
+            return true;
+        }
 
-    return null;
-}
+        if (
+            $file['name']     === '' ||
+            $file['type']     === '' ||
+            $file['tmp_name'] === '' ||
+            $file['size']     === 0
+        ) {
+            return true;
+        }
+
+        return false;
+    }

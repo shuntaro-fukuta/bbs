@@ -74,6 +74,7 @@ class Validator
         }
     }
 
+    // hamaco: クラスの｛は次の行
     private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types) {
         if (is_empty($uploaded_file)) {
             return null;
@@ -86,6 +87,7 @@ class Validator
         }
 
         if (!file_exists($tmp_name)) {
+            // hamaco: これは使ってるコードを直さないといけない不具合なのか？
             throw new LogicException("{$tmp_name} file doesn't exist.");
         }
 
@@ -132,6 +134,8 @@ class Validator
 
         if (isset($limits['min']) && isset($limits['max'])) {
             if ($file_size < $limits['min'] || $file_size > $limits['max']) {
+                // hamaco: 自分がユーザーだったときのことを考えてください。
+                //         例えば(1024x1024x8)バイト以下とか言われても辛くないですか？
                 return "{$name}のサイズは{$limits['min']}バイト以上{$limits['max']}バイト以下のファイルにしてください";
             }
         } elseif (isset($limits['min']) && $file_size < $limits['min']) {
