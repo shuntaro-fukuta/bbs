@@ -2,7 +2,7 @@
 
 class ImageUploader
 {
-    private $path_to_image_directory;
+    private $directory_path;
     private $mimetypes = [
         'jpeg' => 'image/jpeg',
         'jpg'  => 'image/jpeg',
@@ -10,25 +10,29 @@ class ImageUploader
         'gif'  => 'image/gif',
     ];
 
-    public function __construct($path_to_image_directory)
+    public function __construct($directory_path)
     {
-        $this->path_to_image_directory = $path_to_image_directory;
+        $this->setDirectoryPath($directory_path);
     }
 
-    private function getUniqueFilename($tmp_name)
+    private function setDirectoryPath($directory_path)
+    {
+        if (!file_exists($directory_path)) {
+            mkdir($directory_path, 0774, true);
+        }
+
+        $this->directory_path = $directory_path;
+    }
+
+    private function buildUniquePath($tmp_name)
     {
         $mime_type = mime_content_type($tmp_name);
 
         $extension = array_search($mime_type, $this->mimetypes);
 
-        return uniqid(mt_rand(), true) . '.' . $extension;
-    }
+        $file_name = uniqid(mt_rand(), true) . '.' . $extension;
 
-    private function buildFilePath($tmp_name)
-    {
-        $file_name = $this->getUniqueFilename($tmp_name);
-        // TODO: ディレクトリを変更できるようにする？
-        $file_path = $this->path_to_image_directory . '/' . $file_name;
+        $file_path = $this->directory_path . '/' . $file_name;
 
         return $file_path;
     }
@@ -41,7 +45,7 @@ class ImageUploader
 
         $tmp_name = $file['tmp_name'];
 
-        $upload_path = $this->buildFilePath($tmp_name);
+        $upload_path = $this->buildUniquePath($tmp_name);
 
         if (!move_uploaded_file($tmp_name, $upload_path)) {
             throw new RuntimeException('Failed to upload file');
