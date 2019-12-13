@@ -22,6 +22,7 @@ $post_insert_validation_rules = [
         ],
     ],
     'image_file' => [
+        'required'   => false,
         'mime_types' => [
             'jpg'  => 'image/jpeg',
             'png'  => 'image/png',
@@ -44,7 +45,7 @@ $error_messages = [];
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
-        $inputs['image_file'] = is_empty_file($_FILES['image']) ? null : $_FILES['image'];
+        $inputs['image_file'] = $_FILES['image'] ?? null;
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);

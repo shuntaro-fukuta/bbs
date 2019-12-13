@@ -40,7 +40,7 @@ class Validator
         return $error_messages;
     }
 
-    private function validateRequired(string $name, ?string $input, bool $rule)
+    private function validateRequired(string $name, $input, bool $rule)
     {
         if ($rule === true && is_empty($input)) {
             return "{$name}を入力してください";
@@ -76,21 +76,19 @@ class Validator
 
     private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types)
     {
-        if (is_empty($uploaded_file)) {
+        if (is_empty($uploaded_file) || !$this->isFileUploaded($uploaded_file)) {
             return null;
+        }
+
+        if (!$this->isValidFileFormat($uploaded_file)) {
+            throw new LogicException('Invalid file format');
         }
 
         $tmp_name = $uploaded_file['tmp_name'];
 
-        if ($tmp_name === '') {
-            return null;
-        }
-
         if (!file_exists($tmp_name)) {
             throw new RuntimeException("{$tmp_name} file doesn't exist.");
         }
-
-        // TODO: $mime_typesのチェック
 
         if (!($mime_type = mime_content_type($tmp_name))) {
             throw new RuntimeException('Failed to get mime type from file');
@@ -105,6 +103,14 @@ class Validator
 
     private function validateFileSize(string $name, ?array $uploaded_file, array $limits)
     {
+        if (is_empty($uploaded_file) || !$this->isFileUploaded($uploaded_file)) {
+            return null;
+        }
+
+        if (!$this->isValidFileFormat($uploaded_file)) {
+            throw new LogicException('Invalid file format');
+        }
+
         foreach ($limits as $category => $byte) {
             if (!in_array($category, ['min', 'max'])) {
                 throw new LogicException('file_size validation category must be min or max');
@@ -115,33 +121,40 @@ class Validator
             }
         }
 
-        if (is_empty($uploaded_file)) {
-            return null;
-        }
-
-        $tmp_name = $uploaded_file['tmp_name'];
-
-        if ($tmp_name === '') {
-            return null;
-        }
-
-        $file_size = filesize($tmp_name);
-
-        if ($file_size === false) {
-            throw new RuntimeException('Failed to get filesize.');
-        }
+        $filesize = $uploaded_file['size'];
 
         if (isset($limits['min']) && isset($limits['max'])) {
-            if ($file_size < $limits['min'] || $file_size > $limits['max']) {
+            if ($filesize < $limits['min'] || $filesize > $limits['max']) {
                 // hamaco: 自分がユーザーだったときのことを考えてください。
                 //         例えば(1024x1024x8)バイト以下とか言われても辛くないですか？
                 return "{$name}のサイズは{$limits['min']}バイト以上{$limits['max']}バイト以下のファイルにしてください";
             }
-        } elseif (isset($limits['min']) && $file_size < $limits['min']) {
+        } elseif (isset($limits['min']) && $filesize < $limits['min']) {
             return "{$name}のサイズは{$limits['min']}バイト以上にしてください";
-        } elseif (isset($limits['max']) && $file_size > $limits['max']) {
+        } elseif (isset($limits['max']) && $filesize > $limits['max']) {
             return "{$name}のサイズは{$limits['max']}バイト以下にしてください";
         }
+    }
+
+    private function isValidFileFormat(array $file)
+    {
+        return (
+            isset($file['name'])     &&
+            isset($file['type'])     &&
+            isset($file['tmp_name']) &&
+            isset($file['error'])    &&
+            isset($file['size'])
+        );
+    }
+
+    private function isFileUploaded(array $file)
+    {
+        // FIXME: !isset($file['error']) を考慮できてない
+        if (isset($file['error']) && $file['error'] === 4) {
+            return false;
+        }
+
+        return true;
     }
 
     private function validateDigit(string $name, ?string $input, int $digit)

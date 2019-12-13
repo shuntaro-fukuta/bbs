@@ -37,20 +37,3 @@ function trim_values(array $keys, array $values) {
 
     return $trimmed_values;
 }
-
-function is_valid_uploaded_file(array $file)
-    {
-        if (
-            !isset($file['name'])     ||
-            !isset($file['type'])     ||
-            !isset($file['tmp_name']) ||
-            !isset($file['error'])    ||
-            !isset($file['size'])
-        ) {
-            return false;
-        }
-
-
-
-        return false;
-    }
