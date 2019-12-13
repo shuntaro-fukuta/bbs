@@ -74,8 +74,8 @@ class Validator
         }
     }
 
-    // hamaco: クラスの｛は次の行
-    private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types) {
+    private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types)
+    {
         if (is_empty($uploaded_file)) {
             return null;
         }
@@ -87,8 +87,7 @@ class Validator
         }
 
         if (!file_exists($tmp_name)) {
-            // hamaco: これは使ってるコードを直さないといけない不具合なのか？
-            throw new LogicException("{$tmp_name} file doesn't exist.");
+            throw new RuntimeException("{$tmp_name} file doesn't exist.");
         }
 
         // TODO: $mime_typesのチェック

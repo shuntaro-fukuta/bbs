@@ -47,17 +47,10 @@ function is_valid_uploaded_file(array $file)
             !isset($file['error'])    ||
             !isset($file['size'])
         ) {
-            return true;
+            return false;
         }
 
-        if (
-            $file['name']     === '' ||
-            $file['type']     === '' ||
-            $file['tmp_name'] === '' ||
-            $file['size']     === 0
-        ) {
-            return true;
-        }
+
 
         return false;
     }
