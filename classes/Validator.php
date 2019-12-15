@@ -125,14 +125,19 @@ class Validator
 
         if (isset($limits['min']) && isset($limits['max'])) {
             if ($filesize < $limits['min'] || $filesize > $limits['max']) {
-                // hamaco: 自分がユーザーだったときのことを考えてください。
-                //         例えば(1024x1024x8)バイト以下とか言われても辛くないですか？
-                return "{$name}のサイズは{$limits['min']}バイト以上{$limits['max']}バイト以下のファイルにしてください";
+                $min = convert_byte_to_display($limits['min']);
+                $max = convert_byte_to_display($limits['max']);
+
+                return "{$name}のサイズは{$min}以上{$max}以下のファイルにしてください";
             }
         } elseif (isset($limits['min']) && $filesize < $limits['min']) {
-            return "{$name}のサイズは{$limits['min']}バイト以上にしてください";
+            $min = convert_byte_to_display($limits['min']);
+
+            return "{$name}のサイズは{$min}以上にしてください";
         } elseif (isset($limits['max']) && $filesize > $limits['max']) {
-            return "{$name}のサイズは{$limits['max']}バイト以下にしてください";
+            $max = convert_byte_to_display($limits['max']);
+
+            return "{$name}のサイズは{$max}以下にしてください";
         }
     }
 

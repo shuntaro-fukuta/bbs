@@ -27,6 +27,7 @@ $post_edit_validation_rules = [
     ],
     'image_file' => [
         'mime_types' => [
+            'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
             'png'  => 'image/png',
             'gif'  => 'image/gif',
@@ -38,6 +39,7 @@ $post_edit_validation_rules = [
 ];
 
 $posts = new Posts();
+
 
 try {
     $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);

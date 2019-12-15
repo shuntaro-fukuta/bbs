@@ -24,12 +24,13 @@ $post_insert_validation_rules = [
     'image_file' => [
         'required'   => false,
         'mime_types' => [
+            'jpeg' => 'image/jpeg',
             'jpg'  => 'image/jpeg',
             'png'  => 'image/png',
             'gif'  => 'image/gif',
         ],
         'file_size' => [
-            'max' => 1000000,
+            'max' => 1048576,
         ],
     ],
     'password' => [

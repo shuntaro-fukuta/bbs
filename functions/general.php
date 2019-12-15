@@ -37,3 +37,35 @@ function trim_values(array $keys, array $values) {
 
     return $trimmed_values;
 }
+
+function convert_byte_to_display(int $byte) {
+    if ($byte < 0) {
+        throw new InvalidArgumentException('Byte must be greater than or equal to 0');
+    }
+
+    if ($byte < 1024) {
+        return $byte . 'B';
+    }
+
+    if ($byte < 1024 * 1024) {
+        $kilobyte = round($byte / 1024, 1);
+
+        return  $kilobyte . 'KB';
+    }
+
+    if ($byte < 1024 * 1024 * 1024) {
+        $megabyte = round($byte / (1024 * 1024), 1);
+
+        return $megabyte . 'MB';
+    }
+
+    if ($byte < (1024 * 1024 * 1024 * 1024)) {
+        $gigabyte = round($byte / (1024 * 1024 * 1024), 1);
+
+        return $gigabyte . 'GB';
+    }
+
+    $terabyte = round($byte / (1024 * 1024 * 1024 * 1024), 1);
+
+    return $terabyte . 'TB';
+}
