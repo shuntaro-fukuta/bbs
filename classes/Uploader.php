@@ -65,11 +65,19 @@ class Uploader
 
     protected function createUniqueFilename(string $extension)
     {
+        if (empty($extension)) {
+            return false;
+        }
+
         return uniqid(mt_rand(), true) . '.' . $extension;
     }
 
     protected function getExtension(string $file_path)
     {
+        if (empty($file_path) || !file_exists($file_path)) {
+            return false;
+        }
+
         if (!($mime_type = mime_content_type($file_path))) {
             return false;
         }
