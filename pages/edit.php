@@ -12,34 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isse
     exit;
 }
 
-$post_edit_validation_rules = [
-    'title' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 32,
-        ],
-    ],
-    'comment' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 200,
-        ],
-    ],
-    'image_file' => [
-        'mime_types' => [
-            'jpeg' => 'image/jpeg',
-            'jpg'  => 'image/jpeg',
-            'png'  => 'image/png',
-            'gif'  => 'image/gif',
-        ],
-        'file_size' => [
-            'max' => 1024 * 1024,
-        ],
-    ],
-];
-
 $posts = new Posts();
 
 try {
@@ -65,7 +37,7 @@ try {
         $inputs['image_file'] = get_file('image');
 
         $validator = new Validator();
-        $validator->setAttributeValidationRules($post_edit_validation_rules);
+        $validator->setAttributeValidationRules($posts->getValidationRule());
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {

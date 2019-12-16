@@ -6,41 +6,6 @@ require_once(__DIR__ . '/../classes/Paginator.php');
 require_once(__DIR__ . '/../classes/Posts.php');
 require_once(__DIR__ . '/../classes/Uploader.php');
 
-// ebine
-// このバリデーションルールは、Postsクラスが持つべきものだよね
-$post_insert_validation_rules = [
-    'title' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 32,
-        ],
-    ],
-    'comment' => [
-        'required' => true,
-        'length'   => [
-            'min' => 10,
-            'max' => 200,
-        ],
-    ],
-    'image_file' => [
-        'required'   => false,
-        'mime_types' => [
-            'jpeg' => 'image/jpeg',
-            'jpg'  => 'image/jpeg',
-            'png'  => 'image/png',
-            'gif'  => 'image/gif',
-        ],
-        'file_size' => [
-            'max' => 1024 * 1024,
-        ],
-    ],
-    'password' => [
-        'required' => false,
-        'digit'    => 4,
-    ],
-];
-
 $posts = new Posts();
 
 $error_messages = [];
@@ -51,7 +16,7 @@ try {
         $inputs['image_file'] = get_file('image');
 
         $validator = new Validator();
-        $validator->setAttributeValidationRules($post_insert_validation_rules);
+        $validator->setAttributeValidationRules($posts->getValidationRule());
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
