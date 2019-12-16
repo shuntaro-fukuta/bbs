@@ -70,6 +70,10 @@ function convert_byte_unit(int $byte) {
     return $terabyte . 'TB';
 }
 
-function is_file_uploaded(array $file) {
-    return (isset($file['tmp_name']) && !empty($file['tmp_name']));
+function get_file(string $name) {
+    if (isset($_FILES[$name]) && is_uploaded_file($_FILES[$name]['tmp_name'])) {
+        return $_FILES[$name];
+    }
+
+    return null;
 }

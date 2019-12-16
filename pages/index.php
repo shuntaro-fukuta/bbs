@@ -45,6 +45,7 @@ $error_messages = [];
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+<<<<<<< HEAD
         $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
 
         if (isset($_FILES['image']) && is_file_uploaded($_FILES['image'])) {
@@ -52,6 +53,10 @@ try {
         } else {
             $inputs['image_file'] = null;
         }
+=======
+        $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
+        $inputs['image_file'] = get_file('image');
+>>>>>>> d68bb66... get_file関数を作成
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);
