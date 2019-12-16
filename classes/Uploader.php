@@ -3,9 +3,8 @@
 class Uploader
 {
     protected $root_path;
-    protected $directory_path;
-    protected $upload_directory = 'uploads';
-    protected $mimetypes        = [
+    protected $directory_path = '/uploads';
+    protected $mimetypes      = [
         'jpeg' => 'image/jpeg',
         'jpg'  => 'image/jpeg',
         'png'  => 'image/png',
@@ -13,18 +12,15 @@ class Uploader
         // ... その他MIMEタイプ
     ];
 
-    public function __construct(string $directory_path = null)
+    public function __construct()
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
-        $this->setDirectoryPath($directory_path);
     }
 
-    public function setDirectoryPath(?string $path)
+    public function setDirectoryPath(string $directory_path)
     {
-        if (empty($path)) {
-            $directory_path = '/' . $this->directory_name;
-        } else {
-            $directory_path = '/' . $path;
+        if (empty($directory_path)) {
+            throw new InvalidArgumentException('Invalid path.');
         }
 
         if (!file_exists($this->root_path . $directory_path)) {
