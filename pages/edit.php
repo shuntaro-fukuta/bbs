@@ -58,9 +58,7 @@ try {
 
                     $uploaded_path = $uploader->upload($inputs['image_file']);
 
-                    // ebine
-                    // テストしてる？変数名間違っとるよ
-                    $insert_values['image_path'] = $uploaded_path;
+                    $update_values['image_path'] = $uploaded_path;
                 }
             }
 
