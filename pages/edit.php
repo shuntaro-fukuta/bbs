@@ -25,14 +25,18 @@ try {
     $previous_page     = $_POST['previous_page'] ?? 1;
     $previous_page_url = "index.php?page={$previous_page}";
 
-    $exists_password     = isset($record['password']);
-    // ebine
-    // パスワードが空じゃなかったらチェックをするわけなので、
-    // その if 文はちゃんと書きましょうね
-    $is_correct_password = password_verify($_POST['password'], $record['password']);
-    $do_edit             = isset($_POST['do_edit']);
+    $exists_password     = false;
+    $is_correct_password = false;
 
-    if ($exists_password && $is_correct_password && $do_edit) {
+    if (isset($record['password'])) {
+        $exists_password = true;
+
+        if (password_verify($_POST['password'], $record['password'])) {
+            $is_correct_password = true;
+        }
+    }
+
+    if ($is_correct_password && isset($_POST['do_edit'])) {
         $inputs               = trim_values(['title', 'comment'], $_POST);
         $inputs['image_file'] = get_file('image');
 

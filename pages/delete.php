@@ -21,11 +21,18 @@ try {
     $previous_page     = $_POST['previous_page'] ?? 1;
     $previous_page_url = "index.php?page={$previous_page}";
 
-    $exists_password     = isset($record['password']);
-    $is_correct_password = password_verify($_POST['password'], $record['password']);
-    $do_delete           = isset($_POST['do_delete']);
+    $exists_password     = false;
+    $is_correct_password = false;
 
-    if ($exists_password && $is_correct_password && $do_delete) {
+    if (isset($record['password'])) {
+        $exists_password = true;
+
+        if (password_verify($_POST['password'], $record['password'])) {
+            $is_correct_password = true;
+        }
+    }
+
+    if ($is_correct_password && isset($_POST['do_delete'])) {
         unlink($record['image_path']);
         $posts->delete([['id', '=', $_POST['id']]]);
 
