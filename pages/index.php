@@ -4,7 +4,7 @@ require_once(dirname(__FILE__) . '/../functions/general.php');
 require_once(dirname(__FILE__) . '/../classes/Validator.php');
 require_once(dirname(__FILE__) . '/../classes/Paginator.php');
 require_once(dirname(__FILE__) . '/../classes/Posts.php');
-require_once(dirname(__FILE__) . '/../classes/ImageUploader.php');
+require_once(dirname(__FILE__) . '/../classes/Uploader.php');
 
 $post_insert_validation_rules = [
     'title' => [
@@ -69,7 +69,7 @@ try {
             ];
 
             if (!is_null($inputs['image_file'])) {
-                $uploader = new ImageUploader();
+                $uploader = new Uploader();
 
                 if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
                     $insert_values['image_path'] = $uploaded_path;

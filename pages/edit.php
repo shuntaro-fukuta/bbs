@@ -3,7 +3,7 @@
 require_once(dirname(__FILE__) . '/../functions/general.php');
 require_once(dirname(__FILE__) . '/../classes/Validator.php');
 require_once(dirname(__FILE__) . '/../classes/Posts.php');
-require_once(dirname(__FILE__) . '/../classes/ImageUploader.php');
+require_once(dirname(__FILE__) . '/../classes/Uploader.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
@@ -81,7 +81,7 @@ try {
                 $update_values['image_path'] = null;
             } else {
                 if (!is_null($inputs['image_file'])) {
-                    $uploader = new ImageUploader();
+                    $uploader = new Uploader();
 
                     if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
                         $update_values['image_path'] = $uploaded_path;
