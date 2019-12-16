@@ -33,7 +33,7 @@ $post_edit_validation_rules = [
             'gif'  => 'image/gif',
         ],
         'file_size' => [
-            'max' => 1000000,
+            'max' => 1024 * 1024,
         ],
     ],
 ];
