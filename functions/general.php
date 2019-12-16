@@ -38,7 +38,7 @@ function trim_values(array $keys, array $values) {
     return $trimmed_values;
 }
 
-function convert_byte_to_display(int $byte) {
+function convert_byte_unit(int $byte) {
     if ($byte < 0) {
         throw new InvalidArgumentException('Byte must be greater than or equal to 0');
     }

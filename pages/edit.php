@@ -40,7 +40,6 @@ $post_edit_validation_rules = [
 
 $posts = new Posts();
 
-
 try {
     $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 

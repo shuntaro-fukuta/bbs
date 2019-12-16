@@ -131,17 +131,17 @@ class Validator
 
         if (isset($limits['min']) && isset($limits['max'])) {
             if ($filesize < $limits['min'] || $filesize > $limits['max']) {
-                $min = convert_byte_to_display($limits['min']);
-                $max = convert_byte_to_display($limits['max']);
+                $min = convert_byte_unit($limits['min']);
+                $max = convert_byte_unit($limits['max']);
 
                 return "{$name}のサイズは{$min}以上{$max}以下のファイルにしてください";
             }
         } elseif (isset($limits['min']) && $filesize < $limits['min']) {
-            $min = convert_byte_to_display($limits['min']);
+            $min = convert_byte_unit($limits['min']);
 
             return "{$name}のサイズは{$min}以上にしてください";
         } elseif (isset($limits['max']) && $filesize > $limits['max']) {
-            $max = convert_byte_to_display($limits['max']);
+            $max = convert_byte_unit($limits['max']);
 
             return "{$name}のサイズは{$max}以下にしてください";
         }
