@@ -5,10 +5,9 @@ class Uploader
     protected $root_path;
     protected $directory_path = '/uploads';
     protected $mimetypes      = [
-        'jpeg' => 'image/jpeg',
-        'jpg'  => 'image/jpeg',
-        'png'  => 'image/png',
-        'gif'  => 'image/gif',
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
         // ... その他MIMEタイプ
     ];
 

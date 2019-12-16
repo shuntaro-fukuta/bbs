@@ -1,10 +1,10 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../functions/general.php');
-require_once(dirname(__FILE__) . '/../classes/Validator.php');
-require_once(dirname(__FILE__) . '/../classes/Paginator.php');
-require_once(dirname(__FILE__) . '/../classes/Posts.php');
-require_once(dirname(__FILE__) . '/../classes/Uploader.php');
+require_once(__DIR__ . '/../functions/general.php');
+require_once(__DIR__ . '/../classes/Validator.php');
+require_once(__DIR__ . '/../classes/Paginator.php');
+require_once(__DIR__ . '/../classes/Posts.php');
+require_once(__DIR__ . '/../classes/Uploader.php');
 
 $post_insert_validation_rules = [
     'title' => [

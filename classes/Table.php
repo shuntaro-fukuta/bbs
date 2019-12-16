@@ -1,7 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../functions/general.php');
-require_once(dirname(__FILE__) . '/../database/db_connect.php');
+require_once(__DIR__ . '/../functions/general.php');
+require_once(__DIR__ . '/../database/db_connect.php');
 
 abstract class Table
 {

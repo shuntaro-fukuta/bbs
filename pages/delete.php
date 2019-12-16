@@ -1,7 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../functions/general.php');
-require_once(dirname(__FILE__) . '/../classes/Posts.php');
+require_once(__DIR__ . '/../functions/general.php');
+require_once(__DIR__ . '/../classes/Posts.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
