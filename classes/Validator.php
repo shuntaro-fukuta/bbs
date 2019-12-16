@@ -111,27 +111,19 @@ class Validator
             throw new LogicException('Invalid file format');
         }
 
-        // ebine
-        // ここは、回すのではなく素直に書いたほうがいい
-        /*
         if (isset($limits['min'])) {
-        }
-        if (isset($limits['max'])) {
-        }
-        */
-
-        foreach ($limits as $category => $byte) {
-            if (!in_array($category, ['min', 'max'])) {
-                throw new LogicException('file_size validation category must be min or max');
+            if ($limits['min'] < 1) {
+                throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 1.');
             }
+        }
 
-            if (($category === 'min' && $byte < 1) || ($category === 'max' && $byte < 2)) {
-                throw new LogicException('file_size validation value is invalid.');
+        if (isset($limits['max'])) {
+            if ($limits['max'] < 2) {
+                throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 2.');
             }
         }
 
         $tmp_name = $uploaded_file['tmp_name'];
-
         if (!file_exists($tmp_name)) {
             throw new RuntimeException("{$tmp_name} file doesn't exist.");
         }
