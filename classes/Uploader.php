@@ -33,14 +33,28 @@ class Uploader
         $this->directory_path = $directory_path;
     }
 
-    public function upload(array $file)
+    public function upload(array $file, string $file_name = null)
     {
         $tmp_name = $file['tmp_name'] ?? null;
         if (empty($tmp_name)) {
-            throw new Exception('Invalid file.');
+            throw new RuntimeException('Invalid file passed.');
         }
 
-        $upload_path = $this->directory_path . '/' . $this->createUniqueFilename($tmp_name);
+        $extension = $this->getExtension($tmp_name);
+        if ($extension === false) {
+            throw new RuntimeException('Failed to get extension.');
+        }
+
+        if (empty($file_name)) {
+            $file_name = $this->createUniqueFilename($extension);
+            if ($file_name === false) {
+                throw new RuntimeException('Failed to create filename.');
+            }
+
+            $upload_path = $this->directory_path . '/' . $file_name;
+        } else {
+            $upload_path = $this->directory_path . '/' . $file_name . $extension;
+        }
 
         if (!move_uploaded_file($tmp_name, $this->root_path . '/' . $upload_path)) {
             throw new RuntimeException('Failed to upload file.');
@@ -49,12 +63,21 @@ class Uploader
         return $upload_path;
     }
 
-    protected function createUniqueFilename(string $tmp_name)
+    protected function createUniqueFilename(string $extension)
     {
-        $mime_type = mime_content_type($tmp_name);
-
-        $extension = array_search($mime_type, $this->mimetypes);
-
         return uniqid(mt_rand(), true) . '.' . $extension;
+    }
+
+    protected function getExtension(string $file_path)
+    {
+        if (!($mime_type = mime_content_type($file_path))) {
+            return false;
+        }
+
+        if (!($extension = array_search($mime_type, $this->mimetypes))) {
+            return false;
+        }
+
+        return $extension;
     }
 }
