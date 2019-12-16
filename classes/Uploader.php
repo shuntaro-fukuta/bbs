@@ -23,6 +23,10 @@ class Uploader
             throw new InvalidArgumentException('Invalid path.');
         }
 
+        if (substr($directory_path, 0, 1) !== '/') {
+            throw new InvalidArgumentException("Path format must be '/dir1/dir2'.");
+        }
+
         if (!file_exists($this->root_path . $directory_path)) {
             mkdir($this->root_path . $directory_path, 0777, true);
         }
