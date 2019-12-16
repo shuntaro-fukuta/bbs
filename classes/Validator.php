@@ -76,7 +76,7 @@ class Validator
 
     private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types)
     {
-        if (is_null($uploaded_file)) {
+        if (empty($uploaded_file)) {
             return null;
         }
 
@@ -103,7 +103,7 @@ class Validator
 
     private function validateFileSize(string $name, ?array $uploaded_file, array $limits)
     {
-        if (is_null($uploaded_file)) {
+        if (empty($uploaded_file)) {
             return null;
         }
 

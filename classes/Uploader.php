@@ -38,7 +38,7 @@ class Uploader
     {
         $tmp_name = $file['tmp_name'] ?? null;
         if (empty($tmp_name)) {
-            throw new Exception('Invalid file format.');
+            throw new Exception('Invalid file.');
         }
 
         $upload_path = $this->directory_path . '/' . $this->createUniqueFilename($tmp_name);
