@@ -57,8 +57,13 @@ try {
     $do_edit             = isset($_POST['do_edit']);
 
     if ($exists_password && $is_correct_password && $do_edit) {
-        $inputs               = trim_values(['title', 'comment'], $_POST);
-        $inputs['image_file'] = $_FILES['image'] ?? null;
+        $inputs = trim_values(['title', 'comment'], $_POST);
+
+        if (isset($_FILES['image']['tmp_name']) && !empty($_FILES['image']['tmp_name'])) {
+            $inputs['image_file'] = $_FILES['image'];
+        } else {
+            $inputs['image_file'] = null;
+        }
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_edit_validation_rules);
@@ -76,7 +81,7 @@ try {
                 $update_values['image_path'] = null;
             } else {
                 if (!is_null($inputs['image_file'])) {
-                    $uploader = new ImageUploader('./uploads');
+                    $uploader = new ImageUploader();
 
                     if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
                         $update_values['image_path'] = $uploaded_path;

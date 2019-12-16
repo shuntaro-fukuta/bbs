@@ -2,60 +2,59 @@
 
 class ImageUploader
 {
-    private $upload_path;
-    private $mimetypes = [
+    private $root_path;
+    private $directory_path;
+    private $directory_name = 'uploads';
+    private $mimetypes      = [
         'jpeg' => 'image/jpeg',
         'jpg'  => 'image/jpeg',
         'png'  => 'image/png',
         'gif'  => 'image/gif',
     ];
 
-    public function __construct($upload_path)
+    public function __construct(string $directory_path = null, string $root_path = null)
     {
-        $this->setUploadPath($upload_path);
+        $this->root_path = empty($root_path) ? $_SERVER['DOCUMENT_ROOT'] : $root_path ;
+        $this->setDirectoryPath($directory_path);
     }
 
-    private function setUploadPath($path)
+    public function setDirectoryPath(?string $path)
     {
-        if (!file_exists($path)) {
-            mkdir($path, 0775, true);
+        if (empty($path)) {
+            $directory_path = '/' . $this->directory_name;
+        } else {
+            $directory_path = '/' . $path;
         }
 
-        $this->upload_path = $path;
+        if (!file_exists($this->root_path . $directory_path)) {
+            mkdir($this->root_path . $directory_path, 0777, true);
+        }
+
+        $this->directory_path = $directory_path;
     }
 
-    private function createUniqueFilename($tmp_name)
+    public function upload(array $file)
+    {
+        $tmp_name = $file['tmp_name'] ?? null;
+        if (empty($tmp_name)) {
+            throw new Exception('Invalid file format.');
+        }
+
+        $upload_path = $this->directory_path . '/' . $this->createUniqueFilename($tmp_name);
+
+        if (!move_uploaded_file($tmp_name, $this->root_path . '/' . $upload_path)) {
+            throw new RuntimeException('Failed to upload file.');
+        }
+
+        return $upload_path;
+    }
+
+    private function createUniqueFilename(string $tmp_name)
     {
         $mime_type = mime_content_type($tmp_name);
 
         $extension = array_search($mime_type, $this->mimetypes);
 
         return uniqid(mt_rand(), true) . '.' . $extension;
-    }
-
-    private function buildUploadPath($tmp_name)
-    {
-        $file_name = $this->createUniqueFilename($tmp_name);
-
-        $file_path = $this->upload_path . '/' . $file_name;
-
-        return $file_path;
-    }
-
-    public function upload(array $file)
-    {
-        if ($file === [] || !isset($file['tmp_name']) || $file['tmp_name'] === '') {
-            return false;
-        }
-
-        $tmp_name = $file['tmp_name'];
-
-        $upload_path = $this->buildUploadPath($tmp_name);
-
-        if (!move_uploaded_file($tmp_name, $upload_path)) {
-            throw new RuntimeException('Failed to upload file');
-        }
-
-        return $upload_path;
     }
 }

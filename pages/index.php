@@ -45,8 +45,13 @@ $error_messages = [];
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
-        $inputs['image_file'] = $_FILES['image'] ?? null;
+        $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
+
+        if (isset($_FILES['image']['tmp_name']) && !empty($_FILES['image']['tmp_name'])) {
+            $inputs['image_file'] = $_FILES['image'];
+        } else {
+            $inputs['image_file'] = null;
+        }
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);
@@ -64,12 +69,9 @@ try {
             ];
 
             if (!is_null($inputs['image_file'])) {
-                $uploader = new ImageUploader('./uploads');
+                $uploader = new ImageUploader();
 
                 if ($uploaded_path = $uploader->upload($inputs['image_file'])) {
-                    // hamaco: ここに入っているの相対パスになってしまっているから、
-                    //         ディレクトリ変わると読み込めなくなったりしない？
-                    //         動かす環境が変わっても困らないようにしてあげないといけない
                     $insert_values['image_path'] = $uploaded_path;
                 }
             }

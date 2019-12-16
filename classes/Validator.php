@@ -37,7 +37,7 @@ class Validator
             }
         }
 
-        return $error_messages;
+        return array_unique($error_messages);
     }
 
     private function validateRequired(string $name, $input, bool $rule)
@@ -76,7 +76,7 @@ class Validator
 
     private function validateMimetype(string $name, ?array $uploaded_file, array $mime_types)
     {
-        if (is_empty($uploaded_file) || !$this->isFileUploaded($uploaded_file)) {
+        if (is_null($uploaded_file)) {
             return null;
         }
 
@@ -103,7 +103,7 @@ class Validator
 
     private function validateFileSize(string $name, ?array $uploaded_file, array $limits)
     {
-        if (is_empty($uploaded_file) || !$this->isFileUploaded($uploaded_file)) {
+        if (is_null($uploaded_file)) {
             return null;
         }
 
@@ -121,7 +121,7 @@ class Validator
             }
         }
 
-        $filesize = $uploaded_file['size'];
+        $filesize = filesize($uploaded_file['tmp_name']);
 
         if (isset($limits['min']) && isset($limits['max'])) {
             if ($filesize < $limits['min'] || $filesize > $limits['max']) {
@@ -150,16 +150,6 @@ class Validator
             isset($file['error'])    &&
             isset($file['size'])
         );
-    }
-
-    private function isFileUploaded(array $file)
-    {
-        // FIXME: !isset($file['error']) を考慮できてない
-        if (isset($file['error']) && $file['error'] === 4) {
-            return false;
-        }
-
-        return true;
     }
 
     private function validateDigit(string $name, ?string $input, int $digit)
