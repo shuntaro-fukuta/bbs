@@ -37,9 +37,7 @@ class Validator
             }
         }
 
-        // ebine
-        // array_unique() いらないよね
-        return array_unique($error_messages);
+        return $error_messages;
     }
 
     private function validateRequired(string $name, $input, bool $rule)

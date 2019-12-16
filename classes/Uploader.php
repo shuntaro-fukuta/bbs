@@ -62,7 +62,7 @@ class Uploader
             throw new RuntimeException('Failed to upload file.');
         }
 
-        return $uploaßd_path;
+        return $upload_path;
     }
 
     // ebine
