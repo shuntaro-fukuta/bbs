@@ -121,6 +121,12 @@ class Validator
             }
         }
 
+        $tmp_name = $uploaded_file['tmp_name'];
+
+        if (!file_exists($tmp_name)) {
+            throw new RuntimeException("{$tmp_name} file doesn't exist.");
+        }
+
         $filesize = filesize($uploaded_file['tmp_name']);
 
         if (isset($limits['min']) && isset($limits['max'])) {

@@ -69,3 +69,7 @@ function convert_byte_to_display(int $byte) {
 
     return $terabyte . 'TB';
 }
+
+function is_file_uploaded(array $file) {
+    return (isset($file['tmp_name']) && !empty($file['tmp_name']));
+}
