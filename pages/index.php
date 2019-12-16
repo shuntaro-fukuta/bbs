@@ -45,8 +45,13 @@ $error_messages = [];
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
-        $inputs['image_file'] = is_file_uploaded($_FILES['image']) ? $_FILES['image'] : null;
+        $inputs = trim_values(['title', 'comment' , 'password'], $_POST);
+
+        if (isset($_FILES['image']) && is_file_uploaded($_FILES['image'])) {
+            $inputs['image_file'] = $_FILES['image'];
+        } else {
+            $inputs['image_file'] = null;
+        }
 
         $validator = new Validator();
         $validator->setAttributeValidationRules($post_insert_validation_rules);
