@@ -74,10 +74,6 @@ class Uploader
 
     protected function getExtension(string $file_path)
     {
-        if (empty($file_path) || !file_exists($file_path)) {
-            return false;
-        }
-
         if (!($mime_type = mime_content_type($file_path))) {
             return false;
         }
