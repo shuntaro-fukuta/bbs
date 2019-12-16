@@ -43,6 +43,10 @@ function convert_byte_unit(int $byte) {
         throw new InvalidArgumentException('Byte must be greater than or equal to 0');
     }
 
+    // ebine
+    // ここの実装、ださいよね。
+    // もうちょいキレイに実装しましょう。
+
     if ($byte < 1024) {
         return $byte . 'B';
     }

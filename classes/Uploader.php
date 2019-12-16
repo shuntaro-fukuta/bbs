@@ -53,6 +53,8 @@ class Uploader
 
             $upload_path = $this->directory_path . '/' . $file_name;
         } else {
+            // ebine
+            // '.' いれないとだめだよね
             $upload_path = $this->directory_path . '/' . $file_name . $extension;
         }
 
@@ -60,9 +62,13 @@ class Uploader
             throw new RuntimeException('Failed to upload file.');
         }
 
-        return $upload_path;
+        return $uploaßd_path;
     }
 
+    // ebine
+    // これってランダムな文字列を生成してるだけで、
+    // ランダムな文字列を生成するっていうのはわりと汎用的に使われるものなので、
+    // 関数としてつくちゃったほうがいい
     protected function createUniqueFilename(string $extension)
     {
         if (empty($extension)) {

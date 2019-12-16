@@ -37,6 +37,8 @@ class Validator
             }
         }
 
+        // ebine
+        // array_unique() いらないよね
         return array_unique($error_messages);
     }
 
@@ -110,6 +112,15 @@ class Validator
         if (!$this->isValidFileFormat($uploaded_file)) {
             throw new LogicException('Invalid file format');
         }
+
+        // ebine
+        // ここは、回すのではなく素直に書いたほうがいい
+        /*
+        if (isset($limits['min'])) {
+        }
+        if (isset($limits['max'])) {
+        }
+        */
 
         foreach ($limits as $category => $byte) {
             if (!in_array($category, ['min', 'max'])) {

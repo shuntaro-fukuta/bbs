@@ -5,6 +5,8 @@ require_once(__DIR__ . '/../classes/Validator.php');
 require_once(__DIR__ . '/../classes/Posts.php');
 require_once(__DIR__ . '/../classes/Uploader.php');
 
+// ebine
+// !isset($_POST['password']) が余計
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
     exit;
@@ -52,6 +54,9 @@ try {
     $previous_page_url = "index.php?page={$previous_page}";
 
     $exists_password     = isset($record['password']);
+    // ebine
+    // パスワードが空じゃなかったらチェックをするわけなので、
+    // その if 文はちゃんと書きましょうね
     $is_correct_password = password_verify($_POST['password'], $record['password']);
     $do_edit             = isset($_POST['do_edit']);
 
@@ -70,6 +75,8 @@ try {
             ];
 
             if (isset($_POST['delete_image'])) {
+                // ebine
+                // テストしてる？画像消えてないよ。
                 unlink($record['image_path']);
 
                 $update_values['image_path'] = null;
@@ -79,6 +86,8 @@ try {
 
                     $uploaded_path = $uploader->upload($inputs['image_file']);
 
+                    // ebine
+                    // テストしてる？変数名間違っとるよ
                     $insert_values['image_path'] = $uploaded_path;
                 }
             }

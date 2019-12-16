@@ -6,6 +6,8 @@ require_once(__DIR__ . '/../classes/Paginator.php');
 require_once(__DIR__ . '/../classes/Posts.php');
 require_once(__DIR__ . '/../classes/Uploader.php');
 
+// ebine
+// このバリデーションルールは、Postsクラスが持つべきものだよね
 $post_insert_validation_rules = [
     'title' => [
         'required' => true,
