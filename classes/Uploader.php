@@ -3,9 +3,9 @@
 class Uploader
 {
     protected $root_path;
-    protected $directory_name = 'uploads';
     protected $directory_path;
-    protected $mimetypes = [
+    protected $upload_directory = 'uploads';
+    protected $mimetypes        = [
         'jpeg' => 'image/jpeg',
         'jpg'  => 'image/jpeg',
         'png'  => 'image/png',
@@ -13,9 +13,9 @@ class Uploader
         // ... その他MIMEタイプ
     ];
 
-    public function __construct(string $directory_path = null, string $root_path = null)
+    public function __construct(string $directory_path = null)
     {
-        $this->root_path = empty($root_path) ? $_SERVER['DOCUMENT_ROOT'] : $root_path ;
+        $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setDirectoryPath($directory_path);
     }
 
