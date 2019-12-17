@@ -76,6 +76,7 @@ class Uploader
         }
 
         $delete_path = $this->root_path . $file_path;
+        // ここは例外を吐くべきじゃない
         if (!file_exists($delete_path)) {
             throw new Exception("{$delete_path} doesn't exist.");
         }

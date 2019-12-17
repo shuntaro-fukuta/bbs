@@ -12,6 +12,10 @@ abstract class Table
 
     public function __construct()
     {
+        if (empty($this->table_name)) {
+            throw new LogicException('table_name is not defined.');
+        }
+
         $this->mysqli = connect_mysqli();
     }
 
@@ -178,6 +182,10 @@ abstract class Table
 
     protected function bindParams(mysqli_stmt $stmt, array $columns, array $values)
     {
+        if (empty($this->bindParams)) {
+            throw new LogicException('bind_types is not defined.');
+        }
+
         $types = '';
         foreach ($columns as $column) {
             if (!isset($this->bind_types[$column])) {
