@@ -182,7 +182,7 @@ abstract class Table
 
     protected function bindParams(mysqli_stmt $stmt, array $columns, array $values)
     {
-        if (empty($this->bindParams)) {
+        if (empty($this->bind_types)) {
             throw new LogicException('bind_types is not defined.');
         }
 

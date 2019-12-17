@@ -28,9 +28,10 @@ try {
     if (isset($record['password'])) {
         $exists_password = true;
 
-        $input_password = $_POST['password'] ?? null;
-        if (password_verify($input_password, $record['password'])) {
-            $is_correct_password = true;
+        if (isset($_POST['password'])) {
+            if (password_verify($_POST['password'], $record['password'])) {
+                $is_correct_password = true;
+            }
         }
     }
 

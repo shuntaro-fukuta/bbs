@@ -76,13 +76,11 @@ class Uploader
         }
 
         $delete_path = $this->root_path . $file_path;
-        // ここは例外を吐くべきじゃない
-        if (!file_exists($delete_path)) {
-            throw new Exception("{$delete_path} doesn't exist.");
-        }
 
-        if (!unlink($this->root_path . $file_path)) {
-            throw new RuntimeException("Failed to delete file '{$delete_path}'.");
+        if (file_exists($delete_path)) {
+            if (!unlink($this->root_path . $file_path)) {
+                throw new RuntimeException("Failed to delete file '{$delete_path}'.");
+            }
         }
     }
 
