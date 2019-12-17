@@ -4,9 +4,9 @@ require_once(__DIR__ . '/../functions/general.php');
 
 class Uploader
 {
-    protected $root_path;
-    protected $directory_path = '/uploads';
-    protected $mimetypes      = [
+    private $root_path;
+    private $directory_path = '/uploads';
+    private $mimetypes      = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
         'gif' => 'image/gif',
@@ -56,7 +56,7 @@ class Uploader
         return $upload_path;
     }
 
-    protected function getExtension(string $file_path)
+    private function getExtension(string $file_path)
     {
         if (!($mime_type = mime_content_type($file_path))) {
             return false;
