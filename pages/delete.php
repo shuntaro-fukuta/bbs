@@ -36,8 +36,10 @@ try {
     }
 
     if ($is_correct_password && isset($_POST['do_delete'])) {
-        $uploader = new Uploader();
-        $uploader->delete($record['image_path']);
+        if (isset($record['image_path'])) {
+            $uploader = new Uploader();
+            $uploader->delete($record['image_path']);
+        }
 
         $posts->delete([['id', '=', $_POST['id']]]);
 
