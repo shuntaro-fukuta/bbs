@@ -72,7 +72,7 @@ class Uploader
     public function delete(string $file_path)
     {
         if (!$this->isValidPath($file_path)) {
-            throw new InvalidArgumentException("Path format must be '/directory/file.");
+            throw new InvalidArgumentException("Path format must be '/directory/file'.");
         }
 
         $delete_path = $this->root_path . $file_path;

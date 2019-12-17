@@ -81,7 +81,7 @@ class Validator
         }
 
         if (!$this->isValidFileFormat($uploaded_file)) {
-            throw new LogicException('Invalid file format');
+            throw new RuntimeException('Invalid file format');
         }
 
         $tmp_name = $uploaded_file['tmp_name'];
@@ -108,19 +108,15 @@ class Validator
         }
 
         if (!$this->isValidFileFormat($uploaded_file)) {
-            throw new LogicException('Invalid file format');
+            throw new RuntimeException('Invalid file format');
         }
 
-        if (isset($limits['min'])) {
-            if ($limits['min'] < 1) {
-                throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 1.');
-            }
+        if (isset($limits['min']) && $limits['min'] < 1) {
+            throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 1.');
         }
 
-        if (isset($limits['max'])) {
-            if ($limits['max'] < 2) {
-                throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 2.');
-            }
+        if (isset($limits['max']) && $limits['max'] < 2) {
+            throw new LogicException('Minimum byte of file_size validation must be greater than or equal to 2.');
         }
 
         $tmp_name = $uploaded_file['tmp_name'];
