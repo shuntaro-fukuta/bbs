@@ -72,4 +72,18 @@ class Uploader
 
         return $extension;
     }
+
+    public function delete(string $file_path)
+    {
+        if (substr($file_path, 0, 1) !== '/') {
+            throw new InvalidArgumentException("Path format must be '/dir1/dir2'.");
+        }
+
+        $delete_path = $this->root_path . $file_path;
+        if (!file_exists($delete_path)) {
+            throw new Exception("{$delete_path} doesn't exist.");
+        }
+
+        unlink($this->root_path . $file_path);
+    }
 }

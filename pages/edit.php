@@ -51,9 +51,8 @@ try {
             ];
 
             if (isset($_POST['delete_image'])) {
-                // ebine
-                // テストしてる？画像消えてないよ。
-                unlink($record['image_path']);
+                $uploader = new Uploader();
+                $uploader->delete($record['image_path']);
 
                 $update_values['image_path'] = null;
             } else {

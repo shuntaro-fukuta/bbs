@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../functions/general.php');
 require_once(__DIR__ . '/../classes/Posts.php');
+require_once(__DIR__ . '/../classes/Uploader.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
@@ -33,7 +34,9 @@ try {
     }
 
     if ($is_correct_password && isset($_POST['do_delete'])) {
-        unlink($record['image_path']);
+        $uploader = new Uploader();
+        $uploader->delete($record['image_path']);
+
         $posts->delete([['id', '=', $_POST['id']]]);
 
         header("Location: {$previous_page_url}");
