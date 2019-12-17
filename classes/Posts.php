@@ -45,9 +45,4 @@ class Posts extends Table
             'digit'    => 4,
         ],
     ];
-
-    public function getValidationRule()
-    {
-        return $this->validation_rule;
-    }
 }

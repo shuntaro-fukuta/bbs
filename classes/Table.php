@@ -8,6 +8,7 @@ abstract class Table
     protected $mysqli;
     protected $table_name;
     protected $bind_types;
+    protected $validation_rule;
 
     public function __construct()
     {
@@ -244,5 +245,10 @@ abstract class Table
         $where_bind_items['values']  = $values;
 
         return $where_bind_items;
+    }
+
+    public function getValidationRule()
+    {
+        return $this->validation_rule;
     }
 }
