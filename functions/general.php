@@ -81,3 +81,19 @@ function get_file(string $name) {
 
     return null;
 }
+
+function create_random_string(int $length = 10){
+    if ($length < 1) {
+        throw new InvalidArgumentException('Length must be greater than or equal to 1.');
+    }
+
+    $character_list  = array_merge(range('a', 'z'), range('A', 'Z'), range('0', '9'));
+    $character_count = count($character_list);
+
+    $string = '';
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $character_list[mt_rand(0, $character_count - 1)];
+    }
+
+    return $string;
+}

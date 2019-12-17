@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/../functions/general.php');
+
 class Uploader
 {
     protected $root_path;
@@ -46,36 +48,16 @@ class Uploader
         }
 
         if (empty($file_name)) {
-            $file_name = $this->createUniqueFilename($extension);
-            if ($file_name === false) {
-                throw new RuntimeException('Failed to create filename.');
-            }
-
-            $upload_path = $this->directory_path . '/' . $file_name;
-        } else {
-            // ebine
-            // '.' いれないとだめだよね
-            $upload_path = $this->directory_path . '/' . $file_name . $extension;
+            $file_name = create_random_string(20);
         }
+
+        $upload_path = $this->directory_path . '/' . $file_name . '.' . $extension;
 
         if (!move_uploaded_file($tmp_name, $this->root_path . '/' . $upload_path)) {
             throw new RuntimeException('Failed to upload file.');
         }
 
         return $upload_path;
-    }
-
-    // ebine
-    // これってランダムな文字列を生成してるだけで、
-    // ランダムな文字列を生成するっていうのはわりと汎用的に使われるものなので、
-    // 関数としてつくちゃったほうがいい
-    protected function createUniqueFilename(string $extension)
-    {
-        if (empty($extension)) {
-            return false;
-        }
-
-        return uniqid(mt_rand(), true) . '.' . $extension;
     }
 
     protected function getExtension(string $file_path)
