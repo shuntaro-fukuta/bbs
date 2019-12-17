@@ -84,6 +84,8 @@ class Uploader
             throw new Exception("{$delete_path} doesn't exist.");
         }
 
-        unlink($this->root_path . $file_path);
+        if (!unlink($this->root_path . $file_path)) {
+            throw new RuntimeException("Failed to delete file '{$delete_path}'.");
+        }
     }
 }
