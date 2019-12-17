@@ -43,35 +43,19 @@ function convert_byte_unit(int $byte) {
         throw new InvalidArgumentException('Byte must be greater than or equal to 0');
     }
 
-    // ebine
-    // ここの実装、ださいよね。
-    // もうちょいキレイに実装しましょう。
+    $unit_min_bytes = [
+        'TB' => pow(1024, 4),
+        'GB' => pow(1024, 3),
+        'MB' => pow(1024, 2),
+        'KB' => pow(1024, 1),
+        'B'  => pow(1024, 0),
+    ];
 
-    if ($byte < 1024) {
-        return $byte . 'B';
+    foreach ($unit_min_bytes as $unit => $min_byte) {
+        if ($byte >= $min_byte) {
+            return round($byte / $min_byte) . $unit;
+        }
     }
-
-    if ($byte < 1024 * 1024) {
-        $kilobyte = round($byte / 1024, 1);
-
-        return  $kilobyte . 'KB';
-    }
-
-    if ($byte < 1024 * 1024 * 1024) {
-        $megabyte = round($byte / (1024 * 1024), 1);
-
-        return $megabyte . 'MB';
-    }
-
-    if ($byte < (1024 * 1024 * 1024 * 1024)) {
-        $gigabyte = round($byte / (1024 * 1024 * 1024), 1);
-
-        return $gigabyte . 'GB';
-    }
-
-    $terabyte = round($byte / (1024 * 1024 * 1024 * 1024), 1);
-
-    return $terabyte . 'TB';
 }
 
 function get_file(string $name) {
@@ -91,7 +75,7 @@ function create_random_string(int $length = 10){
     $character_count = count($character_list);
 
     $string = '';
-    for ($i = 0; $i < $length; $i++) {
+    for ($i = 1; $i <= $length; $i++) {
         $string .= $character_list[mt_rand(0, $character_count - 1)];
     }
 
