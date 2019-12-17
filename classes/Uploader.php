@@ -20,11 +20,7 @@ class Uploader
 
     public function setDirectoryPath(string $directory_path)
     {
-        if (empty($directory_path)) {
-            throw new InvalidArgumentException('Invalid path.');
-        }
-
-        if (substr($directory_path, 0, 1) !== '/') {
+        if (!$this->isValidPath($directory_path)) {
             throw new InvalidArgumentException("Path format must be '/dir1/dir2'.");
         }
 
@@ -75,8 +71,8 @@ class Uploader
 
     public function delete(string $file_path)
     {
-        if (substr($file_path, 0, 1) !== '/') {
-            throw new InvalidArgumentException("Path format must be '/dir1/dir2'.");
+        if (!$this->isValidPath($file_path)) {
+            throw new InvalidArgumentException("Path format must be '/directory/file.");
         }
 
         $delete_path = $this->root_path . $file_path;
@@ -87,5 +83,18 @@ class Uploader
         if (!unlink($this->root_path . $file_path)) {
             throw new RuntimeException("Failed to delete file '{$delete_path}'.");
         }
+    }
+
+    private function isValidPath(string $path)
+    {
+        if (empty($path)) {
+            return false;
+        }
+
+        if (substr($path, 0, 1) !== '/') {
+            return false;
+        }
+
+        return true;
     }
 }
