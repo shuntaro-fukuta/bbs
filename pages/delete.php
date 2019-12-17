@@ -4,7 +4,7 @@ require_once(__DIR__ . '/../functions/general.php');
 require_once(__DIR__ . '/../classes/Posts.php');
 require_once(__DIR__ . '/../classes/Uploader.php');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['password']) || !isset($_POST['id'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id'])) {
     header('HTTP/1.0 400 Bad Request');
     exit;
 }
@@ -28,7 +28,8 @@ try {
     if (isset($record['password'])) {
         $exists_password = true;
 
-        if (password_verify($_POST['password'], $record['password'])) {
+        $input_password = $_POST['password'] ?? null;
+        if (password_verify($input_password, $record['password'])) {
             $is_correct_password = true;
         }
     }
