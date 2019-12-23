@@ -4,31 +4,42 @@ class Uploader
 {
     const UPLOAD_DIR_NAME = 'upload';
 
-    private $root_path;
-    private $directory_path = '/upload';
-    private $mimetypes      = [
+    private $upload_dir_path = '';
+    private $mimetypes       = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
         'gif' => 'image/gif',
         // ... その他MIMEタイプ
     ];
 
-    public function __construct()
+    public function __construct(string $dir_path = null)
     {
-        $this->root_path = $_SERVER['DOCUMENT_ROOT'];
+        $this->setUploadDirPath($dir_path);
     }
 
-    public function setDirectoryPath(string $directory_path)
+    public function setUploadDirPath(?string $dir_path, $append = true)
     {
-        if (!$this->isValidPath($directory_path)) {
-            throw new InvalidArgumentException("Path format must be '/dir1/dir2'.");
+        if (empty($dir_path)) {
+            $upload_dir_path = PROJECT_ROOT . DIR_SEP . self::UPLOAD_DIR_NAME;
+        } else {
+            $upload_dir_path = PROJECT_ROOT . DIR_SEP . ltrim($dir_path, '/');
         }
 
-        if (!file_exists($this->root_path . $directory_path)) {
-            mkdir($this->root_path . $directory_path, 0777, true);
+        if (file_exists($upload_dir_path) && is_file($upload_dir_path)) {
+            throw new Exception(__METHOD__ . "() '{$upload_dir_path}' is a file.");
         }
 
-        $this->directory_path = $directory_path;
+        if (!file_exists($upload_dir_path)) {
+            if ($append) {
+                if (!mkdir($upload_dir_path, 0777, true)) {
+                    throw new Exception(__METHOD__ . "() Failed to create directory '{$upload_dir_path}'.");
+                }
+            } else {
+                throw new Exception(__METHOD__ . "() Directory not found. '{$upload_dir_path}'");
+            }
+        }
+
+        $this->upload_dir_path = $upload_dir_path;
     }
 
     public function upload(array $file, string $file_name = null)
@@ -47,9 +58,9 @@ class Uploader
             $file_name = create_random_string(20);
         }
 
-        $upload_path = $this->directory_path . '/' . $file_name . '.' . $extension;
+        $upload_path = $this->directory_path . DIR_SEP . $file_name . '.' . $extension;
 
-        if (!move_uploaded_file($tmp_name, $this->root_path . '/' . $upload_path)) {
+        if (!move_uploaded_file($tmp_name, $this->root_path . DIR_SEP . $upload_path)) {
             throw new RuntimeException('Failed to upload file.');
         }
 
@@ -71,10 +82,6 @@ class Uploader
 
     public function delete(string $file_path)
     {
-        if (!$this->isValidPath($file_path)) {
-            throw new InvalidArgumentException("Path format must be '/directory/file'.");
-        }
-
         $delete_path = $this->root_path . $file_path;
 
         if (file_exists($delete_path)) {
@@ -82,18 +89,5 @@ class Uploader
                 throw new RuntimeException("Failed to delete file '{$delete_path}'.");
             }
         }
-    }
-
-    private function isValidPath(string $path)
-    {
-        if (empty($path)) {
-            return false;
-        }
-
-        if (substr($path, 0, 1) !== '/') {
-            return false;
-        }
-
-        return true;
     }
 }
