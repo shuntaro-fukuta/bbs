@@ -11,28 +11,6 @@ class Storage_Database_MySQL extends Storage_Database
         parent::__construct($config);
     }
 
-    protected function connect()
-    {
-        $config = $this->config;
-
-        $host = $config['host'];
-        if (isset($config['port']) && !empty($config['port'])) {
-            $host .= ':' . $config['port'];
-        }
-
-        $conn = mysqli_connect($host, $config['user'], $config['password'], $config['name']);
-
-        if (!$conn) {
-            throw new Exception(__METHOD__ . "() Can't connect to the database server. " . mysqli_error($this->conn));
-        }
-
-        if (isset($config['charset'])) {
-            mysqli_set_charset($conn, $config['charset']);
-        }
-
-        return $conn;
-    }
-
     public function selectRecord(string $table_name, array $columns, array $where)
     {
         $options = [];
@@ -272,5 +250,27 @@ class Storage_Database_MySQL extends Storage_Database
     public function getValidationRule()
     {
         return $this->validation_rule;
+    }
+
+    protected function connect()
+    {
+        $config = $this->config;
+
+        $host = $config['host'];
+        if (isset($config['port']) && !empty($config['port'])) {
+            $host .= ':' . $config['port'];
+        }
+
+        $conn = mysqli_connect($host, $config['user'], $config['password'], $config['name']);
+
+        if (!$conn) {
+            throw new Exception(__METHOD__ . "() Can't connect to the database server. " . mysqli_error($this->conn));
+        }
+
+        if (isset($config['charset'])) {
+            mysqli_set_charset($conn, $config['charset']);
+        }
+
+        return $conn;
     }
 }
