@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/../functions/general.php');
-
 class Uploader
 {
     private $root_path;

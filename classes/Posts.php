@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/Table.php');
-
 class Posts extends Table
 {
     protected $table_name = 'posts';

@@ -1,10 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../functions/general.php');
-require_once(__DIR__ . '/../classes/Validator.php');
-require_once(__DIR__ . '/../classes/Paginator.php');
-require_once(__DIR__ . '/../classes/Posts.php');
-require_once(__DIR__ . '/../classes/Uploader.php');
+require_once(__DIR__ . '/../init.php');
 
 $posts = new Posts();
 
@@ -34,7 +30,6 @@ try {
                 $uploader = new Uploader();
 
                 $uploaded_path = $uploader->upload($inputs['image_file']);
-
                 $insert_values['image_path'] = $uploaded_path;
             }
 

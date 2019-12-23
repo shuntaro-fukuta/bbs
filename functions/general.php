@@ -81,3 +81,14 @@ function create_random_string(int $length = 10){
 
     return $string;
 }
+
+function add_include_path($path, $prepend = false)
+{
+    $current = get_include_path();
+
+    if ($prepend) {
+    set_include_path($path . PATH_SEPARATOR . $current);
+    } else {
+    set_include_path($current . PATH_SEPARATOR . $path);
+    }
+}

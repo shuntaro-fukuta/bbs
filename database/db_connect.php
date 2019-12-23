@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/../config/database.php');
-
 function connect_mysqli(array $db_settings = null) {
     $host     = $db_settings['host']     ?? DB_HOST;
     $username = $db_settings['username'] ?? DB_USERNAME;
