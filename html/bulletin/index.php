@@ -29,7 +29,7 @@
   <?php endif ?>
   <hr>
 
-  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
+  <?php include(HTML_FILES_DIR . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'pager.php') ?>
 
   </body>
 </html>

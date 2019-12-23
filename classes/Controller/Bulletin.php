@@ -135,17 +135,21 @@ class Controller_Bulletin extends Controller_Base
             $this->err400();
         }
 
-        $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
+        $previous_page     = (empty($previous_page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
         $posts = new Posts();
 
         $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
-
-        if (is_null($record)) {
+        if (empty($record)) {
             $this->err400();
         }
 
+        $title      = $record['title'];
+        $comment    = $record['comment'];
+        $image_path = $record['image_path'];
+
+        $is_edit_form        = true;
         $exists_password     = false;
         $is_correct_password = false;
 
@@ -160,8 +164,15 @@ class Controller_Bulletin extends Controller_Base
         }
 
         if ($is_correct_password && $this->getParam('do_edit')) {
-            $inputs               = trim_values(['title', 'comment'], $_POST);
-            $inputs['image_file'] = get_file('image');
+            $title      = $this->getParam('title');
+            $comment    = $this->getParam('comment');
+            $image_file = get_file('image');
+
+            $inputs = [
+                'title'      => $title,
+                'comment'    => $comment,
+                'image_file' => $image_file,
+            ];
 
             $validator = new Validator();
             $validator->setAttributeValidationRules($posts->getValidationRule());
@@ -173,18 +184,15 @@ class Controller_Bulletin extends Controller_Base
                     'comment' => $inputs['comment'],
                 ];
 
+                $uploader = new Uploader();
+
                 if ($this->getParam('delete_image')) {
-                    $uploader = new Uploader();
                     $uploader->delete($record['image_path']);
 
                     $update_values['image_path'] = null;
                 } else {
                     if (!empty($inputs['image_file'])) {
-                        $uploader = new Uploader();
-
-                        $uploaded_path = $uploader->upload($inputs['image_file']);
-
-                        $update_values['image_path'] = $uploaded_path;
+                        $update_values['image_path'] = $uploader->upload($inputs['image_file']);
                     }
                 }
 
