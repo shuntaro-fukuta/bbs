@@ -13,48 +13,6 @@ class Controller_Bulletin extends Controller_Base
     {
         $posts = new Posts();
 
-        $error_messages = [];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $inputs               = trim_values(['title', 'comment' , 'password'], $_POST);
-            $inputs['image_file'] = get_file('image');
-
-            $validator = new Validator();
-            $validator->setAttributeValidationRules($posts->getValidationRule());
-            $error_messages = $validator->validate($inputs);
-
-            if (empty($error_messages)) {
-                if (!is_null($inputs['password'])) {
-                    $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
-                }
-
-                $insert_values = [
-                    'title'    => $inputs['title'],
-                    'comment'  => $inputs['comment'],
-                    'password' => $inputs['password'],
-                ];
-
-                if (!is_null($inputs['image_file'])) {
-                    $uploader = new Uploader();
-
-                    $uploaded_path = $uploader->upload($inputs['image_file']);
-                    $insert_values['image_path'] = $uploaded_path;
-                }
-
-                $posts->insert($insert_values);
-
-                header("Location: {$_SERVER['SCRIPT_NAME']}");
-                exit;
-            } else {
-                if (isset($inputs['title'])) {
-                    $title = $inputs['title'];
-                }
-                if (isset($inputs['comment'])) {
-                    $comment = $inputs['comment'];
-                }
-            }
-        }
-
         $paginator = new Paginator($posts->count());
 
         $page = (int) $this->getParam('page');
@@ -70,6 +28,53 @@ class Controller_Bulletin extends Controller_Base
         ]);
 
         $this->render('bulletin/index.php', get_defined_vars());
+    }
+
+    public function post()
+    {
+        $title      = $this->getParam('title');
+        $comment    = $this->getParam('comment');
+        $password   = $this->getParam('password');
+        $image_file = get_file('image');
+
+        $inputs = [
+            'title'      => $title,
+            'comment'    => $comment,
+            'password'   => $password,
+            'image_file' => $image_file,
+        ];
+
+        $posts = new Posts();
+
+        $validator      = new Validator();
+        $validator->setAttributeValidationRules($posts->getValidationRule());
+        $error_messages = $validator->validate($inputs);
+
+        if (empty($error_messages)) {
+            if (!empty($inputs['password'])) {
+                $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
+            }
+
+            $insert_values = [
+                'title'    => $inputs['title'],
+                'comment'  => $inputs['comment'],
+                'password' => $inputs['password'],
+            ];
+
+            if (!empty($inputs['image_file'])) {
+                $uploader = new Uploader();
+
+                $insert_values['image_path'] = $uploader->upload($inputs['image_file']);
+            } else {
+                $insert_values['image_path'] = null;
+            }
+
+            $posts->insert($insert_values);
+
+            $this->redirect('index.php');
+        } else {
+            $this->render('bulletin/post.php', get_defined_vars());
+        }
     }
 
     public function delete()

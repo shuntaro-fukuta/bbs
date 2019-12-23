@@ -1,6 +1,6 @@
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'error.php') ?>
 
-<form method="post" action="" enctype="multipart/form-data">
+<form method="post" action="post.php" enctype="multipart/form-data">
     <label for="title">Title</label><br>
     <input id="title" type="text" name="title" value="<?php echo isset($title) ? h($title) : '' ?>"><br>
     <label for="comment">Body</label><br>
