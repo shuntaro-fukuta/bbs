@@ -71,4 +71,51 @@ class Controller_Bulletin extends Controller_Base
 
         $this->render('bulletin/index.php', get_defined_vars());
     }
+
+    public function delete()
+    {
+        $id            = $this->getParam('id');
+        $pass          = $this->getParam('password');
+        $previous_page = $this->getParam('previous_page');
+
+        if (empty($id)) {
+            $this->err400();
+        }
+
+        $previous_page = (empty($page)) ? 1 : (int)$previous_page;
+
+        $posts = new Posts();
+
+        $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+
+        if (is_null($record)) {
+            $this->err400();
+        }
+
+        $exists_password     = false;
+        $is_correct_password = false;
+
+        if (isset($record['password'])) {
+            $exists_password = true;
+
+            if (isset($_POST['password'])) {
+                if (password_verify($_POST['password'], $record['password'])) {
+                    $is_correct_password = true;
+                }
+            }
+        }
+
+        if ($is_correct_password && $this->getParam('do_delete')) {
+            if (!empty($record['image_path'])) {
+                $uploader = new Uploader();
+                $uploader->delete($record['image_path']);
+            }
+
+            $posts->delete([['id', '=', $_POST['id']]]);
+
+            $this->redirect('index.php', ['page' => $previous_page]);
+        }
+
+        $this->render('bulletin/delete.php', get_defined_vars());
+    }
 }

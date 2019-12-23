@@ -2,10 +2,10 @@
 
 class Uploader
 {
-    const UPLOAD_DIR_NAME = 'uploads';
+    const UPLOAD_DIR_NAME = 'upload';
 
     private $root_path;
-    private $directory_path = '/uploads';
+    private $directory_path = '/upload';
     private $mimetypes      = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',

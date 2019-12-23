@@ -1,5 +1,3 @@
-<?php include(HTML_FILES_DIR . '/common/header.php') ?>
-
 <div id="contents">
   <h2>404 Not Found</h2>
   <div>
@@ -9,5 +7,3 @@
     <?php endif ?>
   </div>
 </div>
-
-<?php include(HTML_FILES_DIR . '/common/footer.php') ?>

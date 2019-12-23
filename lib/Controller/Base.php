@@ -137,7 +137,7 @@ abstract class Controller_Base
             $uri .= $glue . http_build_query($params, '', '&');
         }
 
-        header('Location: ' .  PROJECT_ROOT . '/' . $uri);
+        header("Location: {$uri}");
 
         if ($exit) {
             exit;
