@@ -1,8 +1,13 @@
 <?php
 
-function debug($var) {
-    echo '<pre>';
-        var_dump($var);
+function debug() {
+    echo '<pre style="background: #fff; color: #333; ' .
+    'border: 1px solid #ccc; margin: 5px; padding: 10px;">';
+
+    foreach (func_get_args() as $value) {
+        var_dump($value);
+    }
+
     echo '</pre>';
 }
 
