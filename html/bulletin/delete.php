@@ -1,5 +1,5 @@
-<html>
-  <body>
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
+
     <?php if (!$exists_password) : ?>
       <p>この投稿にはパスワードが設定されていないため、削除できません。</p>
       <p><?php echo h($record['title']) ?></p>
@@ -31,5 +31,5 @@
         <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
       </form>
     <?php endif ?>
-  </body>
-</html>
+
+    <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'footer.php') ?>

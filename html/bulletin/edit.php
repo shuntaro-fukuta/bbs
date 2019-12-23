@@ -1,5 +1,5 @@
-<html>
-  <body>
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
+
     <?php if (!$exists_password) : ?>
       <p>この投稿にはパスワードが設定されていないため、削除できません。</p>
       <p><?php echo h($record['title']) ?></p>
@@ -26,8 +26,8 @@
       </form>
     <?php else : ?>
 
-      <?php include(HTML_FILES_DIR . DIRECTORY_SEPARATOR . 'bulletin' . DIRECTORY_SEPARATOR . 'form.php') ?>
+      <?php include(HTML_FILES_DIR . DIR_SEP . 'bulletin' . DIR_SEP . 'form.php') ?>
 
     <?php endif ?>
-  </body>
-</html>
+
+    <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'footer.php') ?>

@@ -1,8 +1,4 @@
-<html>
-  <head>
-    <title>challnege8</title>
-  </head>
-  <body>
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
 
   <?php include(HTML_FILES_DIR . DIR_SEP . 'bulletin' . DIR_SEP . 'form.php') ?>
 
@@ -29,7 +25,6 @@
   <?php endif ?>
   <hr>
 
-  <?php include(HTML_FILES_DIR . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'pager.php') ?>
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
 
-  </body>
-</html>
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'footer.php');
