@@ -2,6 +2,16 @@
 
 class Storage_Database_MySQL extends Storage_Database
 {
+    // FIXME: なんとかする
+    protected $bind_types = [
+        'id'         => 'i',
+        'title'      => 's',
+        'comment'    => 's',
+        'image_path' => 's',
+        'password'   => 's',
+        'created_at' => 's',
+    ];
+
     public function __construct($config = [])
     {
         if (!isset($config['charset'])) {
@@ -89,7 +99,7 @@ class Storage_Database_MySQL extends Storage_Database
 
             $results = $stmt->get_result();
         } else {
-            $results = $this->mysqli->query($query);
+            $results = $this->conn->query($query);
         }
 
         if ($results === false) {
@@ -196,7 +206,7 @@ class Storage_Database_MySQL extends Storage_Database
 
     protected function prepareStatement(string $query)
     {
-        if (!($stmt = $this->mysqli->prepare($query))) {
+        if (!($stmt = $this->conn->prepare($query))) {
             throw new LogicException('Failed to prepare statement.');
         }
 
@@ -247,12 +257,7 @@ class Storage_Database_MySQL extends Storage_Database
         return $where_bind_items;
     }
 
-    public function getValidationRule()
-    {
-        return $this->validation_rule;
-    }
-
-    protected function connect()
+    public function connect()
     {
         $config = $this->config;
 

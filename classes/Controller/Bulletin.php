@@ -11,9 +11,9 @@ class Controller_Bulletin extends Controller_Base
 
     public function index()
     {
-        $posts = new Posts();
+        $bulletin = new Storage_Bulletin();
 
-        $paginator = new Paginator($posts->count());
+        $paginator = new Paginator($bulletin->count());
 
         $page = (int) $this->getParam('page');
 
@@ -21,7 +21,7 @@ class Controller_Bulletin extends Controller_Base
 
         $page_numbers = $paginator->getPageNumbers();
 
-        $records = $posts->selectRecords(['*'], [
+        $records = $bulletin->selectRecords(['*'], [
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),
@@ -44,10 +44,10 @@ class Controller_Bulletin extends Controller_Base
             'image_file' => $image_file,
         ];
 
-        $posts = new Posts();
+        $bulletin = new Storage_Bulletin();
 
         $validator      = new Validator();
-        $validator->setAttributeValidationRules($posts->getValidationRule());
+        $validator->setAttributeValidationRules($bulletin->getValidationRule());
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
@@ -69,7 +69,7 @@ class Controller_Bulletin extends Controller_Base
                 $insert_values['image_path'] = null;
             }
 
-            $posts->insert($insert_values);
+            $bulletin->insert($insert_values);
 
             $this->redirect('index.php');
         } else {
@@ -90,9 +90,9 @@ class Controller_Bulletin extends Controller_Base
         $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $posts = new Posts();
+        $bulletin = new Storage_Bulletin();
 
-        $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
         if (is_null($record)) {
             $this->err400();
@@ -117,7 +117,7 @@ class Controller_Bulletin extends Controller_Base
                 $uploader->delete($record['image_path']);
             }
 
-            $posts->delete([['id', '=', $_POST['id']]]);
+            $bulletin->delete([['id', '=', $_POST['id']]]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
@@ -138,9 +138,9 @@ class Controller_Bulletin extends Controller_Base
         $previous_page     = (empty($previous_page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $posts = new Posts();
+        $bulletin = new Storage_Bulletin();
 
-        $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
         if (empty($record)) {
             $this->err400();
         }
@@ -175,7 +175,7 @@ class Controller_Bulletin extends Controller_Base
             ];
 
             $validator = new Validator();
-            $validator->setAttributeValidationRules($posts->getValidationRule());
+            $validator->setAttributeValidationRules($bulletin->getValidationRule());
             $error_messages = $validator->validate($inputs);
 
             if (empty($error_messages)) {
@@ -196,7 +196,7 @@ class Controller_Bulletin extends Controller_Base
                     }
                 }
 
-                $posts->update($update_values, [['id', '=', $_POST['id']]]);
+                $bulletin->update($update_values, [['id', '=', $_POST['id']]]);
 
                 $this->redirect('index.php', array('page' => $previous_page));
             }
