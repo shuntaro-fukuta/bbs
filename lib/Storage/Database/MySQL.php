@@ -9,6 +9,7 @@ class Storage_Database_MySQL extends Storage_Database
         'comment'    => 's',
         'image_path' => 's',
         'password'   => 's',
+        'is_deleted' => 'i',
         'created_at' => 's',
     ];
 
@@ -180,6 +181,15 @@ class Storage_Database_MySQL extends Storage_Database
         if (!$stmt->execute()) {
             throw new RuntimeException('Failed to delete records.');
         }
+    }
+
+    public function softDelete(string $table_name, array $where = null)
+    {
+        $this->update(
+            $table_name,
+            ['is_deleted' => 1,],
+            $where
+        );
     }
 
     protected function bindParams(mysqli_stmt $stmt, array $columns, array $values)

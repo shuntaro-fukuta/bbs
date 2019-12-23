@@ -39,4 +39,12 @@ abstract class Storage_Base
     {
         $this->database->delete($this->table_name, $where);
     }
+
+    public function softDelete(array $where)
+    {
+        $this->update(
+            ['is_deleted' => 1],
+            $where
+        );
+    }
 }

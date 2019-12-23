@@ -22,6 +22,7 @@ class Controller_Bulletin extends Controller_Base
         $page_numbers = $paginator->getPageNumbers();
 
         $records = $bulletin->selectRecords(['*'], [
+            'where'    => [['is_deleted', '=', 0]],
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),
@@ -94,7 +95,7 @@ class Controller_Bulletin extends Controller_Base
 
         $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
-        if (is_null($record)) {
+        if (is_null($record) || $record['is_deleted'] === '1') {
             $this->err400();
         }
 
@@ -117,7 +118,7 @@ class Controller_Bulletin extends Controller_Base
                 $uploader->delete($record['image_path']);
             }
 
-            $bulletin->delete([['id', '=', $_POST['id']]]);
+            $bulletin->softDelete([['id', '=', $_POST['id']]]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
@@ -141,7 +142,7 @@ class Controller_Bulletin extends Controller_Base
         $bulletin = new Storage_Bulletin();
 
         $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
-        if (empty($record)) {
+        if (empty($record) || $record['is_deleted'] === '1') {
             $this->err400();
         }
 
