@@ -15,8 +15,16 @@ function mb_trim($string) {
     return preg_replace('/\A[\p{Z}]+|[\p{Z}]+\z/u', '', $string);
 }
 
-function h($string) {
-    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+function h($string, $flags = null, $encoding = null) {
+    if (empty($flags)) {
+        $flags = ENT_QUOTES;
+    }
+
+    if (empty($encoding)) {
+        $encoding = 'UTF-8';
+    }
+
+    return htmlspecialchars($string, $flags, $encoding);
 }
 
 function is_empty($var) {
@@ -71,17 +79,13 @@ function get_file(string $name) {
     return null;
 }
 
-function create_random_string(int $length = 10){
-    if ($length < 1) {
-        throw new InvalidArgumentException('Length must be greater than or equal to 1.');
-    }
-
-    $character_list  = array_merge(range('a', 'z'), range('A', 'Z'), range('0', '9'));
-    $character_count = count($character_list);
+function create_random_string(int $length = 10) {
+    $charas   = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $char_len = strlen($charas);
 
     $string = '';
-    for ($i = 1; $i <= $length; $i++) {
-        $string .= $character_list[mt_rand(0, $character_count - 1)];
+    for ($i = 0; $i < $length; $i++) {
+        $string .= $charas[mt_rand(0, $char_len - 1)];
     }
 
     return $string;
