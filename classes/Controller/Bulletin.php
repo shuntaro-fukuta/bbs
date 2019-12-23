@@ -95,7 +95,7 @@ class Controller_Bulletin extends Controller_Base
 
         $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
-        if (is_null($record) || $record['is_deleted'] === '1') {
+        if (is_null($record) || $record['is_deleted'] === 1) {
             $this->err400();
         }
 
@@ -142,7 +142,7 @@ class Controller_Bulletin extends Controller_Base
         $bulletin = new Storage_Bulletin();
 
         $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
-        if (empty($record) || $record['is_deleted'] === '1') {
+        if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
         }
 
