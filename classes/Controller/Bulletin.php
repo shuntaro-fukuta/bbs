@@ -119,4 +119,76 @@ class Controller_Bulletin extends Controller_Base
 
         $this->render('bulletin/delete.php', get_defined_vars());
     }
+
+    public function edit()
+    {
+        $id            = $this->getParam('id');
+        $pass          = $this->getParam('password');
+        $previous_page = $this->getParam('previous_page');
+
+        if (empty($id)) {
+            $this->err400();
+        }
+
+        $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
+        $previous_page_url = "index.php?page={$previous_page}";
+
+        $posts = new Posts();
+
+        $record = $posts->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+
+        if (is_null($record)) {
+            $this->err400();
+        }
+
+        $exists_password     = false;
+        $is_correct_password = false;
+
+        if (isset($record['password'])) {
+            $exists_password = true;
+
+            if (isset($_POST['password'])) {
+                if (password_verify($_POST['password'], $record['password'])) {
+                    $is_correct_password = true;
+                }
+            }
+        }
+
+        if ($is_correct_password && $this->getParam('do_edit')) {
+            $inputs               = trim_values(['title', 'comment'], $_POST);
+            $inputs['image_file'] = get_file('image');
+
+            $validator = new Validator();
+            $validator->setAttributeValidationRules($posts->getValidationRule());
+            $error_messages = $validator->validate($inputs);
+
+            if (empty($error_messages)) {
+                $update_values = [
+                    'title'   => $inputs['title'],
+                    'comment' => $inputs['comment'],
+                ];
+
+                if ($this->getParam('delete_image')) {
+                    $uploader = new Uploader();
+                    $uploader->delete($record['image_path']);
+
+                    $update_values['image_path'] = null;
+                } else {
+                    if (!empty($inputs['image_file'])) {
+                        $uploader = new Uploader();
+
+                        $uploaded_path = $uploader->upload($inputs['image_file']);
+
+                        $update_values['image_path'] = $uploaded_path;
+                    }
+                }
+
+                $posts->update($update_values, [['id', '=', $_POST['id']]]);
+
+                $this->redirect('index.php', array('page' => $previous_page));
+            }
+        }
+
+        $this->render('bulletin/edit.php', get_defined_vars());
+    }
 }
