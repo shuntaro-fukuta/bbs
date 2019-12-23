@@ -28,7 +28,7 @@
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="hidden" name="password" value="<?php echo h($_POST['password']) ?>">
         <input type="submit" name="do_delete" value="Yes">
-        <input type="button" value="Cancel" onclick="location.href='index.php?page=<?php echo h($previous_page) ?>'">
+        <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page) ?>'">
       </form>
     <?php endif ?>
   </body>
