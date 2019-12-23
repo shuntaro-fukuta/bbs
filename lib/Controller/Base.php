@@ -110,9 +110,9 @@ abstract class Controller_Base
 
     public function setUp()
     {
-        // $this->logger = new Logger();
+        $this->logger = new Logger();
 
-        // set_error_handler(array($this, 'errorHandler'));
+        set_error_handler(array($this, 'errorHandler'));
     }
 
     public function execute($action)
