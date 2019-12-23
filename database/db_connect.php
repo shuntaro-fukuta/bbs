@@ -1,11 +1,11 @@
 <?php
 
 function connect_mysqli(array $db_settings = null) {
-    $host     = $db_settings['host']     ?? DB_HOST;
-    $username = $db_settings['username'] ?? DB_USERNAME;
-    $password = $db_settings['password'] ?? DB_PASSWORD;
-    $db_name  = $db_settings['db_name']  ?? DB_NAME;
-    $encoding = $db_settings['encoding'] ?? DB_ENCODING;
+    $host     = $db_settings['host']     ?? DATABASE_HOST;
+    $username = $db_settings['username'] ?? DATABASE_USER;
+    $password = $db_settings['password'] ?? DATABASE_PASSWORD;
+    $db_name  = $db_settings['db_name']  ?? DATABASE_NAME;
+    $encoding = $db_settings['encoding'] ?? DATABASE_ENCODING;
 
     $mysqli = new mysqli($host, $username, $password, $db_name);
 

@@ -97,3 +97,19 @@ function add_include_path($path, $prepend = false)
     set_include_path($current . PATH_SEPARATOR . $path);
     }
 }
+
+function get_db_config()
+{
+    $config = array();
+
+    $keys = array('HOST', 'NAME', 'USER', 'PASSWORD');
+    foreach ($keys as $key) {
+        if (defined('DATABASE_' . $key)) {
+            $config[strtolower($key)] = constant('DATABASE_' . $key);
+        } else {
+            throw new Exception(__FUNCTION__ . "() DATABASE_{$key} is not defined.");
+        }
+    }
+
+    return $config;
+}

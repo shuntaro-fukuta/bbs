@@ -1,7 +1,7 @@
 <?php
 
-const DB_HOST     = 'localhost';
-const DB_USERNAME = 'root';
-const DB_PASSWORD = 'root';
-const DB_NAME     = 'bbs';
-const DB_ENCODING = 'UTF8';
+const DATABASE_HOST     = 'localhost';
+const DATABASE_NAME     = 'bbs';
+const DATABASE_USER     = 'root';
+const DATABASE_PASSWORD = 'root';
+const DATABASE_ENCODING = 'utf8';
