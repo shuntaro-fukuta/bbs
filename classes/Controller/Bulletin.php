@@ -33,18 +33,12 @@ class Controller_Bulletin extends Controller_Base
 
     public function post()
     {
-        $name       = $this->getParam('name');
-        $title      = $this->getParam('title');
-        $comment    = $this->getParam('comment');
-        $password   = $this->getParam('password');
-        $image_file = get_file('image');
-
         $inputs = [
-            'name'       => $name,
-            'title'      => $title,
-            'comment'    => $comment,
-            'password'   => $password,
-            'image_file' => $image_file,
+            'name'       => $this->getParam('name'),
+            'title'      => $this->getParam('title'),
+            'comment'    => $this->getParam('comment'),
+            'password'   => $this->getParam('password'),
+            'image_file' => get_file('image'),
         ];
 
         $bulletin = new Storage_Bulletin();
@@ -169,16 +163,11 @@ class Controller_Bulletin extends Controller_Base
         }
 
         if ($is_correct_password && $this->getParam('do_edit')) {
-            $name       = $this->getParam('name');
-            $title      = $this->getParam('title');
-            $comment    = $this->getParam('comment');
-            $image_file = get_file('image');
-
             $inputs = [
-                'name'       => $name,
-                'title'      => $title,
-                'comment'    => $comment,
-                'image_file' => $image_file,
+                'name'       => $this->getParam('name'),
+                'title'      => $this->getParam('title'),
+                'comment'    => $this->getParam('comment'),
+                'image_file' => get_file('image'),
             ];
 
             $validator = new Validator();
@@ -187,6 +176,7 @@ class Controller_Bulletin extends Controller_Base
 
             if (empty($error_messages)) {
                 $update_values = [
+                    'name'    => $inputs['name'],
                     'title'   => $inputs['title'],
                     'comment' => $inputs['comment'],
                 ];
