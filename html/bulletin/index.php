@@ -5,6 +5,12 @@
   <?php if (!empty($records)) : ?>
     <?php foreach ($records as $record) : ?>
     <hr>
+    <?php if (isset($record['name'])) : ?>
+      <?php echo $record['name'] ?>
+    <?php else : ?>
+      No Name
+    <?php endif ?>
+    <br>
     <?php echo h($record['title']) ?>
     <br>
     <?php echo nl2br(h($record['comment'])) ?>
