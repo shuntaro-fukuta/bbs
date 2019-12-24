@@ -33,12 +33,14 @@ class Controller_Bulletin extends Controller_Base
 
     public function post()
     {
+        $name       = $this->getParam('name');
         $title      = $this->getParam('title');
         $comment    = $this->getParam('comment');
         $password   = $this->getParam('password');
         $image_file = get_file('image');
 
         $inputs = [
+            'name'       => $name,
             'title'      => $title,
             'comment'    => $comment,
             'password'   => $password,
@@ -57,6 +59,7 @@ class Controller_Bulletin extends Controller_Base
             }
 
             $insert_values = [
+                'name'     => $inputs['name'],
                 'title'    => $inputs['title'],
                 'comment'  => $inputs['comment'],
                 'password' => $inputs['password'],
@@ -146,6 +149,7 @@ class Controller_Bulletin extends Controller_Base
             $this->err400();
         }
 
+        $name       = $record['name'];
         $title      = $record['title'];
         $comment    = $record['comment'];
         $image_path = $record['image_path'];
@@ -165,11 +169,13 @@ class Controller_Bulletin extends Controller_Base
         }
 
         if ($is_correct_password && $this->getParam('do_edit')) {
+            $name       = $this->getParam('name');
             $title      = $this->getParam('title');
             $comment    = $this->getParam('comment');
             $image_file = get_file('image');
 
             $inputs = [
+                'name'       => $name,
                 'title'      => $title,
                 'comment'    => $comment,
                 'image_file' => $image_file,

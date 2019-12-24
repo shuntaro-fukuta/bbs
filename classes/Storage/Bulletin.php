@@ -5,6 +5,13 @@ class Storage_Bulletin extends Storage_Base
     protected $table_name = 'posts';
 
     protected $validation_rule = [
+        'name'  => [
+            'required' => false,
+            'length'   => [
+                'min' => '3',
+                'max' => '16',
+            ],
+        ],
         'title' => [
             'required' => true,
             'length'   => [

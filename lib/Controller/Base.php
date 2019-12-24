@@ -223,19 +223,19 @@ abstract class Controller_Base
         }
     }
 
-    protected function render($name, $data = array())
+    protected function render($template_name, $data = array())
     {
-        if ($template = $this->getTemplate($name)) {
+        if ($template = $this->getTemplate($template_name)) {
             extract(array_merge(get_object_vars($this), $data), EXTR_OVERWRITE);
             include($template);
         } else {
-            trigger_error(__METHOD__ . '() Template not found: ' . $name, E_USER_ERROR);
+            trigger_error(__METHOD__ . '() Template not found: ' . $template_name, E_USER_ERROR);
         }
     }
 
-    protected function getTemplate($name)
+    protected function getTemplate($template_name)
     {
-        $path = HTML_FILES_DIR . '/' . $name;
+        $path = HTML_FILES_DIR . '/' . $template_name;
 
         if (file_exists($path)) {
             return $path;
