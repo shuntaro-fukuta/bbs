@@ -2,15 +2,11 @@
 
 class Storage_Database_MySQL extends Storage_Database
 {
-    // FIXME: なんとかする
-    protected $bind_types = [
-        'id'         => 'i',
-        'title'      => 's',
-        'comment'    => 's',
-        'image_path' => 's',
-        'password'   => 's',
-        'is_deleted' => 'i',
-        'created_at' => 's',
+    private $bind_types = [
+        'string'  => 's',
+        'integer' => 'i',
+        'double'  => 'd',
+        'NULL'    => 's',
     ];
 
     public function __construct($config = [])
@@ -47,9 +43,8 @@ class Storage_Database_MySQL extends Storage_Database
             if (isset($options['where'])) {
                 $where_bind_items = $this->getWhereBindItems($options['where']);
 
-                $query        .= $where_bind_items['query'];
-                $where_columns = $where_bind_items['columns'];
-                $where_values  = $where_bind_items['values'];
+                $query       .= $where_bind_items['query'];
+                $where_values = $where_bind_items['values'];
             }
 
             if (isset($options['order_by'])) {
@@ -68,7 +63,7 @@ class Storage_Database_MySQL extends Storage_Database
         $stmt = $this->prepareStatement($query);
 
         if (isset($options) && isset($options['where'])) {
-            $stmt = $this->bindParams($stmt, $where_columns, $where_values);
+            $stmt = $this->bindParams($stmt, $where_values);
         }
 
         $stmt->execute();
@@ -92,7 +87,7 @@ class Storage_Database_MySQL extends Storage_Database
             $where_values  = $where_bind_items['values'];
 
             $stmt = $this->prepareStatement($query);
-            $stmt = $this->bindParams($stmt, $where_columns, $where_values);
+            $stmt = $this->bindParams($stmt, $where_values);
 
             if (!$stmt->execute()) {
                 throw new LogicException('Failed to execute statement.');
@@ -125,7 +120,7 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "INSERT INTO {$table_name} ({$insert_columns}) VALUES ({$place_holders})";
 
         $stmt = $this->prepareStatement($query);
-        $stmt = $this->bindParams($stmt, $columns, $values);
+        $stmt = $this->bindParams($stmt, $values);
 
         if (!$stmt->execute()) {
             throw new RuntimeException('Failed to insert records into table.');
@@ -148,13 +143,12 @@ class Storage_Database_MySQL extends Storage_Database
         if (!is_null($where)) {
             $where_bind_items = $this->getWhereBindItems($where);
 
-            $query  .= $where_bind_items['query'];
-            $columns = array_merge($columns, $where_bind_items['columns']);
-            $values  = array_merge($values, $where_bind_items['values']);
+            $query .= $where_bind_items['query'];
+            $values = array_merge($values, $where_bind_items['values']);
         }
 
         $stmt = $this->prepareStatement($query);
-        $stmt = $this->bindParams($stmt, $columns, $values);
+        $stmt = $this->bindParams($stmt, $values);
 
         if (!$stmt->execute()) {
             throw new RuntimeException('Failed to update records.');
@@ -170,12 +164,11 @@ class Storage_Database_MySQL extends Storage_Database
         } else {
             $where_bind_items = $this->getWhereBindItems($where);
 
-            $query  .= $where_bind_items['query'];
-            $columns = $where_bind_items['columns'];
-            $values  = $where_bind_items['values'];
+            $query .= $where_bind_items['query'];
+            $values = $where_bind_items['values'];
 
             $stmt = $this->prepareStatement($query);
-            $stmt = $this->bindParams($stmt, $columns, $values);
+            $stmt = $this->bindParams($stmt, $values);
         }
 
         if (!$stmt->execute()) {
@@ -192,19 +185,16 @@ class Storage_Database_MySQL extends Storage_Database
         );
     }
 
-    protected function bindParams(mysqli_stmt $stmt, array $columns, array $values)
+    private function bindParams(mysqli_stmt $stmt, array $values)
     {
-        if (empty($this->bind_types)) {
-            throw new LogicException('bind_types is not defined.');
-        }
-
         $types = '';
-        foreach ($columns as $column) {
-            if (!isset($this->bind_types[$column])) {
-                throw new InvalidArgumentException("{$column} column doesn't exist.");
+        foreach ($values as $value) {
+            $type = gettype($value);
+            if (!isset($this->bind_types[$type])) {
+                throw new LogicException("Invalid type argument '{$type}' passed.");
             }
 
-            $types .= $this->bind_types[$column];
+            $types .= $this->bind_types[$type];
         }
 
         if (!$stmt->bind_param($types, ...$values)) {
@@ -214,7 +204,7 @@ class Storage_Database_MySQL extends Storage_Database
         return $stmt;
     }
 
-    protected function prepareStatement(string $query)
+    private function prepareStatement(string $query)
     {
         if (!($stmt = $this->conn->prepare($query))) {
             throw new LogicException('Failed to prepare statement.');
@@ -223,7 +213,7 @@ class Storage_Database_MySQL extends Storage_Database
         return $stmt;
     }
 
-    protected function getWhereBindItems(array $wheres)
+    private function getWhereBindItems(array $wheres)
     {
         if ($wheres === []) {
             throw new InvalidArgumentException('Where condition is required.');
