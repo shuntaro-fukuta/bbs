@@ -62,7 +62,7 @@ class Storage_Database_MySQL extends Storage_Database
 
         $stmt = $this->prepareStatement($query);
 
-        if (isset($options) && isset($options['where'])) {
+        if (!empty($options) && isset($options['where'])) {
             $stmt = $this->bindParams($stmt, $where_values);
         }
 
@@ -79,12 +79,11 @@ class Storage_Database_MySQL extends Storage_Database
     {
         $query = "SELECT COUNT(*) FROM {$table_name}";
 
-        if (!is_null($where)) {
+        if (!empty($where)) {
             $where_bind_items = $this->getWhereBindItems($where);
 
-            $query        .= $where_bind_items['query'];
-            $where_columns = $where_bind_items['columns'];
-            $where_values  = $where_bind_items['values'];
+            $query       .= $where_bind_items['query'];
+            $where_values = $where_bind_items['values'];
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $where_values);
@@ -140,7 +139,7 @@ class Storage_Database_MySQL extends Storage_Database
 
         $query = "UPDATE {$table_name} SET {$update_columns}";
 
-        if (!is_null($where)) {
+        if (!empty($where)) {
             $where_bind_items = $this->getWhereBindItems($where);
 
             $query .= $where_bind_items['query'];
@@ -220,7 +219,6 @@ class Storage_Database_MySQL extends Storage_Database
         }
 
         $queries = [];
-        $columns = [];
         $values  = [];
 
         foreach ($wheres as $where) {
@@ -244,15 +242,13 @@ class Storage_Database_MySQL extends Storage_Database
             }
 
             $queries[] = "{$column} {$operator} ?";
-            $columns[] = $column;
             $values[]  = $value;
         }
 
         $where_bind_items = [];
 
-        $where_bind_items['query']   = ' WHERE ' . implode(' AND ', $queries);
-        $where_bind_items['columns'] = $columns;
-        $where_bind_items['values']  = $values;
+        $where_bind_items['query']  = ' WHERE ' . implode(' AND ', $queries);
+        $where_bind_items['values'] = $values;
 
         return $where_bind_items;
     }
