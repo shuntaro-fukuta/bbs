@@ -20,22 +20,24 @@ class Uploader
     public function setUploadDirPath(?string $dir_path, $append = true)
     {
         if (empty($dir_path)) {
-            $upload_dir_path = PROJECT_ROOT . DIR_SEP . self::UPLOAD_DIR_NAME;
+            $upload_dir_path = DIR_SEP . self::UPLOAD_DIR_NAME;
         } else {
-            $upload_dir_path = PROJECT_ROOT . DIR_SEP . ltrim($dir_path, '/');
+            $upload_dir_path = DIR_SEP . ltrim($dir_path, '/');
         }
 
         if (file_exists($upload_dir_path) && is_file($upload_dir_path)) {
             throw new Exception(__METHOD__ . "() '{$upload_dir_path}' is a file.");
         }
 
-        if (!file_exists($upload_dir_path)) {
+        $upload_dir_full_path = PROJECT_ROOT . DIR_SEP . $upload_dir_path;
+
+        if (!file_exists($upload_dir_full_path)) {
             if ($append) {
-                if (!mkdir($upload_dir_path, 0777, true)) {
-                    throw new Exception(__METHOD__ . "() Failed to create directory '{$upload_dir_path}'.");
+                if (!mkdir($upload_dir_full_path, 0777, true)) {
+                    throw new Exception(__METHOD__ . "() Failed to create directory '{$upload_dir_full_path}'.");
                 }
             } else {
-                throw new Exception(__METHOD__ . "() Directory not found. '{$upload_dir_path}'");
+                throw new Exception(__METHOD__ . "() Directory not found. '{$upload_dir_full_path}'");
             }
         }
 
@@ -58,9 +60,9 @@ class Uploader
             $file_name = create_random_string(20);
         }
 
-        $upload_path = $this->directory_path . DIR_SEP . $file_name . '.' . $extension;
+        $upload_path = $this->upload_dir_path . DIR_SEP . $file_name . '.' . $extension;
 
-        if (!move_uploaded_file($tmp_name, $this->root_path . DIR_SEP . $upload_path)) {
+        if (!move_uploaded_file($tmp_name, PROJECT_ROOT . DIR_SEP . $upload_path)) {
             throw new RuntimeException('Failed to upload file.');
         }
 
@@ -82,10 +84,10 @@ class Uploader
 
     public function delete(string $file_path)
     {
-        $delete_path = $this->root_path . $file_path;
+        $delete_path = PROJECT_ROOT . DIR_SEP . ltrim($file_path, '/');
 
         if (file_exists($delete_path)) {
-            if (!unlink($this->root_path . $file_path)) {
+            if (!unlink(PROJECT_ROOT . $file_path)) {
                 throw new RuntimeException("Failed to delete file '{$delete_path}'.");
             }
         }
