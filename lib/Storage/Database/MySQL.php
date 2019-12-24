@@ -41,10 +41,8 @@ class Storage_Database_MySQL extends Storage_Database
 
         if (isset($options)) {
             if (isset($options['where'])) {
-                $where_bind_items = $this->getWhereBindItems($options['where']);
-
-                $query       .= $where_bind_items['query'];
-                $where_values = $where_bind_items['values'];
+                $query       .= $this->getWhereQueries($options['where']);
+                $where_values = $this->getWhereValues($options['where']);
             }
 
             if (isset($options['order_by'])) {
@@ -80,10 +78,8 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "SELECT COUNT(*) FROM {$table_name}";
 
         if (!empty($where)) {
-            $where_bind_items = $this->getWhereBindItems($where);
-
-            $query       .= $where_bind_items['query'];
-            $where_values = $where_bind_items['values'];
+            $query       .= $this->getWhereQueries($where);
+            $where_values = $this->getWhereValues($where);
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $where_values);
@@ -126,7 +122,7 @@ class Storage_Database_MySQL extends Storage_Database
         }
     }
 
-    public function update(string $table_name, array $column_values, array $where = null)
+    public function update(string $table_name, array $column_values, ?array $where = null)
     {
         $columns = array_keys($column_values);
         $values  = array_values($column_values);
@@ -140,10 +136,8 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "UPDATE {$table_name} SET {$update_columns}";
 
         if (!empty($where)) {
-            $where_bind_items = $this->getWhereBindItems($where);
-
-            $query .= $where_bind_items['query'];
-            $values = array_merge($values, $where_bind_items['values']);
+            $query .= $this->getWhereQueries($where);
+            $values = array_merge($values, $this->getWhereValues($where));
         }
 
         $stmt = $this->prepareStatement($query);
@@ -158,13 +152,11 @@ class Storage_Database_MySQL extends Storage_Database
     {
         $query = "DELETE FROM {$table_name}";
 
-        if (is_null($where)) {
+        if (empty($where)) {
             $stmt = $this->prepareStatement($query);
         } else {
-            $where_bind_items = $this->getWhereBindItems($where);
-
-            $query .= $where_bind_items['query'];
-            $values = $where_bind_items['values'];
+            $query .= $this->getWhereQueries($where);
+            $values = $this->getWhereValues($where);
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $values);
@@ -212,45 +204,61 @@ class Storage_Database_MySQL extends Storage_Database
         return $stmt;
     }
 
-    private function getWhereBindItems(array $wheres)
+    private function getWhereQueries(array $wheres)
     {
         if ($wheres === []) {
-            throw new InvalidArgumentException('Where condition is required.');
+            throw new InvalidArgumentException('Where condition is empty.');
         }
 
         $queries = [];
-        $values  = [];
-
         foreach ($wheres as $where) {
-            if (!is_array($where)) {
-                throw new InvalidArgumentException("Where's condition format must be array.");
-            }
+            $this->validateWhereFormat($where);
 
-            $column = $where[0] ?? null;
-            if (!is_string($column)) {
-                throw new InvalidArgumentException("Where's first parameter must be string.");
-            }
-
-            $operator = $where[1] ?? null;
-            if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>=', '<>'])) {
-                throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=, <>].");
-            }
-
-            $value = $where[2] ?? null;
-            if (!is_string($value) && !is_numeric($value)) {
-                throw new InvalidArgumentException("Where's third parameter must be string or number.");
-            }
+            $column   = $where[0];
+            $operator = $where[1];
 
             $queries[] = "{$column} {$operator} ?";
-            $values[]  = $value;
         }
 
-        $where_bind_items = [];
+        return ' WHERE ' . implode(' AND ', $queries);
+    }
 
-        $where_bind_items['query']  = ' WHERE ' . implode(' AND ', $queries);
-        $where_bind_items['values'] = $values;
+    private function getWhereValues(array $wheres)
+    {
+        if ($wheres === []) {
+            throw new InvalidArgumentException('Where condition is empty.');
+        }
 
-        return $where_bind_items;
+        $values = [];
+        foreach ($wheres as $where) {
+            $this->validateWhereFormat($where);
+
+            $values[] = $where[2];
+        }
+
+        return $values;
+    }
+
+    private function validateWhereFormat(array $where)
+    {
+        if (!is_array($where)) {
+            throw new InvalidArgumentException("Where's condition format must be array.");
+        }
+
+        $column = $where[0] ?? null;
+        if (!is_string($column)) {
+            throw new InvalidArgumentException("Where's first parameter must be string.");
+        }
+
+        $operator = $where[1] ?? null;
+        if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>=', '<>'])) {
+            throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=, <>].");
+        }
+
+        $value = $where[2] ?? null;
+        if (!is_string($value) && !is_numeric($value)) {
+            throw new InvalidArgumentException("Where's third parameter must be string or number.");
+        }
     }
 
     public function connect()
