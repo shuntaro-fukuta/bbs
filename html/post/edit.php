@@ -26,7 +26,7 @@
       </form>
     <?php else : ?>
 
-      <?php include(HTML_FILES_DIR . DIR_SEP . 'bulletin' . DIR_SEP . 'form.php') ?>
+      <?php include(HTML_FILES_DIR . DIR_SEP . 'post' . DIR_SEP . 'form.php') ?>
 
     <?php endif ?>
 

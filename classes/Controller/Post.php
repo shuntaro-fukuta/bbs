@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Bulletin extends Controller_Base
+class Controller_Post extends Controller_Base
 {
     protected $image_dir = '';
 
@@ -11,9 +11,9 @@ class Controller_Bulletin extends Controller_Base
 
     public function index()
     {
-        $bulletin = new Storage_Bulletin();
+        $post = new Storage_Post();
 
-        $paginator = new Paginator($bulletin->count());
+        $paginator = new Paginator($post->count());
 
         $page = (int) $this->getParam('page');
 
@@ -21,14 +21,14 @@ class Controller_Bulletin extends Controller_Base
 
         $page_numbers = $paginator->getPageNumbers();
 
-        $records = $bulletin->selectRecords(['*'], [
+        $records = $post->selectRecords(['*'], [
             'where'    => [['is_deleted', '=', 0]],
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),
         ]);
 
-        $this->render('bulletin/index.php', get_defined_vars());
+        $this->render('post/index.php', get_defined_vars());
     }
 
     public function post()
@@ -41,10 +41,10 @@ class Controller_Bulletin extends Controller_Base
             'image_file' => get_file('image'),
         ];
 
-        $bulletin = new Storage_Bulletin();
+        $post = new Storage_Post();
 
         $validator      = new Validator();
-        $validator->setAttributeValidationRules($bulletin->getValidationRule());
+        $validator->setAttributeValidationRules($post->getValidationRule());
         $error_messages = $validator->validate($inputs);
 
         if (empty($error_messages)) {
@@ -67,11 +67,11 @@ class Controller_Bulletin extends Controller_Base
                 $insert_values['image_path'] = null;
             }
 
-            $bulletin->insert($insert_values);
+            $post->insert($insert_values);
 
             $this->redirect('index.php');
         } else {
-            $this->render('bulletin/post.php', get_defined_vars());
+            $this->render('post/post.php', get_defined_vars());
         }
     }
 
@@ -88,9 +88,9 @@ class Controller_Bulletin extends Controller_Base
         $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $bulletin = new Storage_Bulletin();
+        $post = new Storage_Post();
 
-        $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $_POST['id']]]);
 
         if (is_null($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -115,12 +115,12 @@ class Controller_Bulletin extends Controller_Base
                 $uploader->delete($record['image_path']);
             }
 
-            $bulletin->softDelete([['id', '=', $_POST['id']]]);
+            $post->softDelete([['id', '=', $_POST['id']]]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
 
-        $this->render('bulletin/delete.php', get_defined_vars());
+        $this->render('post/delete.php', get_defined_vars());
     }
 
     public function edit()
@@ -136,9 +136,9 @@ class Controller_Bulletin extends Controller_Base
         $previous_page     = (empty($previous_page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $bulletin = new Storage_Bulletin();
+        $post = new Storage_Post();
 
-        $record = $bulletin->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $_POST['id']]]);
         if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
         }
@@ -171,7 +171,7 @@ class Controller_Bulletin extends Controller_Base
             ];
 
             $validator = new Validator();
-            $validator->setAttributeValidationRules($bulletin->getValidationRule());
+            $validator->setAttributeValidationRules($post->getValidationRule());
             $error_messages = $validator->validate($inputs);
 
             if (empty($error_messages)) {
@@ -193,12 +193,12 @@ class Controller_Bulletin extends Controller_Base
                     }
                 }
 
-                $bulletin->update($update_values, [['id', '=', $_POST['id']]]);
+                $post->update($update_values, [['id', '=', $_POST['id']]]);
 
                 $this->redirect('index.php', array('page' => $previous_page));
             }
         }
 
-        $this->render('bulletin/edit.php', get_defined_vars());
+        $this->render('post/edit.php', get_defined_vars());
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-class Storage_Bulletin extends Storage_Base
+class Storage_Post extends Storage_Base
 {
-    protected $table_name = 'posts';
+    protected $table_name = 'post';
 
     protected $validation_rule = [
         'name'  => [
