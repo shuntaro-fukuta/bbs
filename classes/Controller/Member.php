@@ -11,7 +11,7 @@ class Controller_Member  extends Controller_Base
             $token = $this->getParam('token');
 
             if (empty($token)) {
-                // render 登録フォーム
+                $this->render('member/register.php');
             } else {
                 //     トークンチェックok
                 //         memberテーブルに保存
