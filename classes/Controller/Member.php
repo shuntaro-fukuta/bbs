@@ -7,6 +7,7 @@ class Controller_Member  extends Controller_Base
     {
         $request = $this->getEnv('request-method');
 
+
         if ($request === 'GET') {
             $token = $this->getParam('token');
 
@@ -21,19 +22,29 @@ class Controller_Member  extends Controller_Base
         }
 
         if ($request === 'POST') {
-            $is_confirm = $this->getParam('confirm');
-            $is_submit  = $this->getParam('submit');
+            $inputs = [
+                'name'     => $this->getParam('name'),
+                'email'    => $this->getParam('email'),
+                'password' => $this->getParam('password'),
+            ];
 
-            if ($is_confirm) {
-                // バリデーション
+            $pre_member = new Storage_Premember();
+
+            if ($this->getParam('confirm') === '1') {
+                $error_messages = $pre_member->validate($inputs);
+
+                if (empty($error_messages)) {
+                    // 確認画面
+                } else {
+                    $this->render('member/register.php', get_defined_vars());
+                }
             }
 
-            if ($is_submit) {
+            // submit
                 //     トークン作成
                 //     pre_memberテーブルに情報を保存
                 //         メールを送る url='register.php?token=トークン'
                 //             メール送った画面
-            }
         }
     }
 }
