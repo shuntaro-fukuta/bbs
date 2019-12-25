@@ -1,4 +1,4 @@
-| posts | CREATE TABLE `posts` (
+| post  | CREATE TABLE `post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
@@ -8,7 +8,7 @@
   `is_deleted` tinyint(1) DEFAULT '0',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8726 DEFAULT CHARSET=utf8 |
+) ENGINE=InnoDB AUTO_INCREMENT=8733 DEFAULT CHARSET=utf8 |
 
 | premember | CREATE TABLE `premember` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -20,7 +20,7 @@
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
 
-| members | CREATE TABLE `members` (
+| member | CREATE TABLE `member` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
