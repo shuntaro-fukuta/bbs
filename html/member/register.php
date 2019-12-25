@@ -11,6 +11,8 @@
   <input type="text" name="email"><br>
   <label for="password">Password</label><br>
   <input type="password" name="password"><br>
+  <input type="hidden" name="do_confirm" value="1">
+
   <input type="submit" value="Confirm">
-  <input type="hidden" name="confirm" value="1">
-  <input type="button" value="Back"> </form>
+  <input type="button" value="Back">
+</form>

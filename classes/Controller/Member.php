@@ -5,13 +5,18 @@ class Controller_Member  extends Controller_Base
 
     public function register()
     {
-        $request = $this->getEnv('request-method');
+        $request_method = $this->getEnv('request-method');
 
+        // クリックジャッキング
+        // csrf
 
-        if ($request === 'GET') {
+        $member     = new Storage_Member();
+        $pre_member = new Storage_Premember();
+
+        if ($request_method === 'GET') {
             $token = $this->getParam('token');
 
-            if (empty($token)) {
+            if (is_null($token)) {
                 $this->render('member/register.php');
             } else {
                 //     トークンチェックok
@@ -21,30 +26,36 @@ class Controller_Member  extends Controller_Base
             }
         }
 
-        if ($request === 'POST') {
+        if ($request_method === 'POST') {
+            $name     = $this->getParam('name');
+            $email    = $this->getParam('email');
+            $password = $this->getParam('password');
+
             $inputs = [
-                'name'     => $this->getParam('name'),
-                'email'    => $this->getParam('email'),
-                'password' => $this->getParam('password'),
+                'name'     => $name,
+                'email'    => $email,
+                'password' => $password,
             ];
 
-            $pre_member = new Storage_Premember();
+            $error_messages = $member->validate($inputs);
+            if (empty($error_messages)) {
+                if ($this->getParam('do_confirm') === '1') {
+                    $hidden_pass = str_repeat('*', strlen($inputs['password']));
+                    $this->render('member/register_confirm.php', get_defined_vars());
+                } elseif ($this->getParam('do_register') === '1') {
+                    $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
 
-            if ($this->getParam('confirm') === '1') {
-                $error_messages = $pre_member->validate($inputs);
+                    $token           = uniqid(create_random_string(30), true);
+                    $inputs['token'] = $token;
 
-                if (empty($error_messages)) {
-                    // 確認画面
-                } else {
-                    $this->render('member/register.php', get_defined_vars());
+                    $pre_member->insert($inputs);
+                    // メール送った画面
                 }
-            }
 
-            // submit
-                //     トークン作成
-                //     pre_memberテーブルに情報を保存
-                //         メールを送る url='register.php?token=トークン'
-                //             メール送った画面
+            } else {
+                $this->render('member/register.php', get_defined_vars());
+            }
         }
+
     }
 }
