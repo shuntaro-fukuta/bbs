@@ -97,37 +97,37 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        if ($this->getEnv('request-method') === 'GET') {
-            $this->render('member/login/form.php');
-            return;
+        session_start();
+        if (isset($_SESSION['member_id'])) {
+            $this->redirect('index.php');
         }
 
-        $email    = $this->getParam('email');
-        $password = $this->getParam('password');
+        if ($this->getEnv('request-method') === 'POST') {
+            $email    = $this->getParam('email');
+            $password = $this->getParam('password');
 
-        $error_messages = [];
-        if (empty($email)) {
-            $error_messages[] = 'Emailを入力してください。';
-        }
-        if (empty($password)) {
-            $error_messages[] = 'Passwordを入力してください。';
-        }
+            $error_messages = [];
+            if (empty($email)) {
+                $error_messages[] = 'Emailを入力してください。';
+            }
+            if (empty($password)) {
+                $error_messages[] = 'Passwordを入力してください。';
+            }
 
-        if (empty($error_messages)) {
-            $member = new Storage_Member();
+            if (empty($error_messages)) {
+                $member = new Storage_Member();
 
-            $account = $member->selectRecord(['*'], [['email', '=', $email]]);
-            if (is_null($account)) {
-                $error_messages[] = 'メールアドレスが間違っています。';
-            } elseif (!password_verify($password, $account['password'])) {
-                $error_messages[] = 'パスワードが間違っています。';
-            } else {
-                session_start();
+                $account = $member->selectRecord(['*'], [['email', '=', $email]]);
+                if (is_null($account)) {
+                    $error_messages[] = 'メールアドレスが間違っています。';
+                } elseif (!password_verify($password, $account['password'])) {
+                    $error_messages[] = 'パスワードが間違っています。';
+                } else {
+                    session_regenerate_id(true);
+                    $_SESSION['member_id'] = $account['id'];
 
-                session_regenerate_id(true);
-                $_SESSION['member_id'] = $account['id'];
-
-                $this->redirect('index.php');
+                    $this->redirect('index.php');
+                }
             }
         }
 
