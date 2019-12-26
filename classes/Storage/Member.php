@@ -4,7 +4,7 @@ class Storage_Member extends Storage_Base
 {
     protected $table_name = 'member';
 
-    protected $validation_rules = [
+    protected $register_validation_rules = [
         'name' => [
             'required' => true,
             'length'   => [
@@ -13,7 +13,7 @@ class Storage_Member extends Storage_Base
             ],
         ],
         'email' => [
-            'required' => 'true',
+            'required' => true,
         ],
         'password' => [
             'required' => true,
@@ -24,17 +24,27 @@ class Storage_Member extends Storage_Base
         ],
     ];
 
-    public function validate(array $values)
+    protected $login_validation_rules = [
+        'email' => [
+            'required' => true,
+        ],
+        'password' => [
+            'required' => true,
+            'length'   => [
+                'min' => 8,
+                'max' => 16,
+            ],
+        ],
+    ];
+
+    public function registerValidate(array $inputs)
     {
-        $error_messages = [];
+        $validator      = new Validator();
+        $validator->setAttributeValidationRules($this->register_validation_rules);
+        $error_messages = $validator->validate($inputs);
 
-        $validator = new Validator();
-        // TODO: メソッド名変える
-        $validator->setAttributeValidationRules($this->validation_rules);
-        $error_messages = $validator->validate($values);
-
-        if (isset($values['email']) && !empty($values['email'])) {
-            $email = $values['email'];
+        if (isset($inputs['email']) && !empty($inputs['email'])) {
+            $email = $inputs['email'];
 
             if ($this->count([['email', '=', $email]]) === 1) {
                 $error_messages[] = 'このメールアドレスは既に使用されています。';
@@ -43,6 +53,15 @@ class Storage_Member extends Storage_Base
                 $error_messages[] = 'メールアドレスに＠が含まれていません。';
             }
         }
+
+        return $error_messages;
+    }
+
+    public function loginValidate(array $inputs)
+    {
+        $validator      = new Validator();
+        $validator->setAttributeValidationRules($this->login_validation_rules);
+        $error_messages = $validator->validate($inputs);
 
         return $error_messages;
     }

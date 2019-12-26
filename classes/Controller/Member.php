@@ -26,7 +26,7 @@ class Controller_Member  extends Controller_Base
             'password' => $password,
         ];
 
-        $error_messages = $member->validate($inputs);
+        $error_messages = $member->registerValidate($inputs);
         if (empty($error_messages)) {
             if ($this->getParam('do_confirm') === '1') {
                 $hidden_pass = str_repeat('*', strlen($inputs['password']));
@@ -106,17 +106,15 @@ class Controller_Member  extends Controller_Base
             $email    = $this->getParam('email');
             $password = $this->getParam('password');
 
-            $error_messages = [];
-            if (empty($email)) {
-                $error_messages[] = 'Emailを入力してください。';
-            }
-            if (empty($password)) {
-                $error_messages[] = 'Passwordを入力してください。';
-            }
+            $inputs = [
+                'email'    => $email,
+                'password' => $password,
+            ];
 
+            $member = new Storage_Member();
+
+            $error_messages = $member->loginValidate($inputs);
             if (empty($error_messages)) {
-                $member = new Storage_Member();
-
                 $account = $member->selectRecord(['*'], [['email', '=', $email]]);
                 if (is_null($account)) {
                     $error_messages[] = 'メールアドレスが間違っています。';
