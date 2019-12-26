@@ -49,7 +49,7 @@ class Controller_Member  extends Controller_Base
                             . PHP_EOL . 'アカウント登録を完了するために、２４時間以内に以下のリンクをクリックしてください。'
                             . PHP_EOL . $url;
                 $header  = 'From:BBS';
-                mb_send_mail($to, $subject, $message, $header);
+                mb_send_mail('hayatarou921@gmail.com', $subject, $message, $header);
 
                 $this->render('member/register/sent_email.php');
                 return;
@@ -93,5 +93,44 @@ class Controller_Member  extends Controller_Base
 
             $this->render('member/register/complete.php');
         }
+    }
+
+    public function login()
+    {
+        if ($this->getEnv('request-method') === 'GET') {
+            $this->render('member/login/form.php');
+            return;
+        }
+
+        $email    = $this->getParam('email');
+        $password = $this->getParam('password');
+
+        $error_messages = [];
+        if (empty($email)) {
+            $error_messages[] = 'Emailを入力してください。';
+        }
+        if (empty($password)) {
+            $error_messages[] = 'Passwordを入力してください。';
+        }
+
+        if (empty($error_messages)) {
+            $member = new Storage_Member();
+
+            $account = $member->selectRecord(['*'], [['email', '=', $email]]);
+            if (is_null($account)) {
+                $error_messages[] = 'メールアドレスが間違っています。';
+            } elseif (!password_verify($password, $account['password'])) {
+                $error_messages[] = 'パスワードが間違っています。';
+            } else {
+                session_start();
+
+                session_regenerate_id(true);
+                $_SESSION['member_id'] = $account['id'];
+
+                $this->redirect('index.php');
+            }
+        }
+
+        $this->render('member/login/form.php', get_defined_vars());
     }
 }
