@@ -33,12 +33,18 @@ class Controller_Post extends Controller_Base
 
     public function post()
     {
+        $name       = $this->getParam('name');
+        $title      = $this->getParam('title');
+        $comment    = $this->getParam('comment');
+        $password   = $this->getParam('password');
+        $image_file = get_file('image');
+
         $inputs = [
-            'name'       => $this->getParam('name'),
-            'title'      => $this->getParam('title'),
-            'comment'    => $this->getParam('comment'),
-            'password'   => $this->getParam('password'),
-            'image_file' => get_file('image'),
+            'name'       => $name,
+            'title'      => $title,
+            'comment'    => $comment,
+            'password'   => $password,
+            'image_file' => $image_file,
         ];
 
         $post = new Storage_Post();
@@ -80,6 +86,7 @@ class Controller_Post extends Controller_Base
         $id            = $this->getParam('id');
         $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
+        $password      = $this->getParam('password');
 
         if (empty($id)) {
             $this->err400();
@@ -90,7 +97,7 @@ class Controller_Post extends Controller_Base
 
         $post = new Storage_Post();
 
-        $record = $post->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $id]]);
 
         if (is_null($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -102,8 +109,8 @@ class Controller_Post extends Controller_Base
         if (isset($record['password'])) {
             $exists_password = true;
 
-            if (isset($_POST['password'])) {
-                if (password_verify($_POST['password'], $record['password'])) {
+            if (!is_null($password)) {
+                if (password_verify($password, $record['password'])) {
                     $is_correct_password = true;
                 }
             }
@@ -115,7 +122,7 @@ class Controller_Post extends Controller_Base
                 $uploader->delete($record['image_path']);
             }
 
-            $post->softDelete([['id', '=', $_POST['id']]]);
+            $post->softDelete([['id', '=', $id]]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
@@ -128,6 +135,7 @@ class Controller_Post extends Controller_Base
         $id            = $this->getParam('id');
         $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
+        $password      = $this->getParam('password');
 
         if (empty($id)) {
             $this->err400();
@@ -138,7 +146,7 @@ class Controller_Post extends Controller_Base
 
         $post = new Storage_Post();
 
-        $record = $post->selectRecord(['*'], [['id', '=', $_POST['id']]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $id]]);
         if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
         }
@@ -155,8 +163,8 @@ class Controller_Post extends Controller_Base
         if (isset($record['password'])) {
             $exists_password = true;
 
-            if (isset($_POST['password'])) {
-                if (password_verify($_POST['password'], $record['password'])) {
+            if (isset($password)) {
+                if (password_verify($password, $record['password'])) {
                     $is_correct_password = true;
                 }
             }
@@ -193,7 +201,7 @@ class Controller_Post extends Controller_Base
                     }
                 }
 
-                $post->update($update_values, [['id', '=', $_POST['id']]]);
+                $post->update($update_values, [['id', '=', $id]]);
 
                 $this->redirect('index.php', array('page' => $previous_page));
             }

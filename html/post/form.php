@@ -14,9 +14,9 @@
       <img src="<?php echo $record['image_path'] ?>"><br>
       <input type="checkbox" name="delete_image">Delete Imaege<br>
     <?php endif ?>
-    <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
+    <input type="hidden" name="id" value="<?php echo h($id) ?>">
     <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
-    <input type="hidden" name="password" value="<?php echo h($_POST['password']) ?>">
+    <input type="hidden" name="password" value="<?php echo h($password) ?>">
     <input type="submit" name="do_edit" value="Submit">
     <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
   <?php else : ?>

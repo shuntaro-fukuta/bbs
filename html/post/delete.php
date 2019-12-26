@@ -14,7 +14,7 @@
       <form method="post" action="">
         Pass
         <input type="password" name="password">
-        <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
+        <input type="hidden" name="id" value="<?php echo h($id) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="submit" value="Del">
       </form>
@@ -24,9 +24,9 @@
     <p><?php echo h($record['created_at']) ?></p>
       <p>削除してよろしいですか？</p>
       <form method="post" action="">
-        <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
+        <input type="hidden" name="id" value="<?php echo h($id) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
-        <input type="hidden" name="password" value="<?php echo h($_POST['password']) ?>">
+        <input type="hidden" name="password" value="<?php echo h($password) ?>">
         <input type="submit" name="do_delete" value="Yes">
         <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
       </form>

@@ -20,7 +20,7 @@
       <form method="post" action="">
         Pass
         <input type="password" name="password">
-        <input type="hidden" name="id" value="<?php echo h($_POST['id']) ?>">
+        <input type="hidden" name="id" value="<?php echo h($id) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="submit" value="Edit">
       </form>
