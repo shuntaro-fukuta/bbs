@@ -141,7 +141,6 @@ class Controller_Member  extends Controller_Base
         $_SESSION = [];
 
         if (isset($_COOKIE[session_name()])) {
-            echo 'a';
             setcookie('PHPSESSID', '', 1);
         }
 

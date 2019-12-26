@@ -6,9 +6,9 @@
 
 <form method="post" action="register.php">
   <label for="name">Name</label><br>
-  <input type="text" name="name"><br>
+  <input type="text" name="name" value="<?php echo isset($name) ? h($name) : '' ?>"><br>
   <label for="email">E-mail</label><br>
-  <input type="text" name="email"><br>
+  <input type="text" name="email" value="<?php echo isset($email) ? h($email) : '' ?>"><br>
   <label for="password">Password</label><br>
   <input type="password" name="password"><br>
   <input type="hidden" name="do_confirm" value="1">

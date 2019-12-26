@@ -6,7 +6,7 @@
 
 <form method="post" action="login.php">
   <label for="email">Email</label><br>
-  <input type="text" name="email"><br>
+  <input type="text" name="email" value="<?php echo isset($email) ? h($email) : '' ?>"><br>
   <label for="password">Password</label><br>
   <input type="password" name="password"><br>
   <input type="submit" value="ログイン">
