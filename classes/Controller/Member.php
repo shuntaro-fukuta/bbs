@@ -2,7 +2,6 @@
 
 class Controller_Member  extends Controller_Base
 {
-
     public function register()
     {
         $request_method = $this->getEnv('request-method');
@@ -13,14 +12,31 @@ class Controller_Member  extends Controller_Base
         $member    = new Storage_Member();
         $premember = new Storage_Premember();
 
+        $error_messages = [];
+
         if ($request_method === 'GET') {
             $token = $this->getParam('token');
 
             if (!empty($token)) {
-                //     トークンチェックok
-                //         memberテーブルに保存
-                //         prememberから削除
-                //             登録完了画面
+                $account = $premember->selectRecord(['*'], [['token', '=', $token]]);
+                if (empty($account)) {
+                    $error_messages[] = 'アカウントが見つかりませんでした。' . PHP_EOL . 'もう一度登録し直してください。';
+                    $this->render('member/register/form.php');
+                    return;
+                }
+
+                if (!$premember->isExpired($account['date'])) {
+                    $member->insert([
+                        'name'     => $account['name'],
+                        'email'    => $account['email'],
+                        'password' => $account['password'],
+                    ]);
+
+                    $premember->delete([['id', '=', $account['id']]]);
+
+                    $this->render('member/register/complete.php');
+                    return;
+                }
             }
         }
 
