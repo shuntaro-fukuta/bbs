@@ -10,15 +10,13 @@ class Controller_Member  extends Controller_Base
         // クリックジャッキング
         // csrf
 
-        $member     = new Storage_Member();
-        $pre_member = new Storage_Premember();
+        $member    = new Storage_Member();
+        $premember = new Storage_Premember();
 
         if ($request_method === 'GET') {
             $token = $this->getParam('token');
 
-            if (is_null($token)) {
-                $this->render('member/register.php');
-            } else {
+            if (!empty($token)) {
                 //     トークンチェックok
                 //         memberテーブルに保存
                 //         prememberから削除
@@ -41,21 +39,34 @@ class Controller_Member  extends Controller_Base
             if (empty($error_messages)) {
                 if ($this->getParam('do_confirm') === '1') {
                     $hidden_pass = str_repeat('*', strlen($inputs['password']));
-                    $this->render('member/register_confirm.php', get_defined_vars());
-                } elseif ($this->getParam('do_register') === '1') {
+                    $this->render('member/register/confirm.php', get_defined_vars());
+                    return;
+                }
+
+                if ($this->getParam('do_register') === '1') {
                     $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
 
                     $token           = uniqid(create_random_string(30), true);
                     $inputs['token'] = $token;
 
-                    $pre_member->insert($inputs);
-                    // メール送った画面
+                    $premember->insert($inputs);
+
+                    $to      = $email;
+                    $subject = 'アカウント登録はまだ完了しておりません';
+                    $url     = 'http://centos7-amp7/register.php?token=' . $token;
+                    $message = 'Hi, Mr.' . $name
+                               . PHP_EOL . 'アカウント登録を完了するために、２４時間以内に以下のリンクをクリックしてください。'
+                               . PHP_EOL . $url;
+                    $header  = 'From:BBS';
+                    mb_send_mail($to, $subject, $message, $header);
+
+                    $this->render('member/register/sent_email.php');
+                    return;
                 }
 
-            } else {
-                $this->render('member/register.php', get_defined_vars());
             }
         }
 
+        $this->render('member/register/form.php', get_defined_vars());
     }
 }
