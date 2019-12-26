@@ -133,4 +133,20 @@ class Controller_Member  extends Controller_Base
 
         $this->render('member/login/form.php', get_defined_vars());
     }
+
+    public function logout()
+    {
+        session_start();
+
+        $_SESSION = [];
+
+        if (isset($_COOKIE[session_name()])) {
+            echo 'a';
+            setcookie('PHPSESSID', '', 1);
+        }
+
+        session_destroy();
+
+        $this->redirect('index.php');
+    }
 }
