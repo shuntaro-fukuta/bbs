@@ -135,13 +135,14 @@ class Controller_Member  extends Controller_Base
     public function logout()
     {
         session_start();
-
-        $_SESSION = [];
-
-        if (isset($_COOKIE[session_name()])) {
-            setcookie('PHPSESSID', '', 1);
+        if (!isset($_SESSION['member_id'])) {
+            $this->redirect('login.php');
         }
 
+        $_SESSION = [];
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', 1);
+        }
         session_destroy();
 
         $this->redirect('index.php');
