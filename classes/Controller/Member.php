@@ -13,6 +13,7 @@ class Controller_Member  extends Controller_Base
 
         if ($request_method === 'GET') {
             $this->render('member/register/form.php');
+
             return;
         }
 
@@ -34,6 +35,7 @@ class Controller_Member  extends Controller_Base
             if ($this->getParam('do_confirm') === '1') {
                 $hidden_pass = str_repeat('*', strlen($inputs['password']));
                 $this->render('member/register/confirm.php', get_defined_vars());
+
                 return;
             }
 
@@ -55,6 +57,7 @@ class Controller_Member  extends Controller_Base
                 mb_send_mail('hayatarou921@gmail.com', $subject, $message, $header);
 
                 $this->render('member/register/sent_email.php');
+
                 return;
             }
         }
@@ -80,6 +83,7 @@ class Controller_Member  extends Controller_Base
         if (empty($account)) {
             $error_messages = ['会員登録に失敗しました。' . PHP_EOL . 'もう一度登録し直してください。'];
             $this->render('member/register/form.php', get_defined_vars());
+
             return;
         }
 
