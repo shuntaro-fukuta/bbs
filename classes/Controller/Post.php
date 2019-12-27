@@ -59,10 +59,11 @@ class Controller_Post extends Controller_Base
             }
 
             $insert_values = [
-                'name'     => $inputs['name'],
-                'title'    => $inputs['title'],
-                'comment'  => $inputs['comment'],
-                'password' => $inputs['password'],
+                'name'      => $inputs['name'],
+                'title'     => $inputs['title'],
+                'comment'   => $inputs['comment'],
+                'password'  => $inputs['password'],
+                'member_id' => $this->getSession('member_id'),
             ];
 
             if (!empty($inputs['image_file'])) {
