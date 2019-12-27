@@ -32,6 +32,16 @@
           <input type="submit" formaction="edit.php" value="Edit">
         </form>
       <?php endif ?>
+    <?php else : ?>
+      <?php if (!isset($record['member_id'])) : ?>
+        <form method="post">
+          Pass <input type="password" name="password">
+          <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+          <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+          <input type="submit" formaction="delete.php" value="Del">
+          <input type="submit" formaction="edit.php" value="Edit">
+        </form>
+      <?php endif ?>
     <?php endif ?>
     <br>
     <?php echo h($record['created_at']) ?>

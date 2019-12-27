@@ -88,7 +88,7 @@ class Controller_Post extends Controller_Base
 
             $post->insert($insert_values);
 
-            // $this->redirect('index.php');
+            $this->redirect('index.php');
         }
 
         $this->render('post/post.php', get_defined_vars());
