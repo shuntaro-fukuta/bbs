@@ -4,8 +4,9 @@ abstract class Controller_Base
 {
     protected $method = 'GET';
 
-    protected $params = array();
-    protected $files  = array();
+    protected $params   = array();
+    protected $files    = array();
+    protected $sessions = array();
 
     protected $logger = null;
 
@@ -105,6 +106,19 @@ abstract class Controller_Base
 
             return $file;
             }
+        }
+    }
+
+    public function setSessions(array $sessions)
+    {
+        $this->sessions = $sessions;
+    }
+
+    public function getSession(string $key)
+    {
+        $sessions = $this->sessions;
+        if (isset($sessions[$key]) && $sessions[$key] !== '') {
+            return $sessions[$key];
         }
     }
 
