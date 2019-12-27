@@ -21,14 +21,19 @@
     <?php if (isset($record['image_path'])) : ?>
       <img src="<?php echo $record['image_path'] ?>">
     <?php endif ?>
-    <form method="post">
-      Pass
-      <input type="password" name="password">
-      <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
-      <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-      <input type="submit" formaction="delete.php" value="Del">
-      <input type="submit" formaction="edit.php" value="Edit">
-    </form>
+
+
+    <?php if (isset($member_id)) : ?>
+      <?php if (isset($record['member_id']) && $member_id === $record['member_id']) : ?>
+        <form method="post">
+          <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+          <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+          <input type="submit" formaction="delete.php" value="Del">
+          <input type="submit" formaction="edit.php" value="Edit">
+        </form>
+      <?php endif ?>
+    <?php endif ?>
+    <br>
     <?php echo h($record['created_at']) ?>
     <?php endforeach ?>
   <?php endif ?>
