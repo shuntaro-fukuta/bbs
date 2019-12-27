@@ -20,8 +20,10 @@
     <input type="submit" name="do_edit" value="Submit">
     <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
   <?php else : ?>
-    <label for="password">Password</label>
-    <input id="password" type="password" name="password"><br>
+    <?php if (!isset($member_id)) : ?>
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password"><br>
+    <?php endif ?>
     <input type="submit" value="Submit">
   <?php endif ?>
 </form>

@@ -11,6 +11,8 @@ class Controller_Post extends Controller_Base
 
     public function index()
     {
+        $member_id  = $this->getSession('member_id');
+
         $post = new Storage_Post();
 
         $paginator = new Paginator($post->count());
