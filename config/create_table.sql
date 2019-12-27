@@ -7,8 +7,9 @@
   `password` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `member_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8733 DEFAULT CHARSET=utf8 |
+) ENGINE=InnoDB AUTO_INCREMENT=8737 DEFAULT CHARSET=utf8 |
 
 | premember | CREATE TABLE `premember` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
