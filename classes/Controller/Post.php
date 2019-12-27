@@ -59,11 +59,8 @@ class Controller_Post extends Controller_Base
             'image_file' => $image_file,
         ];
 
-        $post = new Storage_Post();
-
-        $validator      = new Validator();
-        $validator->setAttributeValidationRules($post->getValidationRule());
-        $error_messages = $validator->validate($inputs);
+        $post           = new Storage_Post();
+        $error_messages = $post->validate($inputs);
 
         if (empty($error_messages)) {
             if (!empty($inputs['password'])) {
@@ -193,10 +190,7 @@ class Controller_Post extends Controller_Base
                 'image_file' => get_file('image'),
             ];
 
-            $validator = new Validator();
-            $validator->setAttributeValidationRules($post->getValidationRule());
-            $error_messages = $validator->validate($inputs);
-
+            $error_messages = $post->validate($inputs);
             if (empty($error_messages)) {
                 $update_values = [
                     'name'    => $inputs['name'],

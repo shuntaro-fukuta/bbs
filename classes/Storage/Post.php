@@ -44,8 +44,12 @@ class Storage_Post extends Storage_Base
         ],
     ];
 
-    public function getValidationRule()
+    public function validate(array $inputs)
     {
-        return $this->validation_rule;
+        $validator      = new Validator();
+        $validator->setAttributeValidationRules($this->validation_rule);
+        $error_messages = $validator->validate($inputs);
+
+        return $error_messages;
     }
 }
