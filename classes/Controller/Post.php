@@ -12,6 +12,10 @@ class Controller_Post extends Controller_Base
     public function index()
     {
         $member_id  = $this->getSession('member_id');
+        if (!is_null($member_id)) {
+            $member      = new Storage_Member();
+            $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
+        }
 
         $post = new Storage_Post();
 
