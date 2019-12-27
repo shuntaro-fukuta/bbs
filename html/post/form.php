@@ -2,8 +2,12 @@
 
 <?php $_action = (isset($is_edit_form)) ? 'edit.php' : 'post.php' ?>
 <form method="post" action="<?php echo $_action ?>" enctype="multipart/form-data">
-  <label for="name">Name</label><br>
-  <input type="text" name="name" value="<?php echo isset($name) ? h($name) : '' ?>"><br>
+    <label for="name">Name</label><br>
+  <?php if(isset($member_name)) : ?>
+    <input type="text" name="name" value="<?php echo h($member_name) ?>"><br>
+  <?php else : ?>
+    <input type="text" name="name" value="<?php echo isset($name) ? h($name) : '' ?>"><br>
+  <?php endif ?>
   <label for="title">Title</label><br>
   <input id="title" type="text" name="title" value="<?php echo isset($title) ? h($title) : '' ?>"><br>
   <label for="comment">Body</label><br>

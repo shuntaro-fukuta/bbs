@@ -35,12 +35,17 @@ class Controller_Post extends Controller_Base
 
     public function post()
     {
+        $member_id = $this->getSession('member_id');
+        if (!is_null($member_id)) {
+            $member      = new Storage_Member();
+            $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
+        }
+
         $name       = $this->getParam('name');
         $title      = $this->getParam('title');
         $comment    = $this->getParam('comment');
         $password   = $this->getParam('password');
         $image_file = get_file('image');
-        $member_id  = $this->getSession('member_id');
 
         $inputs = [
             'name'       => $name,
@@ -79,10 +84,10 @@ class Controller_Post extends Controller_Base
 
             $post->insert($insert_values);
 
-            $this->redirect('index.php');
-        } else {
-            $this->render('post/post.php', get_defined_vars());
+            // $this->redirect('index.php');
         }
+
+        $this->render('post/post.php', get_defined_vars());
     }
 
     public function delete()
