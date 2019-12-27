@@ -1,7 +1,7 @@
   <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
 
-    <?php if (!$exists_password) : ?>
-      <p>この投稿にはパスワードが設定されていないため、削除できません。</p>
+    <?php if (!$is_logged_in && !$exists_password) : ?>
+      <p>この投稿にはパスワードが設定されていないため、編集できません。</p>
       <p><?php echo h($record['title']) ?></p>
       <p><?php echo h($record['comment']) ?></p>
       <?php if (isset($record['image_path'])) : ?>
@@ -9,7 +9,7 @@
       <?php endif ?>
       <p><?php echo h($record['created_at']) ?></p>
       <a href="<?php echo $previous_page_url ?>">前のページへ戻る</a>
-    <?php elseif (!$is_correct_password) : ?>
+    <?php elseif (!$is_logged_in && $is_correct_password) : ?>
       <p>パスワードが間違っています。もう一度入力してください</p>
       <p><?php echo h($record['title']) ?></p>
       <p><?php echo h($record['comment']) ?></p>

@@ -96,6 +96,9 @@ class Controller_Post extends Controller_Base
 
     public function delete()
     {
+        $member_id    = $this->getSession('member_id');
+        $is_logged_in = (is_null($member_id)) ? false : true;
+
         $id            = $this->getParam('id');
         $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
@@ -129,7 +132,7 @@ class Controller_Post extends Controller_Base
             }
         }
 
-        if ($is_correct_password && $this->getParam('do_delete')) {
+        if (($is_logged_in || $is_correct_password) && $this->getParam('do_delete')) {
             if (!empty($record['image_path'])) {
                 $uploader = new Uploader();
                 $uploader->delete($record['image_path']);
@@ -145,6 +148,9 @@ class Controller_Post extends Controller_Base
 
     public function edit()
     {
+        $member_id    = $this->getSession('member_id');
+        $is_logged_in = (is_null($member_id)) ? false : true;
+
         $id            = $this->getParam('id');
         $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
@@ -183,7 +189,7 @@ class Controller_Post extends Controller_Base
             }
         }
 
-        if ($is_correct_password && $this->getParam('do_edit')) {
+        if (($is_logged_in || $is_correct_password) && $this->getParam('do_edit')) {
             $inputs = [
                 'name'       => $this->getParam('name'),
                 'title'      => $this->getParam('title'),
