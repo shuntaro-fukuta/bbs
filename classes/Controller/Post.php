@@ -38,6 +38,7 @@ class Controller_Post extends Controller_Base
         $comment    = $this->getParam('comment');
         $password   = $this->getParam('password');
         $image_file = get_file('image');
+        $member_id  = $this->getSession('member_id');
 
         $inputs = [
             'name'       => $name,
@@ -63,7 +64,7 @@ class Controller_Post extends Controller_Base
                 'title'     => $inputs['title'],
                 'comment'   => $inputs['comment'],
                 'password'  => $inputs['password'],
-                'member_id' => $this->getSession('member_id'),
+                'member_id' => $member_id,
             ];
 
             if (!empty($inputs['image_file'])) {

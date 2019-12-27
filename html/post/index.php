@@ -10,6 +10,9 @@
     <?php else : ?>
       No Name
     <?php endif ?>
+    <?php if (isset($record['member_id'])) : ?>
+      [ ID : <?php echo $record['member_id'] ?> ]
+    <?php endif ?>
     <br>
     <?php echo h($record['title']) ?>
     <br>
