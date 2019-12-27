@@ -7,6 +7,7 @@ class Controller_Post extends Controller_Base
     public function __construct()
     {
         $this->image_dir = Uploader::UPLOAD_DIR_NAME;
+        $this->startSession();
     }
 
     public function index()

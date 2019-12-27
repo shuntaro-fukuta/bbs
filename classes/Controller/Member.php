@@ -2,6 +2,11 @@
 
 class Controller_Member  extends Controller_Base
 {
+    public function __construct()
+    {
+        $this->startSession();
+    }
+
     public function register()
     {
         // クリックジャッキング
@@ -97,7 +102,6 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        session_start();
         if (isset($_SESSION['member_id'])) {
             $this->redirect('index.php');
         }
@@ -134,7 +138,6 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        session_start();
         if (!isset($_SESSION['member_id'])) {
             $this->redirect('login.php');
         }

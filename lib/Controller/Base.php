@@ -122,6 +122,13 @@ abstract class Controller_Base
         }
     }
 
+    public function startSession()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+    }
+
     public function setUp()
     {
         $this->logger = new Logger();
