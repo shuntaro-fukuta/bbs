@@ -102,7 +102,7 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        if (isset($_SESSION['member_id'])) {
+        if (!is_null($this->getSession('member_id'))) {
             $this->redirect('index.php');
         }
 
@@ -138,7 +138,7 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        if (!isset($_SESSION['member_id'])) {
+        if (!is_null($this->getSession('member_id'))) {
             $this->redirect('login.php');
         }
 

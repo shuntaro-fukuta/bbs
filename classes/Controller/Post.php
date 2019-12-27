@@ -12,8 +12,9 @@ class Controller_Post extends Controller_Base
 
     public function index()
     {
-        $member_id  = $this->getSession('member_id');
-        if (!is_null($member_id)) {
+        $member_id    = $this->getSession('member_id');
+        $is_logged_in = (is_null($member_id)) ? false : true;
+        if ($is_logged_in) {
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
         }
@@ -40,8 +41,9 @@ class Controller_Post extends Controller_Base
 
     public function post()
     {
-        $member_id = $this->getSession('member_id');
-        if (!is_null($member_id)) {
+        $member_id    = $this->getSession('member_id');
+        $is_logged_in = (is_null($member_id)) ? false : true;
+        if ($is_logged_in) {
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
         }

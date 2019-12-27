@@ -22,8 +22,7 @@
       <img src="<?php echo $record['image_path'] ?>">
     <?php endif ?>
 
-
-    <?php if (isset($member_id)) : ?>
+    <?php if ($is_logged_in) : ?>
       <?php if (isset($record['member_id']) && $member_id === $record['member_id']) : ?>
         <form method="post">
           <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
@@ -33,15 +32,13 @@
         </form>
       <?php endif ?>
     <?php else : ?>
-      <?php if (!isset($record['member_id'])) : ?>
-        <form method="post">
-          Pass <input type="password" name="password">
-          <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
-          <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-          <input type="submit" formaction="delete.php" value="Del">
-          <input type="submit" formaction="edit.php" value="Edit">
-        </form>
-      <?php endif ?>
+      <form method="post">
+        Pass <input type="password" name="password">
+        <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+        <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+        <input type="submit" formaction="delete.php" value="Del">
+        <input type="submit" formaction="edit.php" value="Edit">
+      </form>
     <?php endif ?>
     <br>
     <?php echo h($record['created_at']) ?>
