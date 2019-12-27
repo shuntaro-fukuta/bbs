@@ -9,8 +9,6 @@ class Controller_Member  extends Controller_Base
 
     public function register()
     {
-        // クリックジャッキング
-        // csrf
         $request_method = $this->getEnv('request-method');
 
         if ($request_method === 'GET') {
@@ -120,10 +118,8 @@ class Controller_Member  extends Controller_Base
             $error_messages = $member->loginValidate($inputs);
             if (empty($error_messages)) {
                 $account = $member->selectRecord(['*'], [['email', '=', $email]]);
-                if (is_null($account)) {
-                    $error_messages[] = 'メールアドレスが間違っています。';
-                } elseif (!password_verify($password, $account['password'])) {
-                    $error_messages[] = 'パスワードが間違っています。';
+                if (is_null($account) || !password_verify($password, $account['password'])) {
+                    $error_messages[] = 'メールアドレスかパスワードが間違っています。';
                 } else {
                     session_regenerate_id(true);
                     $_SESSION['member_id'] = $account['id'];
