@@ -21,12 +21,9 @@ class Controller_Post extends Controller_Base
 
         $post = new Storage_Post();
 
-        $paginator = new Paginator($post->count());
-
-        $page = (int) $this->getParam('page');
-
+        $paginator    = new Paginator($post->count());
+        $page         = (int) $this->getParam('page');
         $paginator->setCurrentPage($page);
-
         $page_numbers = $paginator->getPageNumbers();
 
         $records = $post->selectRecords(['*'], [
@@ -81,12 +78,11 @@ class Controller_Post extends Controller_Base
                 'member_id' => $member_id,
             ];
 
-            if (!empty($inputs['image_file'])) {
-                $uploader = new Uploader();
-
-                $insert_values['image_path'] = $uploader->upload($inputs['image_file']);
-            } else {
+            if (empty($inputs['image_file'])) {
                 $insert_values['image_path'] = null;
+            } else {
+                $uploader = new Uploader();
+                $insert_values['image_path'] = $uploader->upload($inputs['image_file']);
             }
 
             $post->insert($insert_values);
@@ -103,7 +99,6 @@ class Controller_Post extends Controller_Base
         $is_logged_in = (is_null($member_id)) ? false : true;
 
         $id            = $this->getParam('id');
-        $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
         $password      = $this->getParam('password');
 
@@ -114,8 +109,7 @@ class Controller_Post extends Controller_Base
         $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $post = new Storage_Post();
-
+        $post   = new Storage_Post();
         $record = $post->selectRecord(['*'], [['id', '=', $id]]);
 
         if (is_null($record) || $record['is_deleted'] === 1) {
@@ -155,7 +149,6 @@ class Controller_Post extends Controller_Base
         $is_logged_in = (is_null($member_id)) ? false : true;
 
         $id            = $this->getParam('id');
-        $pass          = $this->getParam('password');
         $previous_page = $this->getParam('previous_page');
         $password      = $this->getParam('password');
 
@@ -166,9 +159,9 @@ class Controller_Post extends Controller_Base
         $previous_page     = (empty($previous_page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
-        $post = new Storage_Post();
-
+        $post   = new Storage_Post();
         $record = $post->selectRecord(['*'], [['id', '=', $id]]);
+
         if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
         }
@@ -215,7 +208,6 @@ class Controller_Post extends Controller_Base
 
                 if ($this->getParam('delete_image')) {
                     $uploader->delete($record['image_path']);
-
                     $update_values['image_path'] = null;
                 } else {
                     if (!empty($inputs['image_file'])) {
