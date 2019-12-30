@@ -109,26 +109,6 @@ abstract class Controller_Base
         }
     }
 
-    public function setSessions(array $sessions)
-    {
-        $this->sessions = $sessions;
-    }
-
-    public function getSession(string $key)
-    {
-        $sessions = $this->sessions;
-        if (isset($sessions[$key]) && $sessions[$key] !== '') {
-            return $sessions[$key];
-        }
-    }
-
-    public function startSession()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-    }
-
     public function setUp()
     {
         $this->logger = new Logger();

@@ -2,9 +2,11 @@
 
 class Controller_Member  extends Controller_Base
 {
+    protected $session_manager;
+
     public function __construct()
     {
-        $this->startSession();
+        $this->session_manager = new SessionManager();
     }
 
     public function register()
@@ -104,7 +106,7 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        if (!is_null($this->getSession('member_id'))) {
+        if (!is_null($this->session_manager->getParam('member_id'))) {
             $this->redirect('index.php');
         }
 
@@ -138,11 +140,11 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        if (!is_null($this->getSession('member_id'))) {
+        if (is_null($this->session_manager->getParam('member_id'))) {
             $this->redirect('login.php');
         }
 
-        $_SESSION = [];
+        $this->session_manager->destroyParam();
         if (isset($_COOKIE[session_name()])) {
             setcookie(session_name(), '', 1);
         }
