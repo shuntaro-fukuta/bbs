@@ -25,7 +25,7 @@
     <?php if ($is_logged_in) : ?>
       <?php if (isset($record['member_id']) && $member_id === $record['member_id']) : ?>
         <form method="post">
-          <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+          <input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
           <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
           <input type="submit" formaction="delete.php" value="Del">
           <input type="submit" formaction="edit.php" value="Edit">
@@ -34,7 +34,7 @@
     <?php else : ?>
       <form method="post">
         Pass <input type="password" name="password">
-        <input type="hidden" name="id" value="<?php echo h($record['id']) ?>">
+        <input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($paginator->getCurrentPage()) ?>">
         <input type="submit" formaction="delete.php" value="Del">
         <input type="submit" formaction="edit.php" value="Edit">

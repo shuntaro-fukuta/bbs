@@ -18,10 +18,11 @@
       <img src="<?php echo $record['image_path'] ?>"><br>
       <input type="checkbox" name="delete_image">Delete Imaege<br>
     <?php endif ?>
-    <input type="hidden" name="id" value="<?php echo h($id) ?>">
+    <input type="hidden" name="post_id" value="<?php echo h($post_id) ?>">
     <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
     <input type="hidden" name="password" value="<?php echo h($password) ?>">
-    <input type="submit" name="do_edit" value="Submit">
+    <input type="hidden" name="do_edit" value="1">
+    <input type="submit" value="Submit">
     <input type="button" value="Cancel" onclick="location.href='<?php echo h($previous_page_url) ?>'">
   <?php else : ?>
     <?php if (!isset($member_id)) : ?>

@@ -96,11 +96,11 @@ class Controller_Post extends Controller_Base
         $member_id    = $this->session_manager->getParam('member_id');
         $is_logged_in = (is_null($member_id)) ? false : true;
 
-        $id            = $this->getParam('id');
+        $post_id       = $this->getParam('post_id');
         $previous_page = $this->getParam('previous_page');
         $password      = $this->getParam('password');
 
-        if (empty($id)) {
+        if (empty($post_id)) {
             $this->err400();
         }
 
@@ -108,7 +108,7 @@ class Controller_Post extends Controller_Base
         $previous_page_url = "index.php?page={$previous_page}";
 
         $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'], [['id', '=', $id]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
 
         if (is_null($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -133,7 +133,7 @@ class Controller_Post extends Controller_Base
                 $uploader->delete($record['image_path']);
             }
 
-            $post->softDelete([['id', '=', $id]]);
+            $post->softDelete([['id', '=', $post_id]]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
@@ -146,11 +146,11 @@ class Controller_Post extends Controller_Base
         $member_id    = $this->session_manager->getParam('member_id');
         $is_logged_in = (is_null($member_id)) ? false : true;
 
-        $id            = $this->getParam('id');
+        $post_id       = $this->getParam('post_id');
         $previous_page = $this->getParam('previous_page');
         $password      = $this->getParam('password');
 
-        if (empty($id)) {
+        if (empty($post_id)) {
             $this->err400();
         }
 
@@ -158,7 +158,7 @@ class Controller_Post extends Controller_Base
         $previous_page_url = "index.php?page={$previous_page}";
 
         $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'], [['id', '=', $id]]);
+        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
 
         if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -176,14 +176,14 @@ class Controller_Post extends Controller_Base
         if (isset($record['password'])) {
             $exists_password = true;
 
-            if (isset($password)) {
+            if (!is_null($password)) {
                 if (password_verify($password, $record['password'])) {
                     $is_correct_password = true;
                 }
             }
         }
 
-        if (($is_logged_in || $is_correct_password) && $this->getParam('do_edit')) {
+        if (($is_logged_in || $is_correct_password) && $this->getParam('do_edit') === '1') {
             $inputs = [
                 'name'       => $this->getParam('name'),
                 'title'      => $this->getParam('title'),
@@ -210,7 +210,8 @@ class Controller_Post extends Controller_Base
                     }
                 }
 
-                $post->update($update_values, [['id', '=', $id]]);
+
+                $post->update($update_values, [['id', '=', $post_id]]);
 
                 $this->redirect('index.php', array('page' => $previous_page));
             }

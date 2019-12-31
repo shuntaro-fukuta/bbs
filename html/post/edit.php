@@ -9,7 +9,7 @@
       <?php endif ?>
       <p><?php echo h($record['created_at']) ?></p>
       <a href="<?php echo $previous_page_url ?>">前のページへ戻る</a>
-    <?php elseif (!$is_logged_in && $is_correct_password) : ?>
+    <?php elseif (!$is_logged_in && !$is_correct_password) : ?>
       <p>パスワードが間違っています。もう一度入力してください</p>
       <p><?php echo h($record['title']) ?></p>
       <p><?php echo h($record['comment']) ?></p>
@@ -20,7 +20,7 @@
       <form method="post" action="">
         Pass
         <input type="password" name="password">
-        <input type="hidden" name="id" value="<?php echo h($id) ?>">
+        <input type="hidden" name="post_id" value="<?php echo h($post_id) ?>">
         <input type="hidden" name="previous_page" value="<?php echo h($previous_page) ?>">
         <input type="submit" value="Edit">
       </form>
