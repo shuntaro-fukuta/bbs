@@ -82,7 +82,7 @@ class Controller_Member  extends Controller_Base
         }
 
         $account = $premember->selectRecord(['*'], [['token', '=', $token]]);
-        if (empty($account)) {
+        if (is_null($account)) {
             $error_messages = ['会員登録に失敗しました。' . PHP_EOL . 'もう一度登録し直してください。'];
             $this->render('member/register/form.php', get_defined_vars());
 
