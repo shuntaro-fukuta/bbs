@@ -104,7 +104,7 @@ class Controller_Post extends Controller_Base
             $this->err400();
         }
 
-        $previous_page     = (empty($page)) ? 1 : (int)$previous_page;
+        $previous_page     = (empty($previous_page)) ? 1 : (int)$previous_page;
         $previous_page_url = "index.php?page={$previous_page}";
 
         $post   = new Storage_Post();
