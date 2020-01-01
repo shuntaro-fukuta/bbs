@@ -256,8 +256,9 @@ class Storage_Database_MySQL extends Storage_Database
         }
 
         $value = $where[2] ?? null;
-        if (!is_string($value) && !is_numeric($value)) {
-            throw new InvalidArgumentException("Where's third parameter must be string or number.");
+        $type  = gettype($value);
+        if (!array_key_exists($type, $this->bind_types)) {
+            throw new InvalidArgumentException("Where's third parameter's type must be " . implode(' or ', array_keys($this->bind_types)) . '.');
         }
     }
 
