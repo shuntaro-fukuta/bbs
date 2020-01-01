@@ -37,4 +37,9 @@ class SessionManager
     {
         $_SESSION = [];
     }
+
+    public function regenerateId(bool $delete_old_session = true)
+    {
+        session_regenerate_id($delete_old_session);
+    }
 }

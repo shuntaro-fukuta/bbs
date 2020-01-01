@@ -126,7 +126,7 @@ class Controller_Member  extends Controller_Base
             if (is_null($account) || !password_verify($password, $account['password'])) {
                 $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
             } else {
-                session_regenerate_id(true);
+                $this->session_manager->regenerateId();
                 $this->session_manager->setVar('member_id', $account['id']);
 
                 $this->redirect('index.php');
