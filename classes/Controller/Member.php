@@ -89,7 +89,7 @@ class Controller_Member  extends Controller_Base
             return;
         }
 
-        if ($premember->isExpired($account['date'])) {
+        if ($premember->isExpired($account['created_at'])) {
             $this->render('member/register/expired.php');
         } else {
             $member->insert([
