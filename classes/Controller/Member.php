@@ -81,27 +81,32 @@ class Controller_Member  extends Controller_Base
             $this->err400();
         }
 
+        $error_messages = [];
+
         $account = $premember->selectRecord(['*'], [['token', '=', $token]]);
         if (is_null($account)) {
-            $error_messages = ['会員登録に失敗しました。' . PHP_EOL . 'もう一度登録し直してください。'];
+            $error_messages[] = '会員登録に失敗しました。' . PHP_EOL . 'もう一度登録し直してください。';
+        } elseif ($member->count([['email', '=', $account['email']]]) === 1) {
+            $error_messages[] = '既に会員登録されています。';
+        } elseif ($premember->isExpired($account['created_at'])) {
+            $error_messages[] = 'アカウント認証URLの有効期限が切れました。' . PHP_EOL . 'もう一度登録し直してください。';
+        }
+
+        if (!empty($error_messages)) {
             $this->render('member/register/form.php', get_defined_vars());
 
             return;
         }
 
-        if ($premember->isExpired($account['created_at'])) {
-            $this->render('member/register/expired.php');
-        } else {
-            $member->insert([
-                'name'     => $account['name'],
-                'email'    => $account['email'],
-                'password' => $account['password'],
-            ]);
+        $member->insert([
+            'name'     => $account['name'],
+            'email'    => $account['email'],
+            'password' => $account['password'],
+        ]);
 
-            $premember->delete([['id', '=', $account['id']]]);
+        $premember->delete([['id', '=', $account['id']]]);
 
-            $this->render('member/register/complete.php');
-        }
+        $this->render('member/register/complete.php');
     }
 
     public function login()
