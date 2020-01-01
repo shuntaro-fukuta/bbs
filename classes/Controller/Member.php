@@ -111,7 +111,7 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        if (!is_null($this->session_manager->getParam('member_id'))) {
+        if (!is_null($this->session_manager->getVar('member_id'))) {
             $this->redirect('index.php');
         }
 
@@ -138,11 +138,12 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        if (is_null($this->session_manager->getParam('member_id'))) {
+        if (is_null($this->session_manager->getVar('member_id'))) {
             $this->redirect('login.php');
         }
 
-        $this->session_manager->destroyParam();
+        $this->session_manager->destroyVar();
+        // hamaco: SessionManager があるのにこの辺は自分で書くの？
         if (isset($_COOKIE[session_name()])) {
             setcookie(session_name(), '', 1);
         }

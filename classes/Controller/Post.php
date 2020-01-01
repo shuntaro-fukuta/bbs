@@ -13,7 +13,7 @@ class Controller_Post extends Controller_Base
 
     public function index()
     {
-        $member_id    = $this->session_manager->getParam('member_id');
+        $member_id    = $this->session_manager->getVar('member_id');
         $is_logged_in = ($member_id !== null);
         if ($is_logged_in) {
             $member      = new Storage_Member();
@@ -39,7 +39,7 @@ class Controller_Post extends Controller_Base
 
     public function post()
     {
-        $member_id    = $this->session_manager->getParam('member_id');
+        $member_id    = $this->session_manager->getVar('member_id');
         $is_logged_in = ($member_id !== null);
         if ($is_logged_in) {
             $member      = new Storage_Member();
@@ -93,7 +93,7 @@ class Controller_Post extends Controller_Base
 
     public function delete()
     {
-        $member_id    = $this->session_manager->getParam('member_id');
+        $member_id    = $this->session_manager->getVar('member_id');
         $is_logged_in = ($member_id !== null);
 
         $post_id       = $this->getParam('post_id');
@@ -143,7 +143,7 @@ class Controller_Post extends Controller_Base
 
     public function edit()
     {
-        $member_id    = $this->session_manager->getParam('member_id');
+        $member_id    = $this->session_manager->getVar('member_id');
         $is_logged_in = ($member_id !== null);
 
         $post_id       = $this->getParam('post_id');

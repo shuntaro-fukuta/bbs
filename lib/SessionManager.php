@@ -14,26 +14,26 @@ class SessionManager
         }
     }
 
-    public function getParam(string $key)
+    public function getVar(string $key)
     {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
     }
 
-    public function setParam(string $key, string $value)
+    public function setVar(string $key, string $value)
     {
         $_SESSION[$key] = $value;
     }
 
-    public function unsetParam(string $key)
+    public function unsetVar(string $key)
     {
         if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
         }
     }
 
-    public function destroyParam()
+    public function destroyVar()
     {
         $_SESSION = [];
     }
