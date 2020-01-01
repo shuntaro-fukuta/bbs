@@ -127,7 +127,7 @@ class Controller_Member  extends Controller_Base
                 $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
             } else {
                 session_regenerate_id(true);
-                $_SESSION['member_id'] = $account['id'];
+                $this->session_manager->setVar('member_id', $account['id']);
 
                 $this->redirect('index.php');
             }
