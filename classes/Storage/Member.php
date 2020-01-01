@@ -24,19 +24,6 @@ class Storage_Member extends Storage_Base
         ],
     ];
 
-    protected $login_validation_rules = [
-        'email' => [
-            'required' => true,
-        ],
-        'password' => [
-            'required' => true,
-            'length'   => [
-                'min' => 8,
-                'max' => 16,
-            ],
-        ],
-    ];
-
     public function registerValidate(array $inputs)
     {
         $validator      = new Validator();
@@ -53,15 +40,6 @@ class Storage_Member extends Storage_Base
                 $error_messages[] = 'メールアドレスに＠が含まれていません。';
             }
         }
-
-        return $error_messages;
-    }
-
-    public function loginValidate(array $inputs)
-    {
-        $validator      = new Validator();
-        $validator->setAttributeValidationRules($this->login_validation_rules);
-        $error_messages = $validator->validate($inputs);
 
         return $error_messages;
     }

@@ -119,24 +119,17 @@ class Controller_Member  extends Controller_Base
             $email    = $this->getParam('email');
             $password = $this->getParam('password');
 
-            $inputs = [
-                'email'    => $email,
-                'password' => $password,
-            ];
+            $member  = new Storage_Member();
+            $account = $member->selectRecord(['*'], [['email', '=', $email]]);
 
-            $member = new Storage_Member();
+            $error_messages = [];
+            if (is_null($account) || !password_verify($password, $account['password'])) {
+                $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
+            } else {
+                session_regenerate_id(true);
+                $_SESSION['member_id'] = $account['id'];
 
-            $error_messages = $member->loginValidate($inputs);
-            if (empty($error_messages)) {
-                $account = $member->selectRecord(['*'], [['email', '=', $email]]);
-                if (is_null($account) || !password_verify($password, $account['password'])) {
-                    $error_messages[] = 'メールアドレスかパスワードが間違っています。';
-                } else {
-                    session_regenerate_id(true);
-                    $_SESSION['member_id'] = $account['id'];
-
-                    $this->redirect('index.php');
-                }
+                $this->redirect('index.php');
             }
         }
 
