@@ -17,9 +17,9 @@
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
-  `date` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8 |
 
 | member | CREATE TABLE `member` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
