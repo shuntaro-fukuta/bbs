@@ -47,7 +47,12 @@ class Controller_Member  extends Controller_Base
                 $token           = uniqid(create_random_string(30), true);
                 $inputs['token'] = $token;
 
-                $premember->insert($inputs);
+                if ($premember->count([['email', '=', $email]]) === 0) {
+                    $premember->insert($inputs);
+                } else {
+                    $inputs['created_at'] = date('Y-m-d H:i:s');
+                    $premember->update($inputs, [['email', '=', $email]]);
+                }
 
                 $to      = $email;
                 $subject = 'アカウント登録はまだ完了しておりません';
@@ -56,7 +61,7 @@ class Controller_Member  extends Controller_Base
                             . PHP_EOL . 'アカウント登録を完了するために、２４時間以内に以下のリンクをクリックしてください。'
                             . PHP_EOL . $url;
                 $header  = 'From:BBS';
-                mb_send_mail('hayatarou921@gmail.com', $subject, $message, $header);
+                mb_send_mail($to, $subject, $message, $header);
 
                 $this->render('member/register/sent_email.php');
 
