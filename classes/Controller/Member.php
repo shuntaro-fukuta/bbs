@@ -32,7 +32,7 @@ class Controller_Member  extends Controller_Base
             'password' => $password,
         ];
 
-        $error_messages = $member->registerValidate($inputs);
+        $error_messages = $member->validate($inputs);
         if (empty($error_messages)) {
             if ($this->getParam('do_confirm') === '1') {
                 $hidden_pass = str_repeat('*', strlen($inputs['password']));
@@ -60,7 +60,7 @@ class Controller_Member  extends Controller_Base
                 $message = 'Hi, Mr.' . $name
                             . PHP_EOL . 'アカウント登録を完了するために、２４時間以内に以下のリンクをクリックしてください。'
                             . PHP_EOL . $url;
-                $header  = 'From:BBS';
+                $header  = 'From:BBS@example.com';
                 mb_send_mail($to, $subject, $message, $header);
 
                 $this->render('member/register/sent_email.php');

@@ -4,7 +4,7 @@ class Storage_Member extends Storage_Base
 {
     protected $table_name = 'member';
 
-    protected $register_validation_rules = [
+    protected $validation_rules = [
         'name' => [
             'required' => true,
             'length'   => [
@@ -24,10 +24,10 @@ class Storage_Member extends Storage_Base
         ],
     ];
 
-    public function registerValidate(array $inputs)
+    public function validate(array $inputs)
     {
         $validator      = new Validator();
-        $validator->setAttributeValidationRules($this->register_validation_rules);
+        $validator->setAttributeValidationRules($this->validation_rules);
         $error_messages = $validator->validate($inputs);
 
         if (isset($inputs['email']) && !empty($inputs['email'])) {
