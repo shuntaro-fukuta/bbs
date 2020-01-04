@@ -33,9 +33,13 @@ class SessionManager
         }
     }
 
-    public function destroyVar()
+    public function destroy()
     {
         $_SESSION = [];
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', 1);
+        }
+        session_destroy();
     }
 
     public function regenerateId(bool $delete_old_session = true)

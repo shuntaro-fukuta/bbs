@@ -2,13 +2,6 @@
 
 class Controller_Member  extends Controller_Base
 {
-    protected $session_manager;
-
-    public function __construct()
-    {
-        $this->session_manager = new SessionManager();
-    }
-
     public function register()
     {
         $request_method = $this->getEnv('request-method');
@@ -116,7 +109,8 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        if (!is_null($this->session_manager->getVar('member_id'))) {
+        $session_manager = new SessionManager();
+        if (!is_null($session_manager->getVar('member_id'))) {
             $this->redirect('index.php');
         }
 
@@ -131,8 +125,8 @@ class Controller_Member  extends Controller_Base
             if (is_null($account) || !password_verify($password, $account['password'])) {
                 $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
             } else {
-                $this->session_manager->regenerateId();
-                $this->session_manager->setVar('member_id', $account['id']);
+                $session_manager->regenerateId();
+                $session_manager->setVar('member_id', $account['id']);
 
                 $this->redirect('index.php');
             }
@@ -143,16 +137,12 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        if (is_null($this->session_manager->getVar('member_id'))) {
+        $session_manager = new SessionManager();
+        if (is_null($session_manager->getVar('member_id'))) {
             $this->redirect('login.php');
         }
 
-        $this->session_manager->destroyVar();
-        // hamaco: SessionManager があるのにこの辺は自分で書くの？
-        if (isset($_COOKIE[session_name()])) {
-            setcookie(session_name(), '', 1);
-        }
-        session_destroy();
+        $session_manager->destroy();
 
         $this->redirect('index.php');
     }
