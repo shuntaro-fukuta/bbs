@@ -4,9 +4,7 @@ class Controller_Member  extends Controller_Base
 {
     public function register()
     {
-        $request_method = $this->getEnv('request-method');
-
-        if ($request_method === 'GET') {
+        if ($this->getEnv('request-method') === 'GET') {
             $this->render('member/register/form.php');
 
             return;
