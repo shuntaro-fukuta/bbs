@@ -109,7 +109,7 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        $session_manager = new SessionManager();
+        $session_manager = $this->createSessionManager();
         if (!is_null($session_manager->getVar('member_id'))) {
             $this->redirect('index.php');
         }
@@ -137,7 +137,7 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        $session_manager = new SessionManager();
+        $session_manager = $this->createSessionManager();
         if (is_null($session_manager->getVar('member_id'))) {
             $this->redirect('login.php');
         }
@@ -145,5 +145,9 @@ class Controller_Member  extends Controller_Base
         $session_manager->destroy();
 
         $this->redirect('index.php');
+    }
+    protected function createSessionManager()
+    {
+        return new SessionManager();
     }
 }
