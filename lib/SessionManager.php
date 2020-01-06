@@ -4,11 +4,6 @@ class SessionManager
 {
     public function __construct()
     {
-        $this->sessionStart();
-    }
-
-    protected function sessionStart()
-    {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
