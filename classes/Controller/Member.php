@@ -69,6 +69,11 @@ class Controller_Member  extends Controller_Base
             $this->err400();
         }
 
+        $session_manager = $this->createSessionManager();
+        if (!is_null($session_manager->getVar('member_id'))) {
+            $this->redirect('index.php');
+        }
+
         $member    = new Storage_Member();
         $premember = new Storage_Premember();
 
@@ -99,8 +104,12 @@ class Controller_Member  extends Controller_Base
             'email'    => $account['email'],
             'password' => $account['password'],
         ]);
-
         $premember->delete([['id', '=', $account['id']]]);
+
+        $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]]);
+
+        $session_manager->regenerateId();
+        $session_manager->setVar('member_id', $member_id);
 
         $this->render('member/register/complete.php');
     }
