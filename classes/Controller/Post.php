@@ -17,8 +17,8 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = $this->member['id'];
-            $member_name  = $this->member['name'];
+            $member_id    = $this->getMemberId();
+            $member_name  = $this->getMemberName();
             $is_logged_in = true;
         }
 
@@ -46,8 +46,8 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = $this->member['id'];
-            $member_name  = $this->member['name'];
+            $member_id    = $this->getMemberId();
+            $member_name  = $this->getMemberName();
             $is_logged_in = true;
         }
 
@@ -102,7 +102,7 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = $this->member['id'];
+            $member_id    = $this->getMemberId();
             $is_logged_in = true;
         }
 
@@ -157,7 +157,7 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = $this->member['id'];
+            $member_id    = $this->getMemberId();
             $is_logged_in = true;
         }
 
