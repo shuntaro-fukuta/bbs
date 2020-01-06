@@ -4,6 +4,10 @@ class Controller_Member  extends Controller_Base
 {
     public function register()
     {
+        if ($this->isLoggedIn()) {
+            $this->redirect('index.php');
+        }
+
         if ($this->getEnv('request-method') === 'GET') {
             $this->render('member/register/form.php');
 
@@ -69,8 +73,7 @@ class Controller_Member  extends Controller_Base
             $this->err400();
         }
 
-        $session_manager = $this->createSessionManager();
-        if (!is_null($session_manager->getVar('member_id'))) {
+        if ($this->isLoggedIn()) {
             $this->redirect('index.php');
         }
 
@@ -108,6 +111,7 @@ class Controller_Member  extends Controller_Base
 
         $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]]);
 
+        $session_manager = $this->createSessionManager();
         $session_manager->regenerateId();
         $session_manager->setVar('member_id', $member_id);
 
@@ -116,8 +120,7 @@ class Controller_Member  extends Controller_Base
 
     public function login()
     {
-        $session_manager = $this->createSessionManager();
-        if (!is_null($session_manager->getVar('member_id'))) {
+        if ($this->isLoggedIn()) {
             $this->redirect('index.php');
         }
 
@@ -132,6 +135,7 @@ class Controller_Member  extends Controller_Base
             if (is_null($account) || !password_verify($password, $account['password'])) {
                 $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
             } else {
+                $session_manager = $this->createSessionManager();
                 $session_manager->regenerateId();
                 $session_manager->setVar('member_id', $account['id']);
 
@@ -144,11 +148,11 @@ class Controller_Member  extends Controller_Base
 
     public function logout()
     {
-        $session_manager = $this->createSessionManager();
-        if (is_null($session_manager->getVar('member_id'))) {
+        if (!$this->isLoggedIn()) {
             $this->redirect('login.php');
         }
 
+        $session_manager = $this->createSessionManager();
         $session_manager->destroy();
 
         $this->redirect('index.php');
@@ -156,5 +160,12 @@ class Controller_Member  extends Controller_Base
     protected function createSessionManager()
     {
         return new SessionManager();
+    }
+
+    protected function isLoggedIn()
+    {
+        $session_manager = $this->createSessionManager();
+
+        return ($session_manager->getVar('member_id') !== null);
     }
 }
