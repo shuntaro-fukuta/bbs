@@ -25,14 +25,14 @@ class Controller_Member  extends Controller_Base
 
         $error_messages = $member->validate($inputs);
         if (empty($error_messages)) {
-            if ($this->getParam('do_confirm') === '1') {
+            if (!is_null($this->getParam('do_confirm'))) {
                 $hidden_pass = str_repeat('*', strlen($inputs['password']));
                 $this->render('member/register/confirm.php', get_defined_vars());
 
                 return;
             }
 
-            if ($this->getParam('do_register') === '1') {
+            if (!is_null($this->getParam('do_register'))) {
                 $inputs['password'] = password_hash($inputs['password'], PASSWORD_BCRYPT);
 
                 $token           = uniqid(create_random_string(30), true);

@@ -3,3 +3,5 @@
 <p>会員登録ありがとうございます。</p>
 <p>確認のメールをお送りしました。</p>
 <p>登録を完了するために、メールに記載のURLをクリックしてください。</p>
+
+<button onclick="location.href='index.php'">トップに戻る</button>

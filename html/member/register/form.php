@@ -11,8 +11,6 @@
   <input type="text" name="email" value="<?php echo isset($email) ? h($email) : '' ?>"><br>
   <label for="password">Password</label><br>
   <input type="password" name="password"><br>
-  <input type="hidden" name="do_confirm" value="1">
-
-  <input type="submit" value="Confirm">
-  <input type="button" value="Back">
+  <input type="submit" name="do_confirm" value="Confirm">
+  <input type="button" value="Back" onclick="location.href='index.php'">
 </form>

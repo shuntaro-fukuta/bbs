@@ -9,5 +9,6 @@
   <input type="text" name="email" value="<?php echo isset($email) ? h($email) : '' ?>"><br>
   <label for="password">Password</label><br>
   <input type="password" name="password"><br>
-  <input type="submit" value="ログイン">
+  <input type="submit" value="login">
+  <input type="button" value="back" onclick="location.href='index.php'">
 </form>
