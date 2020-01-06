@@ -14,14 +14,14 @@ abstract class Controller_App extends Controller_Base
 
     public function getMemberId()
     {
-        if (!is_null($this->member)) {
+        if ($this->isLoggedIn()) {
             return $this->member['id'];
         }
     }
 
     public function getMemberName()
     {
-        if (!is_null($this->member)) {
+        if ($this->isLoggedIn()) {
             return $this->member['name'];
         }
     }
