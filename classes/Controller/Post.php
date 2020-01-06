@@ -17,11 +17,8 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id = (int) $this->session_manager->getVar('member_id');
-
-            $member      = new Storage_Member();
-            $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
-
+            $member_id    = $this->member['id'];
+            $member_name  = $this->member['name'];
             $is_logged_in = true;
         }
 
@@ -49,12 +46,9 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id = (int) $this->session_manager->getVar('member_id');
-
-            $member      = new Storage_Member();
-            $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
-
-            $is_logged_in = ($member_id !== null);
+            $member_id    = $this->member['id'];
+            $member_name  = $this->member['name'];
+            $is_logged_in = true;
         }
 
         $name       = $this->getParam('name');
@@ -108,7 +102,7 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = (int) $this->session_manager->getVar('member_id');
+            $member_id    = $this->member['id'];
             $is_logged_in = true;
         }
 
@@ -163,7 +157,7 @@ class Controller_Post extends Controller_App
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $member_id    = (int) $this->session_manager->getVar('member_id');
+            $member_id    = $this->member['id'];
             $is_logged_in = true;
         }
 
