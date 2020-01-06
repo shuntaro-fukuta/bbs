@@ -109,7 +109,7 @@ class Controller_Member  extends Controller_Base
         ]);
         $premember->delete([['id', '=', $account['id']]]);
 
-        $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]]);
+        $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]])['id'];
 
         $session_manager = $this->createSessionManager();
         $session_manager->regenerateId();
