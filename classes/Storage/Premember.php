@@ -27,7 +27,7 @@ class Storage_Premember extends Storage_Base
 
     public function validate(array $inputs)
     {
-        $validator      = new Validator();
+        $validator = new Validator();
         $validator->setAttributeValidationRules($this->validation_rules);
 
         return $validator->validate($inputs);
