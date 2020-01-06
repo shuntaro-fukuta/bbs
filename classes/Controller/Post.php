@@ -1,12 +1,13 @@
 <?php
 
-class Controller_Post extends Controller_Base
+class Controller_Post extends Controller_App
 {
     protected $image_dir = '';
 
     public function __construct()
     {
         $this->image_dir = Uploader::UPLOAD_DIR_NAME;
+        parent::__construct();
     }
 
     public function index()
@@ -16,8 +17,7 @@ class Controller_Post extends Controller_Base
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $session_manager = $this->createSessionManager();
-            $member_id       = (int) $session_manager->getVar('member_id');
+            $member_id = (int) $this->session_manager->getVar('member_id');
 
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
@@ -49,8 +49,7 @@ class Controller_Post extends Controller_Base
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $session_manager = $this->createSessionManager();
-            $member_id       = (int) $session_manager->getVar('member_id');
+            $member_id = (int) $this->session_manager->getVar('member_id');
 
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
@@ -109,9 +108,7 @@ class Controller_Post extends Controller_Base
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $session_manager = $this->createSessionManager();
-            $member_id       = (int) $session_manager->getVar('member_id');
-
+            $member_id    = (int) $this->session_manager->getVar('member_id');
             $is_logged_in = true;
         }
 
@@ -166,9 +163,7 @@ class Controller_Post extends Controller_Base
         $is_logged_in = false;
 
         if ($this->isLoggedIn()) {
-            $session_manager = $this->createSessionManager();
-            $member_id       = (int) $session_manager->getVar('member_id');
-
+            $member_id    = (int) $this->session_manager->getVar('member_id');
             $is_logged_in = true;
         }
 
@@ -244,17 +239,5 @@ class Controller_Post extends Controller_Base
         }
 
         $this->render('post/edit.php', get_defined_vars());
-    }
-
-    protected function createSessionManager()
-    {
-        return new SessionManager();
-    }
-
-    protected function isLoggedIn()
-    {
-        $session_manager = $this->createSessionManager();
-
-        return ($session_manager->getVar('member_id') !== null);
     }
 }

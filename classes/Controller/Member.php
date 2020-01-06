@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Member  extends Controller_Base
+class Controller_Member extends Controller_App
 {
     public function register()
     {
@@ -111,9 +111,8 @@ class Controller_Member  extends Controller_Base
 
         $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]])['id'];
 
-        $session_manager = $this->createSessionManager();
-        $session_manager->regenerateId();
-        $session_manager->setVar('member_id', $member_id);
+        $this->session_manager->regenerateId();
+        $this->session_manager->setVar('member_id', $member_id);
 
         $this->render('member/register/complete.php');
     }
@@ -135,10 +134,8 @@ class Controller_Member  extends Controller_Base
             if (is_null($account) || !password_verify($password, $account['password'])) {
                 $error_messages[] = '入力されたメールアドレスとパスワードに一致するアカウントが見つかりません。';
             } else {
-                $session_manager = $this->createSessionManager();
-                $session_manager->regenerateId();
-                $session_manager->setVar('member_id', $account['id']);
-
+                $this->session_manager->regenerateId();
+                $this->session_manager->setVar('member_id', $account['id']);
                 $this->redirect('index.php');
             }
         }
@@ -152,20 +149,7 @@ class Controller_Member  extends Controller_Base
             $this->redirect('login.php');
         }
 
-        $session_manager = $this->createSessionManager();
-        $session_manager->destroy();
-
+        $this->session_manager->destroy();
         $this->redirect('index.php');
-    }
-    protected function createSessionManager()
-    {
-        return new SessionManager();
-    }
-
-    protected function isLoggedIn()
-    {
-        $session_manager = $this->createSessionManager();
-
-        return ($session_manager->getVar('member_id') !== null);
     }
 }
