@@ -11,19 +11,24 @@ class Controller_Post extends Controller_Base
 
     public function index()
     {
-        $session_manager = $this->createSessionManager();
+        $member_id    = null;
+        $member_name  = null;
+        $is_logged_in = false;
 
-        $member_id    = $session_manager->getVar('member_id');
-        $is_logged_in = ($member_id !== null);
-        if ($is_logged_in) {
+        if ($this->isLoggedIn()) {
+            $session_manager = $this->createSessionManager();
+            $member_id       = (int) $session_manager->getVar('member_id');
+
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
+
+            $is_logged_in = true;
         }
 
         $post = new Storage_Post();
 
-        $paginator    = new Paginator($post->count());
-        $page         = (int) $this->getParam('page');
+        $paginator = new Paginator($post->count());
+        $page      = (int) $this->getParam('page');
         $paginator->setCurrentPage($page);
         $page_numbers = $paginator->getPageNumbers();
 
@@ -39,13 +44,18 @@ class Controller_Post extends Controller_Base
 
     public function post()
     {
-        $session_manager = $this->createSessionManager();
+        $member_id    = null;
+        $member_name  = null;
+        $is_logged_in = false;
 
-        $member_id    = $session_manager->getVar('member_id');
-        $is_logged_in = ($member_id !== null);
-        if ($is_logged_in) {
+        if ($this->isLoggedIn()) {
+            $session_manager = $this->createSessionManager();
+            $member_id       = (int) $session_manager->getVar('member_id');
+
             $member      = new Storage_Member();
             $member_name = $member->selectRecord(['name'], [['id', '=', $member_id]])['name'];
+
+            $is_logged_in = ($member_id !== null);
         }
 
         $name       = $this->getParam('name');
@@ -95,10 +105,15 @@ class Controller_Post extends Controller_Base
 
     public function delete()
     {
-        $session_manager = $this->createSessionManager();
+        $member_id    = null;
+        $is_logged_in = false;
 
-        $member_id    = $session_manager->getVar('member_id');
-        $is_logged_in = ($member_id !== null);
+        if ($this->isLoggedIn()) {
+            $session_manager = $this->createSessionManager();
+            $member_id       = (int) $session_manager->getVar('member_id');
+
+            $is_logged_in = true;
+        }
 
         $post_id       = $this->getParam('post_id');
         $previous_page = $this->getParam('previous_page');
@@ -147,10 +162,15 @@ class Controller_Post extends Controller_Base
 
     public function edit()
     {
-        $session_manager = $this->createSessionManager();
+        $member_id    = null;
+        $is_logged_in = false;
 
-        $member_id    = $session_manager->getVar('member_id');
-        $is_logged_in = ($member_id !== null);
+        if ($this->isLoggedIn()) {
+            $session_manager = $this->createSessionManager();
+            $member_id       = (int) $session_manager->getVar('member_id');
+
+            $is_logged_in = true;
+        }
 
         $post_id       = $this->getParam('post_id');
         $previous_page = $this->getParam('previous_page');
@@ -229,5 +249,12 @@ class Controller_Post extends Controller_Base
     protected function createSessionManager()
     {
         return new SessionManager();
+    }
+
+    protected function isLoggedIn()
+    {
+        $session_manager = $this->createSessionManager();
+
+        return ($session_manager->getVar('member_id') !== null);
     }
 }
