@@ -4,7 +4,35 @@ class Storage_Premember extends Storage_Base
 {
     protected $table_name = 'premember';
 
-    // TODO: 変数、メソッド名
+    protected $validation_rules = [
+        'name' => [
+            'required' => true,
+            'length'   => [
+                'min' => 3,
+                'max' => 16,
+            ],
+        ],
+        'email' => [
+            'required' => true,
+            'email'    => true,
+        ],
+        'password' => [
+            'required' => true,
+            'length'   => [
+                'min'    => 8,
+                'length' => 16,
+            ],
+        ],
+    ];
+
+    public function validate(array $inputs)
+    {
+        $validator      = new Validator();
+        $validator->setAttributeValidationRules($this->validation_rules);
+
+        return $validator->validate($inputs);
+    }
+
     public function isExpired(string $datetime)
     {
         $registration_timestamp = strtotime($datetime);

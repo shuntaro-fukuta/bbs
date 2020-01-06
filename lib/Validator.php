@@ -29,6 +29,8 @@ class Validator
                     $error_message = $this->validateFileSize($attribute_name, $input, $rule);
                 } elseif ($type === 'digit') {
                     $error_message = $this->validateDigit($attribute_name, $input, $rule);
+                } elseif ($type === 'email') {
+                    $error_message = $this->validateEmail($attribute_name, $input);
                 }
 
                 if (isset($error_message)) {
@@ -167,6 +169,17 @@ class Validator
 
         if (!ctype_digit($input) || strlen($input) !== $digit) {
             return "{$name}は{$digit}桁の半角数字で入力してください";
+        }
+    }
+
+    private function validateEmail(string $name, ?string $input)
+    {
+        if (is_empty($input)) {
+            return;
+        }
+
+        if (filter_var($input, FILTER_VALIDATE_EMAIL) === false) {
+            return "{$name}の形式が正しくありません。";
         }
     }
 }

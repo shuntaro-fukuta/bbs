@@ -27,7 +27,7 @@ class Controller_Member extends Controller_App
             'password' => $password,
         ];
 
-        $error_messages = $member->validate($inputs);
+        $error_messages = $premember->validate($inputs);
         if (empty($error_messages)) {
             if (!is_null($this->getParam('do_confirm'))) {
                 $hidden_pass = str_repeat('*', strlen($inputs['password']));
