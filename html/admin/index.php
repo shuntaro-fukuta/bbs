@@ -16,7 +16,8 @@
 					<td>
 						<form method="post" action="delete.php">
 							<img src="<?php echo h($value) ?>" width="200" height="100">
-							<input type="submit" name="delete_image" value="DEL">
+							<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
+							<input type="hidden" name="delete_image" value="1">
 							<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
 							<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 						</form>
@@ -28,14 +29,34 @@
 			<?php endforeach ?>
 			<td>
 				<form method="post" action="delete.php">
-					<input type="submit" name="delete_post" value="DEL">
+					<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
+					<input type="hidden" name="delete_post" value="1">
 					<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
 					<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 				</form>
 			</td>
 		</tr>
 	<?php endforeach ?>
+		<div id="confirm_window" style="display: none;">
+			Are you sure?
+			<button id="do_delete">OK</button>
+			<button id="do_cancel">Cancel</button>
+		</div>
 </table>
+
+<script>
+	var deleteConfirm = function(form) {
+		document.getElementById('confirm_window').style.display = 'block';
+
+		document.getElementById('do_delete').onclick = function () {
+			form.submit();
+		}
+
+		document.getElementById('do_cancel').onclick = function () {
+			document.getElementById('confirm_window').style.display = 'none';
+		}
+	};
+</script>
 
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
 

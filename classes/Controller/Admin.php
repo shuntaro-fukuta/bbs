@@ -74,8 +74,8 @@ class Controller_Admin extends Controller_App
             $this->err400();
         }
 
-        $do_delete_image = ($this->getParam('delete_image') !== null);
-        $do_delete_post  = ($this->getParam('delete_post') !== null);
+        $do_delete_image = ($this->getParam('delete_image') === '1');
+        $do_delete_post  = ($this->getParam('delete_post') === '1');
 
         $uploader = new Uploader();
         if ($do_delete_image) {
