@@ -48,7 +48,7 @@ class Controller_Admin extends Controller_App
 
         $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
 
-        $records = $post->selectRecords($display_columns, [
+        $records = $post->selectRecords(['*'], [
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),

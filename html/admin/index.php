@@ -8,35 +8,51 @@
 		<?php endforeach ?>
 		<th></th>
 	</tr>
+
 	<?php foreach($records as $record) : ?>
-		<tr>
-			<td><input type="checkbox"></td>
+		<?php if ($record['is_deleted'] === 0) : ?>
+			<tr>
+				<td><input type="checkbox"></td>
+		<?php else : ?>
+			<tr style="background: gray;">
+				<td></td>
+		<?php endif ?>
+
 			<?php foreach ($record as $column => $value) : ?>
-				<?php if ($column === 'image_path' && !is_null($value)) : ?>
+				<?php if (in_array($column, $display_columns)) : ?>
 					<td>
-						<form method="post" action="delete.php">
-							<img src="<?php echo h($value) ?>" width="200" height="100">
-							<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
-							<input type="hidden" name="delete_image" value="1">
-							<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
-							<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-						</form>
+						<?php if ($column === 'image_path' && !is_null($value)) : ?>
+							<form method="post" action="delete.php">
+								<img src="<?php echo h($value) ?>" width="200" height="100">
+								<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
+								<input type="hidden" name="delete_image" value="1">
+								<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
+								<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+							</form>
+						<?php else : ?>
+							<?php echo h($value) ?>
+						<?php endif ?>
 					</td>
-				<?php else : ?>
-					<td><?php echo h($value) ?></td>
 				<?php endif ?>
-				<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
 			<?php endforeach ?>
+
 			<td>
-				<form method="post" action="delete.php">
-					<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
-					<input type="hidden" name="delete_post" value="1">
+				<?php if ($record['is_deleted'] === 0) : ?>
+					<form method="post" action="delete.php">
+						<input type="button" onclick="deleteConfirm(this.parentNode)" value="DEL">
+						<input type="hidden" name="delete_post" value="1">
+				<?php else : ?>
+					<form method="post" action="recover.php">
+						<input type="button" value="REC">
+				<?php endif ?>
 					<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
 					<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 				</form>
 			</td>
+
 		</tr>
 	<?php endforeach ?>
+
 		<div id="confirm_window" style="display: none;">
 			Are you sure?
 			<button id="do_delete">OK</button>
