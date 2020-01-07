@@ -52,13 +52,13 @@
 
 		</tr>
 	<?php endforeach ?>
-
-		<div id="confirm_window" style="display: none;">
-			Are you sure?
-			<button id="do_delete">OK</button>
-			<button id="do_cancel">Cancel</button>
-		</div>
 </table>
+
+<div id="confirm_window" style="display: none;">
+	Are you sure?
+	<button id="do_delete">OK</button>
+	<button id="do_cancel">Cancel</button>
+</div>
 
 <script>
 	var deleteConfirm = function(form) {
