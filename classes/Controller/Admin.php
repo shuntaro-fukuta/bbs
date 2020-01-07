@@ -2,6 +2,9 @@
 
 class Controller_Admin extends Controller_App
 {
+    protected $page_item_count = 20;
+    protected $max_pager_count = 10;
+
     public function login()
     {
         if ($this->getEnv('request-method') === 'GET') {
@@ -32,4 +35,25 @@ class Controller_Admin extends Controller_App
         $this->render('admin/login.php', get_defined_vars());
     }
 
+    public function index()
+    {
+        $post      = new Storage_Post();
+
+        $paginator = new Paginator($post->count());
+        $page      = (int)$this->getParam('page');
+        $paginator->setCurrentPage($page);
+        $paginator->setPageItemCount($this->page_item_count);
+        $paginator->setMaxPagerCount($this->max_pager_count);
+        $page_numbers = $paginator->getPageNumbers();
+
+        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
+
+        $records = $post->selectRecords($display_columns, [
+            'order_by' => 'id DESC',
+            'limit'    => $paginator->getPageItemCount(),
+            'offset'   => $paginator->getRecordOffset(),
+        ]);
+
+        $this->render('admin/index.php', get_defined_vars());
+    }
 }

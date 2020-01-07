@@ -50,4 +50,4 @@
 
   <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
 
-  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'footer.php');
+  <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'footer.php') ?>
