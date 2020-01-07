@@ -43,7 +43,7 @@
 						<input type="hidden" name="delete_post" value="1">
 				<?php else : ?>
 					<form method="post" action="recover.php">
-						<input type="button" value="REC">
+						<input type="submit" value="REC">
 				<?php endif ?>
 					<input type="hidden" name="post_id" value="<?php echo h($record['id']) ?>">
 					<input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">

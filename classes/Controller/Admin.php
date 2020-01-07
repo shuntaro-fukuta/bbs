@@ -93,4 +93,21 @@ class Controller_Admin extends Controller_App
 
         $this->redirect('index.php', ['page' => $previous_page]);
     }
+
+    public function recover()
+    {
+        $post_id = $this->getParam('post_id');
+        $page    = $this->getParam('page');
+
+        if (is_null($post_id)) {
+            $this->err400();
+        }
+
+        $previous_page = is_null($page) ? 1 : $page;
+
+        $post = new Storage_Post();
+        $post->update(['is_deleted' => 0], [['id', '=', $post_id]]);
+
+        $this->redirect('index.php', ['page' => $previous_page]);
+    }
 }
