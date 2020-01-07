@@ -141,6 +141,7 @@ class Controller_Post extends Controller_App
             if (!empty($record['image_path'])) {
                 $uploader = new Uploader();
                 $uploader->delete($record['image_path']);
+                $post->update(['image_path' => null], [['id', '=', $record['id']]]);
             }
 
             $post->softDelete([['id', '=', $post_id]]);
