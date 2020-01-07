@@ -26,5 +26,6 @@
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `is_admin` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 |
