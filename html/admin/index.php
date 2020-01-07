@@ -12,7 +12,7 @@
 	<?php foreach($records as $record) : ?>
 		<?php if ($record['is_deleted'] === 0) : ?>
 			<tr>
-				<td><input type="checkbox"></td>
+				<td><input type="checkbox" name="checked_item_ids[]" value="<?php echo $record['id'] ?>" form="delete_multiple"></td>
 		<?php else : ?>
 			<tr style="background: gray;">
 				<td></td>
@@ -53,6 +53,11 @@
 		</tr>
 	<?php endforeach ?>
 </table>
+
+<form id="delete_multiple" method="post" action="delete_multiple.php">
+	<input type="submit" value="Delete Checked Items">
+	<input type="hidden" value="<?php echo h($paginator->getCurrentPage()) ?>">
+</form>
 
 <div id="confirm_window" style="display: none;">
 	Are you sure?

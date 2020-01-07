@@ -57,38 +57,28 @@ class Controller_Admin extends Controller_App
         $this->render('admin/index.php', get_defined_vars());
     }
 
-    public function delete()
+    public function deleteMultiple()
     {
-        $post_id = $this->getParam('post_id');
-        $page    = $this->getParam('page');
-
-        if (empty($post_id)) {
-            $this->err400();
-        }
-
+        $page          = $this->getParam('page');
         $previous_page = is_null($page) ? 1 : $page;
 
-        $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'] , [['id', '=', $post_id]]);
-        if (is_null($record) || $record['is_deleted'] === 1) {
-            $this->err400();
-        }
+        $checked_item_ids = $this->getParam('checked_item_ids');
+        if (!empty($checked_item_ids)) {
+            $post     = new Storage_Post();
+            $uploader = new Uploader();
 
-        $do_delete_image = ($this->getParam('delete_image') === '1');
-        $do_delete_post  = ($this->getParam('delete_post') === '1');
+            foreach ($checked_item_ids as $id) {
+                $record = $post->selectRecord(['*'], [['id', '=', $id]]);
+                if (is_null($record) || $record['is_deleted'] === 1) {
+                    $this->err400();
+                }
 
-        $uploader = new Uploader();
-        if ($do_delete_image) {
-            $uploader->delete($record['image_path']);
-            $post->update(['image_path' => null], [['id', '=', $post_id]]);
-        } elseif ($do_delete_post) {
-            if (isset($record['image_path'])) {
-                // TODO:重複解消
-                $uploader->delete($record['image_path']);
-                $post->update(['image_path' => null], [['id', '=', $post_id]]);
+                if (isset($record['image_path'])) {
+                    $uploader->delete($record['image_path']);
+                    $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+                }
+                $post->softDelete([['id', '=', $record['id']]]);
             }
-
-            $post->softDelete([['id', '=', $post_id]]);
         }
 
         $this->redirect('index.php', ['page' => $previous_page]);
