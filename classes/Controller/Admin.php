@@ -26,7 +26,7 @@ class Controller_Admin extends Controller_App
         if (empty($error_messages)) {
             $this->session_manager->regenerateId();
             $this->session_manager->setVar('member_id', $account['id']);
-            $this->redirect('admin_index.php');
+            $this->redirect('index.php');
         }
 
         $this->render('admin/login.php', get_defined_vars());
