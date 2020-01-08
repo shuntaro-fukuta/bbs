@@ -3,7 +3,7 @@
 
 <table border="1">
   <tr>
-    <th><input type="checkbox"></th>
+    <th><input id="all_check_box" onclick="allCheck()" type="checkbox"></th>
     <?php foreach ($display_columns as $column) : ?>
       <th><?php echo h($column) ?></th>
     <?php endforeach ?>
@@ -14,7 +14,7 @@
     <?php if ($record['is_deleted'] === 0) : ?>
       <tr>
         <td>
-          <input type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="delete_posts">
+          <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="delete_posts">
         </td>
     <?php else : ?>
       <tr style="background: gray;">
@@ -83,6 +83,17 @@
     if (do_delete) {
       var form = document.getElementById(form_id);
       form.submit();
+    }
+  }
+
+  var allCheck = function() {
+    var isChecked = document.getElementById('all_check_box').checked;
+
+    var check_boxes = document.getElementsByClassName('checkboxes');
+    var boxes_count = check_boxes.length;
+
+    for (var i = 0; i < boxes_count; i++) {
+      check_boxes[i].checked = isChecked;
     }
   }
 </script>
