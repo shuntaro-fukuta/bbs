@@ -57,27 +57,29 @@ class Controller_Admin extends Controller_App
         $this->render('admin/index.php', get_defined_vars());
     }
 
-    public function deleteMultiple()
+    public function delete()
     {
         $page          = $this->getParam('page');
-        $previous_page = is_null($page) ? 1 : $page;
+        $previous_page = (is_null($page)) ? 1 : $page;
 
-        $checked_item_ids = $this->getParam('checked_item_ids');
-        if (!empty($checked_item_ids)) {
+        $delete_ids = $this->getParam('delete_ids');
+        if (!is_null($delete_ids)) {
             $post     = new Storage_Post();
             $uploader = new Uploader();
 
-            foreach ($checked_item_ids as $id) {
+            foreach ($delete_ids as $id) {
                 $record = $post->selectRecord(['*'], [['id', '=', $id]]);
-                if (is_null($record) || $record['is_deleted'] === 1) {
+                if (is_null($record)) {
                     $this->err400();
                 }
 
-                if (isset($record['image_path'])) {
-                    $uploader->delete($record['image_path']);
-                    $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+                if ($record['is_deleted'] === 0) {
+                    if (isset($record['image_path'])) {
+                        $uploader->delete($record['image_path']);
+                        $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+                    }
+                    $post->softDelete([['id', '=', $record['id']]]);
                 }
-                $post->softDelete([['id', '=', $record['id']]]);
             }
         }
 
