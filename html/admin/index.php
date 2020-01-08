@@ -14,7 +14,7 @@
     <?php if ($record['is_deleted'] === 0) : ?>
       <tr>
         <td>
-          <input type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="delete_multiple">
+          <input type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="delete_posts">
         </td>
     <?php else : ?>
       <tr style="background: gray;">
@@ -56,8 +56,8 @@
   <?php endforeach ?>
 </table>
 
-<form id="delete_multiple" method="post" action="delete_posts.php">
-  <input type="button" onclick="deletePosts('delete_multiple')" value="Delete Checked Items">
+<form id="delete_posts" method="post" action="delete_posts.php">
+  <input type="button" onclick="deletePosts('delete_posts')" value="Delete Checked Items">
   <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 </form>
 
