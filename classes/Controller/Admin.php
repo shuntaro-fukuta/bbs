@@ -128,4 +128,13 @@ class Controller_Admin extends Controller_App
 
         $this->redirect('index.php', ['page' => $previous_page]);
     }
+
+    public function search()
+    {
+        if ($this->getEnv('request-method') === 'GET') {
+            $this->render('admin/search.php');
+
+            return;
+        }
+    }
 }
