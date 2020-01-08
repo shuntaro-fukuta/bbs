@@ -6,4 +6,4 @@ $controller = new Controller_Admin();
 $controller->setParams(array_merge($_GET, $_POST));
 $controller->setFiles($_FILES);
 $controller->setEnvs($_SERVER);
-$controller->execute('delete');
+$controller->execute('deletePosts');

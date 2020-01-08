@@ -57,7 +57,7 @@ class Controller_Admin extends Controller_App
         $this->render('admin/index.php', get_defined_vars());
     }
 
-    public function delete()
+    public function deletePosts()
     {
         $page          = $this->getParam('page');
         $previous_page = (is_null($page)) ? 1 : $page;
@@ -81,6 +81,32 @@ class Controller_Admin extends Controller_App
                     $post->softDelete([['id', '=', $record['id']]]);
                 }
             }
+        }
+
+        $this->redirect('index.php', ['page' => $previous_page]);
+    }
+
+    public function deleteImage()
+    {
+        $post_id = $this->getParam('post_id');
+        $page    = $this->getParam('page');
+
+        if (is_null($post_id)) {
+            $this->err400();
+        }
+
+        $previous_page = is_null($page) ? 1 : $page;
+
+        $post   = new Storage_Post();
+        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
+        if (is_null($record)) {
+            $this->err400();
+        }
+
+        if (!is_null($record['image_path'])) {
+            $uploader = new Uploader();
+            $uploader->delete($record['image_path']);
+            $post->update(['image_path' => null], [['id', '=', $record['id']]]);
         }
 
         $this->redirect('index.php', ['page' => $previous_page]);
