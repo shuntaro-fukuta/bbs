@@ -39,13 +39,15 @@ class Storage_Database_MySQL extends Storage_Database
         $columns = implode(',', $columns);
         $query   = "SELECT {$columns} FROM {$table_name}";
 
-        if (isset($options)) {
+        $has_where_option = false;
+        if (!is_null($options)) {
             if (isset($options['where'])) {
+                $has_where_option = true;
+
                 $where = $options['where'];
 
-                // TODO: $where チェック
-                $query       .= ' WHERE ' . $where['condition'];
-                $where_values = $where['values'];
+                $query       .= $this->getWhereQuery($where);
+                $where_values = $this->getWhereValues($where);
             }
 
             if (isset($options['order_by'])) {
@@ -63,7 +65,7 @@ class Storage_Database_MySQL extends Storage_Database
 
         $stmt = $this->prepareStatement($query);
 
-        if (!empty($options) && isset($options['where'])) {
+        if ($has_where_option) {
             $stmt = $this->bindParams($stmt, $where_values);
         }
 
@@ -81,9 +83,8 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "SELECT COUNT(*) FROM {$table_name}";
 
         if (!empty($where)) {
-            // TODO: whereチェック
-            $query       .= ' WHERE ' . $where['condition'];
-            $where_values = $where['values'];
+            $query       .= $this->getWhereQuery($where);
+            $where_values = $this->getWhereValues($where);
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $where_values);
@@ -140,9 +141,12 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "UPDATE {$table_name} SET {$update_columns}";
 
         if (!empty($where)) {
-            // TODO: whereチェック
-            $query .= ' WHERE ' . $where['condition'];
-            $values = array_merge($values, $where['values']);
+            $query       .= $this->getWhereQuery($where);
+            $where_values = $this->getWhereValues($where);
+
+            if (!is_null($where_values)) {
+                $values = array_merge($values, $where_values);
+            }
         }
 
         $stmt = $this->prepareStatement($query);
@@ -160,12 +164,11 @@ class Storage_Database_MySQL extends Storage_Database
         if (empty($where)) {
             $stmt = $this->prepareStatement($query);
         } else {
-            // TODO: $whereチェック
-            $query .= ' WHERE ' . $where['condition'];
-            $values = $where['values'];
+            $query       .= $this->getWhereQuery($where);
+            $where_values = $this->getWhereValues($where);
 
             $stmt = $this->prepareStatement($query);
-            $stmt = $this->bindParams($stmt, $values);
+            $stmt = $this->bindParams($stmt, $where_values);
         }
 
         if (!$stmt->execute()) {
@@ -175,7 +178,6 @@ class Storage_Database_MySQL extends Storage_Database
 
     public function softDelete(string $table_name, array $where = null)
     {
-        // TODO: whereチェック
         $this->update(
             $table_name,
             ['is_deleted' => 1,],
@@ -183,8 +185,12 @@ class Storage_Database_MySQL extends Storage_Database
         );
     }
 
-    private function bindParams(mysqli_stmt $stmt, array $values)
+    private function bindParams(mysqli_stmt $stmt, ?array $values)
     {
+        if (empty($values)) {
+            return $stmt;
+        }
+
         $types = '';
         foreach ($values as $value) {
             $type = gettype($value);
@@ -209,6 +215,24 @@ class Storage_Database_MySQL extends Storage_Database
         }
 
         return $stmt;
+    }
+
+    private function getWhereQuery(array $where)
+    {
+        if (!isset($where['condition'])) {
+            throw new LogicException("'condition' parameter is required.");
+        }
+
+        return ' WHERE ' . $where['condition'];
+    }
+
+    private function getWhereValues(array $where)
+    {
+        if (!isset($where['values'])) {
+            return null;
+        }
+
+        return $where['values'];
     }
 
     public function connect()

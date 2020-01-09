@@ -12,7 +12,6 @@ class Controller_Post extends Controller_App
 
     public function index()
     {
-
         $member_id    = null;
         $member_name  = null;
         $is_logged_in = false;
