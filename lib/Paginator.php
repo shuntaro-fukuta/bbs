@@ -3,14 +3,63 @@
 // ページ総数が1ページのときはページャを非表示
 class Paginator
 {
-    private $record_count;
-    private $page_item_count = 10;
-    private $max_pager_count = 5;
-    private $current_page    = 1;
+    public $page_uri              = '/';
+    public $params                = [];
+    private $record_count          = 0;
+    private $page_item_count       = 10;
+    private $max_pager_count       = 5;
+    private $current_page          = 1;
+    private $pagination_param_name = 'page';
 
-    public function __construct(int $record_count)
+    public function __construct(int $record_count, int $page_item_count = null, int $max_pager_count = null)
     {
         $this->setRecordCount($record_count);
+
+        if (!is_null($page_item_count)) {
+            $this->setPageItemCount($page_item_count);
+        }
+
+        if (!is_null($max_pager_count)) {
+            $this->setMaxPagerCount($max_pager_count);
+        }
+    }
+
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    public function setUri(string $uri, array $params = [])
+    {
+        $parsed = parse_url($uri);
+
+        if (isset($parsed['path'])) {
+            $this->page_uri = $parsed['path'];
+        }
+
+        if (isset($parsed['query'])) {
+            parse_str($parsed['query'], $_params);
+            $params = array_merge($_params, $params);
+        }
+
+        $this->setParams($params);
+    }
+
+    public function createUri(int $page = null)
+    {
+        $params = $this->params;
+
+        if (empty($page)) {
+            unset($params['page']);
+        } else {
+            $params['page'] = $page;
+        }
+
+        if (empty($params)) {
+            return $this->page_uri;
+        } else {
+            return $this->page_uri . '?' . http_build_query($params, '', '&');
+        }
     }
 
     private function setRecordCount(int $record_count)
@@ -82,18 +131,14 @@ class Paginator
         return ($this->current_page - 1) * $this->page_item_count;
     }
 
-    public function getPreviousPageUrl($param_name)
+    public function getPreviousPageNumber()
     {
-        $previous_page = $this->current_page - 1;
-
-        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$previous_page}";
+        return $this->current_page - 1;
     }
 
-    public function getNextPageUrl($param_name)
+    public function getNextPageNumber()
     {
-        $next_page = $this->current_page + 1;
-
-        return "{$_SERVER['SCRIPT_NAME']}?{$param_name}={$next_page}";
+        return $this->current_page + 1;
     }
 
     public function getPageNumbers()

@@ -2,8 +2,8 @@
 
 class Controller_Admin extends Controller_App
 {
-    protected $page_item_count = 20;
-    protected $max_pager_count = 10;
+    const PAGE_ITEM_COUNT = 20;
+    const PAGER_COUNT     = 10;
 
     public function login()
     {
@@ -42,11 +42,9 @@ class Controller_Admin extends Controller_App
     {
         $post = new Storage_Post();
 
-        $paginator = new Paginator($post->count());
+        $paginator = $this->createPaginator($post->count());
         $page      = (int)$this->getParam('page');
         $paginator->setCurrentPage($page);
-        $paginator->setPageItemCount($this->page_item_count);
-        $paginator->setMaxPagerCount($this->max_pager_count);
         $page_numbers = $paginator->getPageNumbers();
 
         $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
@@ -140,12 +138,6 @@ class Controller_Admin extends Controller_App
 
     public function search()
     {
-        if ($this->getEnv('request-method') === 'GET') {
-            $this->render('admin/search.php');
-
-            return;
-        }
-
         $title_search_string   = $this->getParam('title_search_string');
         $comment_search_string = $this->getParam('comment_search_string');
         $image_status          = $this->getParam('image_status');
@@ -188,23 +180,42 @@ class Controller_Admin extends Controller_App
             }
         }
 
-        $post = new Storage_Post();
-
         if (empty($conditions)) {
-            $records = $post->selectRecords(['*'], ['order_by' => 'id DESC']);
+            $where = null;
         } else {
             $condition = implode(' AND ', $conditions);
-
-            $records = $post->selectRecords(['*'], [
-                'where' => [
-                    'condition' => $condition,
-                    'values'    => $values,
-                ],
-                'order_by' => 'id DESC',
-            ]);
-
+            $where     = ['condition' => $condition, 'values' => $values];
         }
 
+        $post = new Storage_Post();
+
+        $paginator = $this->createPaginator($post->count($where));
+        $page      = (int)$this->getParam('page');
+        $paginator->setCurrentPage($page);
+        $page_numbers = $paginator->getPageNumbers();
+
+        $records = $post->selectRecords(['*'], [
+            'where'    => $where,
+            'order_by' => 'id DESC',
+            'limit'    => $paginator->getPageItemCount(),
+            'offset'   => $paginator->getRecordOffset(),
+        ]);
+
+        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
+
         $this->render('admin/search.php', get_defined_vars());
+    }
+
+    protected function createPaginator($posts_count)
+    {
+        $paginator = new Paginator(
+            $posts_count,
+            self::PAGE_ITEM_COUNT,
+            self::PAGER_COUNT
+        );
+
+        $paginator->setUri($this->getEnv('request_uri'));
+
+        return $paginator;
     }
 }

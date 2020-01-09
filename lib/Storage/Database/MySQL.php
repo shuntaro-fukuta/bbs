@@ -41,7 +41,7 @@ class Storage_Database_MySQL extends Storage_Database
 
         $has_where_option = false;
         if (!is_null($options)) {
-            if (isset($options['where'])) {
+            if (isset($options['where']) && !is_null($options['where'])) {
                 $has_where_option = true;
 
                 $where = $options['where'];
@@ -228,7 +228,7 @@ class Storage_Database_MySQL extends Storage_Database
 
     private function getWhereValues(array $where)
     {
-        if (!isset($where['values'])) {
+        if (empty($where['values'])) {
             return null;
         }
 
