@@ -145,5 +145,66 @@ class Controller_Admin extends Controller_App
 
             return;
         }
+
+        $title_search_string   = $this->getParam('title_search_string');
+        $comment_search_string = $this->getParam('comment_search_string');
+        $image_status          = $this->getParam('image_status');
+        $post_status           = $this->getParam('post_status');
+
+        $conditions = [];
+        $values     = [];
+
+        if (!is_null($title_search_string)) {
+            $conditions[] = 'title LIKE ?';
+            $values[]     = '%' . $title_search_string . '%';
+        }
+
+        if (!is_null($comment_search_string)) {
+            $conditions[] = 'comment LIKE ?';
+            $values[]     = '%' . $comment_search_string . '%';
+        }
+
+        if (!is_null($image_status)) {
+            switch ($image_status) {
+                case 'with':
+                    $conditions[] = 'image_path IS NOT NULL';
+                    break;
+                case 'without':
+                    $conditions[] = 'image_path IS NULL';
+                    break;
+            }
+        }
+
+        if (!is_null($post_status)) {
+            switch ($post_status) {
+                case 'on':
+                    $conditions[] = 'is_deleted = ?';
+                    $values[]     = 0;
+                    break;
+                case 'delete':
+                    $conditions[] = 'is_deleted = ?';
+                    $values[]     = 1;
+                    break;
+            }
+        }
+
+        $post = new Storage_Post();
+
+        if (empty($conditions)) {
+            $records = $post->selectRecords(['*'], ['order_by' => 'id DESC']);
+        } else {
+            $condition = implode(' AND ', $conditions);
+
+            $records = $post->selectRecords(['*'], [
+                'where' => [
+                    'condition' => $condition,
+                    'values'    => $values,
+                ],
+                'order_by' => 'id DESC',
+            ]);
+
+        }
+
+        $this->render('admin/search.php', get_defined_vars());
     }
 }
