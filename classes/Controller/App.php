@@ -37,7 +37,10 @@ abstract class Controller_App extends Controller_Base
 
         if (!is_null($member_id)) {
             $member       = new Storage_Member();
-            $this->member = $member->selectRecord(['*'], [['id', '=', $member_id]]);
+            $this->member = $member->selectRecord(['*'], [
+                'condition' => 'id = ?',
+                'values'    => [$member_id],
+            ]);
         }
     }
 }

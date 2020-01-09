@@ -12,6 +12,7 @@ class Controller_Post extends Controller_App
 
     public function index()
     {
+
         $member_id    = null;
         $member_name  = null;
         $is_logged_in = false;
@@ -30,7 +31,10 @@ class Controller_Post extends Controller_App
         $page_numbers = $paginator->getPageNumbers();
 
         $records = $post->selectRecords(['*'], [
-            'where'    => [['is_deleted', '=', 0]],
+            'where' => [
+                'condition' => 'is_deleted = ?',
+                'values'    => [0],
+            ],
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),
@@ -118,7 +122,10 @@ class Controller_Post extends Controller_App
         $previous_page_url = "index.php?page={$previous_page}";
 
         $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
+        $record = $post->selectRecord(['*'], [
+            'condition' => 'id = ?',
+            'values'    => [$post_id],
+        ]);
 
         if (is_null($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -141,10 +148,16 @@ class Controller_Post extends Controller_App
             if (!empty($record['image_path'])) {
                 $uploader = new Uploader();
                 $uploader->delete($record['image_path']);
-                $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+                $post->update(['image_path' => null], [
+                    'condition' => 'id = ?',
+                    'values'    => [$record['id']],
+                ]);
             }
 
-            $post->softDelete([['id', '=', $post_id]]);
+            $post->softDelete([
+                'condition' => 'id = ?',
+                'values'    => [$post_id],
+            ]);
 
             $this->redirect('index.php', ['page' => $previous_page]);
         }
@@ -174,7 +187,10 @@ class Controller_Post extends Controller_App
         $previous_page_url = "index.php?page={$previous_page}";
 
         $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
+        $record = $post->selectRecord(['*'], [
+            'condition' => 'id = ?',
+            'values'    => [$post_id],
+        ]);
 
         if (empty($record) || $record['is_deleted'] === 1) {
             $this->err400();
@@ -226,8 +242,10 @@ class Controller_Post extends Controller_App
                     }
                 }
 
-
-                $post->update($update_values, [['id', '=', $post_id]]);
+                $post->update($update_values, [
+                    'condition' => 'id = ?',
+                    'values'    => [$post_id],
+                ]);
 
                 $this->redirect('index.php', array('page' => $previous_page));
             }

@@ -17,7 +17,10 @@ class Controller_Admin extends Controller_App
         $password = $this->getParam('password');
 
         $member  = new Storage_Member();
-        $account = $member->selectRecord(['*'], [['id', '=', $id]]);
+        $account = $member->selectRecord(['*'], [
+            'condition' => 'id = ?',
+            'values'    => [$id],
+        ]);
 
         $error_messages = [];
         if (is_null($account) || !password_verify($password, $account['password'])) {
@@ -68,7 +71,10 @@ class Controller_Admin extends Controller_App
             $uploader = new Uploader();
 
             foreach ($delete_ids as $id) {
-                $record = $post->selectRecord(['*'], [['id', '=', $id]]);
+                $record = $post->selectRecord(['*'], [
+                    'condition' => 'id = ?',
+                    'values'    => [$id],
+                ]);
                 if (is_null($record)) {
                     $this->err400();
                 }
@@ -76,9 +82,9 @@ class Controller_Admin extends Controller_App
                 if ($record['is_deleted'] === 0) {
                     if (isset($record['image_path'])) {
                         $uploader->delete($record['image_path']);
-                        $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+                        $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
                     }
-                    $post->softDelete([['id', '=', $record['id']]]);
+                    $post->softDelete(['condition' => 'id = ?', 'values' => [$record['id']]]);
                 }
             }
         }
@@ -98,7 +104,10 @@ class Controller_Admin extends Controller_App
         $previous_page = is_null($page) ? 1 : $page;
 
         $post   = new Storage_Post();
-        $record = $post->selectRecord(['*'], [['id', '=', $post_id]]);
+        $record = $post->selectRecord(['*'], [
+            'condition' => 'id = ?',
+            'values'    => [$post_id],
+        ]);
         if (is_null($record)) {
             $this->err400();
         }
@@ -106,7 +115,7 @@ class Controller_Admin extends Controller_App
         if (!is_null($record['image_path'])) {
             $uploader = new Uploader();
             $uploader->delete($record['image_path']);
-            $post->update(['image_path' => null], [['id', '=', $record['id']]]);
+            $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
         }
 
         $this->redirect('index.php', ['page' => $previous_page]);
@@ -124,7 +133,7 @@ class Controller_Admin extends Controller_App
         $previous_page = is_null($page) ? 1 : $page;
 
         $post = new Storage_Post();
-        $post->update(['is_deleted' => 0], [['id', '=', $post_id]]);
+        $post->update(['is_deleted' => 0], ['condition' => 'id = ?', 'values' => [$post_id]]);
 
         $this->redirect('index.php', ['page' => $previous_page]);
     }

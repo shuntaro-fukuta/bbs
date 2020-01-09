@@ -42,11 +42,16 @@ class Controller_Member extends Controller_App
                 $token           = uniqid(create_random_string(30), true);
                 $inputs['token'] = $token;
 
-                if ($premember->count([['email', '=', $email]]) === 0) {
+                $record_count      = $premember->count(['condition' => 'email = ?', 'values' => [$email]]);
+                $is_already_exists = ($record_count !== 0);
+                if (!$is_already_exists) {
                     $premember->insert($inputs);
                 } else {
                     $inputs['created_at'] = date('Y-m-d H:i:s');
-                    $premember->update($inputs, [['email', '=', $email]]);
+                    $premember->update($inputs, [
+                        'condition' => 'email = ?',
+                        'values'    => [$email],
+                    ]);
                 }
 
                 $to      = $email;
@@ -87,10 +92,13 @@ class Controller_Member extends Controller_App
 
         $error_messages = [];
 
-        $account = $premember->selectRecord(['*'], [['token', '=', $token]]);
+        $account = $premember->selectRecord(['*'], [
+            'condition' => 'token = ?',
+            'values'    => [$token],
+        ]);
         if (is_null($account)) {
             $error_messages[] = '会員登録に失敗しました。' . PHP_EOL . 'もう一度登録し直してください。';
-        } elseif ($member->count([['email', '=', $account['email']]]) === 1) {
+        } elseif ($member->count(['condition'=> 'email = ?', 'values' => [$account['email']]]) !== 0) {
             $error_messages[] = '既に会員登録されています。';
         } elseif ($premember->isExpired($account['created_at'])) {
             $error_messages[] = 'アカウント認証URLの有効期限が切れました。' . PHP_EOL . 'もう一度登録し直してください。';
@@ -107,9 +115,15 @@ class Controller_Member extends Controller_App
             'email'    => $account['email'],
             'password' => $account['password'],
         ]);
-        $premember->delete([['id', '=', $account['id']]]);
+        $premember->delete([
+            'condition' => 'id = ?',
+            'values'    => [$account['id']],
+        ]);
 
-        $member_id = $member->selectRecord(['id'], [['email', '=', $account['email']]])['id'];
+        $member_id = $member->selectRecord(['id'], [
+            'condition' => 'email = ?',
+            'values'    => [$account['email']],
+        ])['id'];
 
         $this->session_manager->regenerateId();
         $this->session_manager->setVar('member_id', $member_id);
@@ -128,7 +142,10 @@ class Controller_Member extends Controller_App
             $password = $this->getParam('password');
 
             $member  = new Storage_Member();
-            $account = $member->selectRecord(['*'], [['email', '=', $email]]);
+            $account = $member->selectRecord(['*'], [
+                'condition' => 'email = ?',
+                'values'    => [$email],
+            ]);
 
             $error_messages = [];
             if (is_null($account) || !password_verify($password, $account['password'])) {

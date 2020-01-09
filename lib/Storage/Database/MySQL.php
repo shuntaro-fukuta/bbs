@@ -41,8 +41,11 @@ class Storage_Database_MySQL extends Storage_Database
 
         if (isset($options)) {
             if (isset($options['where'])) {
-                $query       .= $this->getWhereQueries($options['where']);
-                $where_values = $this->getWhereValues($options['where']);
+                $where = $options['where'];
+
+                // TODO: $where チェック
+                $query       .= ' WHERE ' . $where['condition'];
+                $where_values = $where['values'];
             }
 
             if (isset($options['order_by'])) {
@@ -78,8 +81,9 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "SELECT COUNT(*) FROM {$table_name}";
 
         if (!empty($where)) {
-            $query       .= $this->getWhereQueries($where);
-            $where_values = $this->getWhereValues($where);
+            // TODO: whereチェック
+            $query       .= ' WHERE ' . $where['condition'];
+            $where_values = $where['values'];
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $where_values);
@@ -136,8 +140,9 @@ class Storage_Database_MySQL extends Storage_Database
         $query = "UPDATE {$table_name} SET {$update_columns}";
 
         if (!empty($where)) {
-            $query .= $this->getWhereQueries($where);
-            $values = array_merge($values, $this->getWhereValues($where));
+            // TODO: whereチェック
+            $query .= ' WHERE ' . $where['condition'];
+            $values = array_merge($values, $where['values']);
         }
 
         $stmt = $this->prepareStatement($query);
@@ -155,8 +160,9 @@ class Storage_Database_MySQL extends Storage_Database
         if (empty($where)) {
             $stmt = $this->prepareStatement($query);
         } else {
-            $query .= $this->getWhereQueries($where);
-            $values = $this->getWhereValues($where);
+            // TODO: $whereチェック
+            $query .= ' WHERE ' . $where['condition'];
+            $values = $where['values'];
 
             $stmt = $this->prepareStatement($query);
             $stmt = $this->bindParams($stmt, $values);
@@ -169,6 +175,7 @@ class Storage_Database_MySQL extends Storage_Database
 
     public function softDelete(string $table_name, array $where = null)
     {
+        // TODO: whereチェック
         $this->update(
             $table_name,
             ['is_deleted' => 1,],
@@ -202,64 +209,6 @@ class Storage_Database_MySQL extends Storage_Database
         }
 
         return $stmt;
-    }
-
-    private function getWhereQueries(array $wheres)
-    {
-        if ($wheres === []) {
-            throw new InvalidArgumentException('Where condition is empty.');
-        }
-
-        $queries = [];
-        foreach ($wheres as $where) {
-            $this->validateWhereFormat($where);
-
-            $column   = $where[0];
-            $operator = $where[1];
-
-            $queries[] = "{$column} {$operator} ?";
-        }
-
-        return ' WHERE ' . implode(' AND ', $queries);
-    }
-
-    private function getWhereValues(array $wheres)
-    {
-        if ($wheres === []) {
-            throw new InvalidArgumentException('Where condition is empty.');
-        }
-
-        $values = [];
-        foreach ($wheres as $where) {
-            $this->validateWhereFormat($where);
-
-            $values[] = $where[2];
-        }
-
-        return $values;
-    }
-
-    private function validateWhereFormat(array $where)
-    {
-        if (!is_array($where)) {
-            throw new InvalidArgumentException("Where's condition format must be array.");
-        }
-
-        $column = $where[0] ?? null;
-        if (!is_string($column)) {
-            throw new InvalidArgumentException("Where's first parameter must be string.");
-        }
-
-        $operator = $where[1] ?? null;
-        if (!in_array($operator, ['<', '>', '=', '!=', '<=', '>=', '<>'])) {
-            throw new InvalidArgumentException("Where's second parameter must be one of these [<, >, =, !=, <=, >=, <>].");
-        }
-
-        $value = $where[2] ?? null;
-        $type  = gettype($value);
-        if (!array_key_exists($type, $this->bind_types)) {
-            throw new InvalidArgumentException("Where's third parameter's type must be " . implode(' or ', array_keys($this->bind_types)) . '.');
-        }
     }
 
     public function connect()
