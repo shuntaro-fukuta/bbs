@@ -20,68 +20,73 @@
   <input type="submit" value="Search">
 </form>
 
-<form id="admin_form" method="post">
-  <table border="1">
-    <tr>
-      <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
-      <?php foreach ($display_columns as $column) : ?>
-        <th><?php echo h($column) ?></th>
-      <?php endforeach ?>
-      <th></th>
-    </tr>
-
-    <?php foreach($records as $record) : ?>
-      <?php if ($record['is_deleted'] === 0) : ?>
-        <tr>
-          <td>
-            <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>">
-          </td>
-      <?php else : ?>
-        <tr style="background: gray;">
-          <td></td>
-      <?php endif ?>
-
-        <?php foreach ($record as $column => $value) : ?>
-          <?php if (in_array($column, $display_columns)) : ?>
-            <td>
-              <?php if ($column === 'image_path' && !is_null($value)) : ?>
-                <img src="<?php echo h($value) ?>" width="150" height="100">
-                <input type="button" onclick="delete_image(<?php echo h($record['id']) ?>)" value="DEL">
-              <?php else : ?>
-                <?php echo h($value) ?>
-              <?php endif ?>
-            </td>
-          <?php endif ?>
+<?php if (empty($records)) : ?>
+  <p>Not found.</p>
+<?php else : ?>
+  <form id="form" method="post">
+    <table border="1">
+      <tr>
+        <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
+        <?php foreach ($display_columns as $column) : ?>
+          <th><?php echo h($column) ?></th>
         <?php endforeach ?>
-
-        <td>
-          <?php if ($record['is_deleted'] === 0) : ?>
-            <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="DEL">
-          <?php else : ?>
-            <input type="button" onclick="recover_post(<?php echo h($record['id']) ?>)" value="REC">
-          <?php endif ?>
-        </td>
-
+        <th></th>
       </tr>
-    <?php endforeach ?>
-  </table>
 
-  <input type="button" onclick="delete_posts('delete_posts')" value="Delete Checked Items">
+      <?php foreach($records as $record) : ?>
+        <?php if ($record['is_deleted'] === 0) : ?>
+          <tr>
+            <td>
+              <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>">
+            </td>
+        <?php else : ?>
+          <tr style="background: gray;">
+            <td></td>
+        <?php endif ?>
 
-  <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-  <?php if (isset($search_conditions)) : ?>
-    <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
-    <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
-    <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
-    <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
-  <?php endif ?>
-</form>
+          <?php foreach ($record as $column => $value) : ?>
+            <?php if (in_array($column, $display_columns)) : ?>
+              <td>
+                <?php if ($column === 'image_path' && !is_null($value)) : ?>
+                  <img src="<?php echo h($value) ?>" width="150" height="100">
+                  <input type="button" onclick="delete_image(<?php echo h($record['id']) ?>)" value="DEL">
+                <?php else : ?>
+                  <?php echo h($value) ?>
+                <?php endif ?>
+              </td>
+            <?php endif ?>
+          <?php endforeach ?>
+
+          <td>
+            <?php if ($record['is_deleted'] === 0) : ?>
+              <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="DEL">
+            <?php else : ?>
+              <input type="button" onclick="recover_post(<?php echo h($record['id']) ?>)" value="REC">
+            <?php endif ?>
+          </td>
+
+        </tr>
+      <?php endforeach ?>
+    </table>
+
+    <input type="button" onclick="delete_posts('delete_posts')" value="Delete Checked Items">
+
+    <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+    <?php if (isset($search_conditions)) : ?>
+      <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
+      <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
+      <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
+      <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
+    <?php endif ?>
+  </form>
+<?php endif ?>
+
 
 <script>
   var delete_image = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
     if (do_delete) {
-      var form = document.getElementById('admin_form');
+      var form = document.getElementById('form');
       form.setAttribute('action', 'delete_image.php');
 
       var input = document.createElement('input');
@@ -97,7 +102,7 @@
   var delete_post = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
     if (do_delete) {
-      var form = document.getElementById('admin_form');
+      var form = document.getElementById('form');
       form.setAttribute('action', 'delete_posts.php');
 
       var input = document.createElement('input');
@@ -113,7 +118,7 @@
   var delete_posts = function() {
     var do_delete = window.confirm(`Are you sure to delete checked items?`);
     if (do_delete) {
-      var form = document.getElementById('admin_form');
+      var form = document.getElementById('form');
       form.setAttribute('action', 'delete_posts.php');
 
       form.submit();
@@ -121,7 +126,7 @@
   }
 
   var recover_post = function(post_id) {
-      var form = form = document.getElementById('admin_form');
+      var form = form = document.getElementById('form');
       form.setAttribute('action', 'recover.php');
 
       var input = document.createElement('input');
