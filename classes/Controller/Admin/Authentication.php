@@ -4,6 +4,10 @@ class Controller_Admin_Authentication extends Controller_App
 {
     public function login()
     {
+        if ($this->isAdmin()) {
+            $this->redirect('index.php');
+        }
+
         if ($this->getEnv('request-method') === 'GET') {
             $this->render('admin/login.php');
 
@@ -22,8 +26,6 @@ class Controller_Admin_Authentication extends Controller_App
         $error_messages = [];
         if (is_null($account) || !password_verify($password, $account['password'])) {
             $error_messages[] = 'idまたはパスワードが間違っています。';
-        } elseif ($account['is_admin'] !== 1) {
-            $error_messages[] = '管理者権限がありません。';
         }
 
         if (empty($error_messages)) {
@@ -37,10 +39,6 @@ class Controller_Admin_Authentication extends Controller_App
 
     public function logout()
     {
-        if (!$this->isLoggedIn()) {
-            $this->redirect('login.php');
-        }
-
         $this->session_manager->destroy();
         $this->redirect('index.php');
     }
