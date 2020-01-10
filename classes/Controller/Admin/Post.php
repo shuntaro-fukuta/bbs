@@ -13,8 +13,7 @@ class Controller_Admin_Post extends Controller_App
 
         $search_conditions = $this->getParam('search_conditions');
 
-        $post = new Storage_Post();
-
+        $post  = new Storage_Post();
         $where = $post->buildWhereToSearch($search_conditions);
 
         $paginator = $this->createPaginator($post->count($where));

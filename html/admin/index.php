@@ -36,7 +36,7 @@
       <?php if ($record['is_deleted'] === 0) : ?>
         <tr>
           <td>
-            <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="admin_form">
+            <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="checkbox_form">
           </td>
       <?php else : ?>
         <tr style="background: gray;">
@@ -68,9 +68,18 @@
     <?php endforeach ?>
   </table>
 
-  <button onclick="delete_posts('delete_posts')">Delete Checked Items</button>
+  <form id="single_post_form" method="post">
+    <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
+    <?php if (isset($search_conditions)) : ?>
+      <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
+      <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
+      <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
+      <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
+    <?php endif ?>
+  </form>
 
-  <form id="admin_form" method="post">
+  <form id="checkbox_form" method="post" action="delete_posts.php">
+    <button onclick="delete_checked_posts('delete_posts')">Delete Checked Items</button>
     <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
     <?php if (isset($search_conditions)) : ?>
       <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
@@ -82,10 +91,22 @@
 <?php endif ?>
 
 <script>
+
+  var check_all = function() {
+    var isChecked = document.getElementById('all_check_box').checked;
+
+    var check_boxes = document.getElementsByClassName('checkboxes');
+    var boxes_count = check_boxes.length;
+
+    for (var i = 0; i < boxes_count; i++) {
+      check_boxes[i].checked = isChecked;
+    }
+  }
+
   var delete_image = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
     if (do_delete) {
-      var form = build_post_form('delete_image.php', {'post_id' : post_id});
+      var form = build_single_post_form('delete_image.php', {'post_id' : post_id});
       form.submit();
     }
   }
@@ -93,29 +114,18 @@
   var delete_post = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
     if (do_delete) {
-      var form = build_post_form('delete_posts.php', {'delete_ids[]' : post_id});
-      form.submit();
-    }
-  }
-
-  var delete_posts = function() {
-    var do_delete = window.confirm(`Are you sure to delete checked items?`);
-    if (do_delete) {
-      var check_boxes = document.getElementsByClassName('checkboxes');
-      var boxes_count = check_boxes.length;
-
-      var form = build_post_form('delete_posts.php', null);
+      var form = build_single_post_form('delete_posts.php', {'delete_ids[]' : post_id});
       form.submit();
     }
   }
 
   var recover_post = function(post_id) {
-    var form = build_post_form('recover.php', {'post_id' : post_id});
+    var form = build_single_post_form('recover.php', {'post_id' : post_id});
     form.submit();
   }
 
-  var build_post_form = function(action, post_values) {
-    var form = document.getElementById('admin_form');
+  var build_single_post_form = function(action, post_values) {
+    var form = document.getElementById('single_post_form');
     form.setAttribute('action', action);
 
     var input = document.createElement('input');
@@ -130,16 +140,14 @@
     return form;
   }
 
-  var check_all = function() {
-    var isChecked = document.getElementById('all_check_box').checked;
-
-    var check_boxes = document.getElementsByClassName('checkboxes');
-    var boxes_count = check_boxes.length;
-
-    for (var i = 0; i < boxes_count; i++) {
-      check_boxes[i].checked = isChecked;
+  var delete_checked_posts = function() {
+    var do_delete = window.confirm(`Are you sure to delete checked items?`);
+    if (do_delete) {
+      var form = document.getElementById('checkbox_form');
+      form.submit();
     }
   }
+
 </script>
 
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
