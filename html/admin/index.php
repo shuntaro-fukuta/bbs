@@ -23,54 +23,54 @@
 <?php if (empty($records)) : ?>
   <p>Not found.</p>
 <?php else : ?>
-  <form id="form" method="post">
-    <table border="1">
-      <tr>
-        <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
-        <?php foreach ($display_columns as $column) : ?>
-          <th><?php echo h($column) ?></th>
-        <?php endforeach ?>
-        <th></th>
-      </tr>
-
-      <?php foreach($records as $record) : ?>
-        <?php if ($record['is_deleted'] === 0) : ?>
-          <tr>
-            <td>
-              <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>">
-            </td>
-        <?php else : ?>
-          <tr style="background: gray;">
-            <td></td>
-        <?php endif ?>
-
-          <?php foreach ($record as $column => $value) : ?>
-            <?php if (in_array($column, $display_columns)) : ?>
-              <td>
-                <?php if ($column === 'image_path' && !is_null($value)) : ?>
-                  <img src="<?php echo h($value) ?>" width="150" height="100">
-                  <input type="button" onclick="delete_image(<?php echo h($record['id']) ?>)" value="DEL">
-                <?php else : ?>
-                  <?php echo h($value) ?>
-                <?php endif ?>
-              </td>
-            <?php endif ?>
-          <?php endforeach ?>
-
-          <td>
-            <?php if ($record['is_deleted'] === 0) : ?>
-              <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="DEL">
-            <?php else : ?>
-              <input type="button" onclick="recover_post(<?php echo h($record['id']) ?>)" value="REC">
-            <?php endif ?>
-          </td>
-
-        </tr>
+  <table border="1">
+    <tr>
+      <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
+      <?php foreach ($display_columns as $column) : ?>
+        <th><?php echo h($column) ?></th>
       <?php endforeach ?>
-    </table>
+      <th></th>
+    </tr>
 
-    <input type="button" onclick="delete_posts('delete_posts')" value="Delete Checked Items">
+    <?php foreach($records as $record) : ?>
+      <?php if ($record['is_deleted'] === 0) : ?>
+        <tr>
+          <td>
+            <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="admin_form">
+          </td>
+      <?php else : ?>
+        <tr style="background: gray;">
+          <td></td>
+      <?php endif ?>
 
+        <?php foreach ($record as $column => $value) : ?>
+          <?php if (in_array($column, $display_columns)) : ?>
+            <td>
+              <?php if ($column === 'image_path' && !is_null($value)) : ?>
+                <img src="<?php echo h($value) ?>" width="150" height="100">
+                <button onclick="delete_image(<?php echo h($record['id']) ?>)">DEL</button>
+              <?php else : ?>
+                <?php echo h($value) ?>
+              <?php endif ?>
+            </td>
+          <?php endif ?>
+        <?php endforeach ?>
+
+        <td>
+          <?php if ($record['is_deleted'] === 0) : ?>
+            <button onclick="delete_post(<?php echo h($record['id']) ?>)">DEL</button>
+          <?php else : ?>
+            <button onclick="recover_post(<?php echo h($record['id']) ?>)">REC</button>
+          <?php endif ?>
+        </td>
+
+      </tr>
+    <?php endforeach ?>
+  </table>
+
+  <button onclick="delete_posts('delete_posts')">Delete Checked Items</button>
+
+  <form id="admin_form" method="post">
     <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
     <?php if (isset($search_conditions)) : ?>
       <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
@@ -115,7 +115,7 @@
   }
 
   var build_post_form = function(action, post_values) {
-    var form = document.getElementById('form');
+    var form = document.getElementById('admin_form');
     form.setAttribute('action', action);
 
     var input = document.createElement('input');
