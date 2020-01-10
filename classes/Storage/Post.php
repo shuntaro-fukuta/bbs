@@ -77,26 +77,20 @@ class Storage_Post extends Storage_Base
         }
 
         if (!is_null($image_status)) {
-            switch ($image_status) {
-                case 'with':
-                    $conditions[] = 'image_path IS NOT NULL';
-                    break;
-                case 'without':
-                    $conditions[] = 'image_path IS NULL';
-                    break;
+            if ($image_status === 'with') {
+                $conditions[] = 'image_path IS NOT NULL';
+            } elseif ($image_status === 'without') {
+                $conditions[] = 'image_path IS NULL';
             }
         }
 
         if (!is_null($post_status)) {
-            switch ($post_status) {
-                case 'on':
-                    $conditions[] = 'is_deleted = ?';
-                    $values[]     = 0;
-                    break;
-                case 'delete':
-                    $conditions[] = 'is_deleted = ?';
-                    $values[]     = 1;
-                    break;
+            if ($post_status === 'on') {
+                $conditions[] = 'is_deleted = ?';
+                $values[]     = 0;
+            } elseif ($post_status === 'delete') {
+                $conditions[] = 'is_deleted = ?';
+                $values[]     = 1;
             }
         }
 
