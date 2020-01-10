@@ -8,9 +8,11 @@
   <table border="1">
     <tr>
       <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
-      <?php foreach ($display_columns as $column) : ?>
-        <th><?php echo h($column) ?></th>
-      <?php endforeach ?>
+      <th>id</th>
+      <th>title</th>
+      <th>comment</th>
+      <th>image</th>
+      <th>created_at</th>
       <th></th>
     </tr>
 
@@ -25,18 +27,16 @@
           <td></td>
       <?php endif ?>
 
-        <?php foreach ($record as $column => $value) : ?>
-          <?php if (in_array($column, $display_columns)) : ?>
-            <td>
-              <?php if ($column === 'image_path' && !is_null($value)) : ?>
-                <img src="<?php echo h($value) ?>" width="150" height="100">
-                <button onclick="delete_image(<?php echo h($record['id']) ?>)">DEL</button>
-              <?php else : ?>
-                <?php echo h($value) ?>
-              <?php endif ?>
-            </td>
+        <td><?php echo h($record['id']) ?></td>
+        <td><?php echo h($record['title']) ?></td>
+        <td><?php echo h($record['comment']) ?></td>
+        <td>
+          <?php if (!is_null($record['image_path'])) : ?>
+            <img src="<?php echo h($record['image_path']) ?>" width="150" height="100">
+            <button onclick="delete_image(<?php echo h($record['id']) ?>)">DEL</button>
           <?php endif ?>
-        <?php endforeach ?>
+        </td>
+        <td><?php echo h($record['created_at']) ?></td>
 
         <td>
           <?php if ($record['is_deleted'] === 0) : ?>

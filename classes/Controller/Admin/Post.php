@@ -28,8 +28,6 @@ class Controller_Admin_Post extends Controller_App
             'offset'   => $paginator->getRecordOffset(),
         ]);
 
-        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
-
         $this->render('admin/index.php', get_defined_vars());
     }
 
