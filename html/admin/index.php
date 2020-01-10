@@ -58,8 +58,7 @@
           <?php if ($record['is_deleted'] === 0) : ?>
             <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="del">
           <?php else : ?>
-            <!-- TODO: メソッド作る -->
-            <input type="button" onclick="recoverPost(<?php echo h($record['id']) ?>)" value="REC">
+            <input type="button" onclick="recover_post(<?php echo h($record['id']) ?>)" value="REC">
           <?php endif ?>
         </td>
 
@@ -119,6 +118,19 @@
 
       form.submit();
     }
+  }
+
+  var recover_post = function(post_id) {
+      var form = form = document.getElementById('admin_form');
+      form.setAttribute('action', 'recover.php');
+
+      var input = document.createElement('input');
+      input.setAttribute('name', 'post_id');
+      input.setAttribute('type', 'hidden');
+      input.setAttribute('value', post_id);
+      form.appendChild(input);
+
+      form.submit();
   }
 
   var allCheck = function() {

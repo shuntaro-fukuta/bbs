@@ -144,7 +144,10 @@ class Controller_Admin extends Controller_App
         $post = new Storage_Post();
         $post->update(['is_deleted' => 0], ['condition' => 'id = ?', 'values' => [$post_id]]);
 
-        $this->redirect('index.php', ['page' => $previous_page]);
+        $this->redirect('index.php', [
+            'page'              => $previous_page,
+            'search_conditions' => $this->getParam('search_conditions'),
+        ]);
     }
 
     protected function createPaginator($posts_count)
