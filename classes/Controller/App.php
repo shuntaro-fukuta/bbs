@@ -31,6 +31,15 @@ abstract class Controller_App extends Controller_Base
         return ($this->member !== null);
     }
 
+    protected function isAdmin()
+    {
+        if (!$this->isLoggedIn()) {
+            return false;
+        }
+
+        return ($this->member['is_admin'] === 1);
+    }
+
     protected function loadMember()
     {
         $member_id = $this->session_manager->getVar('member_id');
