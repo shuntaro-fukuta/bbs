@@ -81,20 +81,11 @@
   </form>
 <?php endif ?>
 
-
 <script>
   var delete_image = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
     if (do_delete) {
-      var form = document.getElementById('form');
-      form.setAttribute('action', 'delete_image.php');
-
-      var input = document.createElement('input');
-      input.setAttribute('name', 'post_id');
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('value', post_id);
-      form.appendChild(input);
-
+      var form = build_post_form('delete_image.php', {'post_id' : post_id});
       form.submit();
     }
   }
@@ -102,15 +93,7 @@
   var delete_post = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
     if (do_delete) {
-      var form = document.getElementById('form');
-      form.setAttribute('action', 'delete_posts.php');
-
-      var input = document.createElement('input');
-      input.setAttribute('name', 'delete_ids[]');
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('value', post_id);
-      form.appendChild(input);
-
+      var form = build_post_form('delete_posts.php', {'delete_ids[]' : post_id});
       form.submit();
     }
   }
@@ -118,24 +101,33 @@
   var delete_posts = function() {
     var do_delete = window.confirm(`Are you sure to delete checked items?`);
     if (do_delete) {
-      var form = document.getElementById('form');
-      form.setAttribute('action', 'delete_posts.php');
+      var check_boxes = document.getElementsByClassName('checkboxes');
+      var boxes_count = check_boxes.length;
 
+      var form = build_post_form('delete_posts.php', null);
       form.submit();
     }
   }
 
   var recover_post = function(post_id) {
-      var form = form = document.getElementById('form');
-      form.setAttribute('action', 'recover.php');
+    var form = build_post_form('recover.php', {'post_id' : post_id});
+    form.submit();
+  }
 
-      var input = document.createElement('input');
-      input.setAttribute('name', 'post_id');
+  var build_post_form = function(action, post_values) {
+    var form = document.getElementById('form');
+    form.setAttribute('action', action);
+
+    var input = document.createElement('input');
+    for (var name in post_values) {
+      input.setAttribute('name', name);
+      input.setAttribute('value', post_values[name]);
       input.setAttribute('type', 'hidden');
-      input.setAttribute('value', post_id);
-      form.appendChild(input);
 
-      form.submit();
+      form.appendChild(input)
+    }
+
+    return form;
   }
 
   var check_all = function() {
