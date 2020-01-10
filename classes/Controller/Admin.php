@@ -101,12 +101,11 @@ class Controller_Admin extends Controller_App
     public function deleteImage()
     {
         $post_id = $this->getParam('post_id');
-        $page    = $this->getParam('page');
-
         if (is_null($post_id)) {
             $this->err400();
         }
 
+        $page          = $this->getParam('page');
         $previous_page = is_null($page) ? 1 : $page;
 
         $post   = new Storage_Post();
@@ -133,12 +132,11 @@ class Controller_Admin extends Controller_App
     public function recover()
     {
         $post_id = $this->getParam('post_id');
-        $page    = $this->getParam('page');
-
         if (is_null($post_id)) {
             $this->err400();
         }
 
+        $page          = $this->getParam('page');
         $previous_page = is_null($page) ? 1 : $page;
 
         $post = new Storage_Post();

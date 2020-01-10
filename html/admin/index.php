@@ -2,10 +2,10 @@
 
 <form method="get" action="index.php">
   <label for="search_conditions[title]">Title : </label>
-  <input type="text" name="search_conditions[title]" value="<?php echo $search_conditions['title'] ?? '' ?>">
+  <input type="text" name="search_conditions[title]" value="<?php echo h($search_conditions['title']) ?? '' ?>">
   <br>
   <label for="search_conditions[comment]">Comment : </label>
-  <input type="text" name="search_conditions[comment]" value="<?php echo $search_conditions['comment'] ?? '' ?>">
+  <input type="text" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? '' ?>">
   <br>
   <label for="search_conditions[image]">Image : </label>
   <input type="radio" name="search_conditions[image]" value="with" <?php if (isset($search_conditions['image']) && $search_conditions['image'] === 'with') echo 'checked' ?>>with
@@ -56,7 +56,7 @@
 
         <td>
           <?php if ($record['is_deleted'] === 0) : ?>
-            <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="del">
+            <input type="button" onclick="delete_post(<?php echo h($record['id']) ?>)" value="DEL">
           <?php else : ?>
             <input type="button" onclick="recover_post(<?php echo h($record['id']) ?>)" value="REC">
           <?php endif ?>
@@ -67,13 +67,13 @@
   </table>
 
   <input type="button" onclick="delete_posts('delete_posts')" value="Delete Checked Items">
-  <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 
+  <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
   <?php if (isset($search_conditions)) : ?>
-    <input type="hidden" name="search_conditions[title]"   value="<?php echo $search_conditions['title']   ?? null ?>">
-    <input type="hidden" name="search_conditions[comment]" value="<?php echo $search_conditions['comment'] ?? null ?>">
-    <input type="hidden" name="search_conditions[image]"   value="<?php echo $search_conditions['image']   ?? null ?>">
-    <input type="hidden" name="search_conditions[post]"    value="<?php echo $search_conditions['post']    ?? null ?>">
+    <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
+    <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
+    <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
+    <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
   <?php endif ?>
 </form>
 
@@ -108,7 +108,7 @@
 
       form.submit();
     }
-}
+  }
 
   var delete_posts = function() {
     var do_delete = window.confirm(`Are you sure to delete checked items?`);
