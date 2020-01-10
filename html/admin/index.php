@@ -23,7 +23,7 @@
 <form id="admin_form" method="post">
   <table border="1">
     <tr>
-      <th><input id="all_check_box" onclick="allCheck()" type="checkbox"></th>
+      <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
       <?php foreach ($display_columns as $column) : ?>
         <th><?php echo h($column) ?></th>
       <?php endforeach ?>
@@ -46,7 +46,7 @@
             <td>
               <?php if ($column === 'image_path' && !is_null($value)) : ?>
                 <img src="<?php echo h($value) ?>" width="150" height="100">
-                <input type="button" onclick="deleteImage(<?php echo h($record['id']) ?>)" value="DEL">
+                <input type="button" onclick="delete_image(<?php echo h($record['id']) ?>)" value="DEL">
               <?php else : ?>
                 <?php echo h($value) ?>
               <?php endif ?>
@@ -66,7 +66,7 @@
     <?php endforeach ?>
   </table>
 
-  <input type="button" onclick="deletePosts('delete_posts')" value="Delete Checked Items">
+  <input type="button" onclick="delete_posts('delete_posts')" value="Delete Checked Items">
   <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
 
   <?php if (isset($search_conditions)) : ?>
@@ -78,7 +78,7 @@
 </form>
 
 <script>
-  var deleteImage = function(post_id) {
+  var delete_image = function(post_id) {
     var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
     if (do_delete) {
       var form = document.getElementById('admin_form');
@@ -110,7 +110,7 @@
     }
 }
 
-  var deletePosts = function() {
+  var delete_posts = function() {
     var do_delete = window.confirm(`Are you sure to delete checked items?`);
     if (do_delete) {
       var form = document.getElementById('admin_form');
@@ -133,7 +133,7 @@
       form.submit();
   }
 
-  var allCheck = function() {
+  var check_all = function() {
     var isChecked = document.getElementById('all_check_box').checked;
 
     var check_boxes = document.getElementsByClassName('checkboxes');
