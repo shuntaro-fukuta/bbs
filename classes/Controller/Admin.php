@@ -40,20 +40,25 @@ class Controller_Admin extends Controller_App
 
     public function index()
     {
+        $search_conditions = $this->getParam('search_conditions');
+
         $post = new Storage_Post();
 
-        $paginator = $this->createPaginator($post->count());
+        $where = $post->buildWhereToSearch($search_conditions);
+
+        $paginator = $this->createPaginator($post->count($where));
         $page      = (int)$this->getParam('page');
         $paginator->setCurrentPage($page);
         $page_numbers = $paginator->getPageNumbers();
 
-        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
-
         $records = $post->selectRecords(['*'], [
+            'where'    => $where,
             'order_by' => 'id DESC',
             'limit'    => $paginator->getPageItemCount(),
             'offset'   => $paginator->getRecordOffset(),
         ]);
+
+        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
 
         $this->render('admin/index.php', get_defined_vars());
     }
@@ -87,7 +92,10 @@ class Controller_Admin extends Controller_App
             }
         }
 
-        $this->redirect('index.php', ['page' => $previous_page]);
+        $this->redirect('index.php', [
+            'page'              => $previous_page,
+            'search_conditions' => $this->getParam('search_conditions')
+        ]);
     }
 
     public function deleteImage()
@@ -116,7 +124,10 @@ class Controller_Admin extends Controller_App
             $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
         }
 
-        $this->redirect('index.php', ['page' => $previous_page]);
+        $this->redirect('index.php', [
+            'page'              => $previous_page,
+            'search_conditions' => $this->getParam('search_conditions'),
+        ]);
     }
 
     public function recover()
@@ -134,76 +145,6 @@ class Controller_Admin extends Controller_App
         $post->update(['is_deleted' => 0], ['condition' => 'id = ?', 'values' => [$post_id]]);
 
         $this->redirect('index.php', ['page' => $previous_page]);
-    }
-
-    public function search()
-    {
-        $title_search_string   = $this->getParam('title_search_string');
-        $comment_search_string = $this->getParam('comment_search_string');
-        $image_status          = $this->getParam('image_status');
-        $post_status           = $this->getParam('post_status');
-
-        $conditions = [];
-        $values     = [];
-
-        if (!is_null($title_search_string)) {
-            $conditions[] = 'title LIKE ?';
-            $values[]     = '%' . $title_search_string . '%';
-        }
-
-        if (!is_null($comment_search_string)) {
-            $conditions[] = 'comment LIKE ?';
-            $values[]     = '%' . $comment_search_string . '%';
-        }
-
-        if (!is_null($image_status)) {
-            switch ($image_status) {
-                case 'with':
-                    $conditions[] = 'image_path IS NOT NULL';
-                    break;
-                case 'without':
-                    $conditions[] = 'image_path IS NULL';
-                    break;
-            }
-        }
-
-        if (!is_null($post_status)) {
-            switch ($post_status) {
-                case 'on':
-                    $conditions[] = 'is_deleted = ?';
-                    $values[]     = 0;
-                    break;
-                case 'delete':
-                    $conditions[] = 'is_deleted = ?';
-                    $values[]     = 1;
-                    break;
-            }
-        }
-
-        if (empty($conditions)) {
-            $where = null;
-        } else {
-            $condition = implode(' AND ', $conditions);
-            $where     = ['condition' => $condition, 'values' => $values];
-        }
-
-        $post = new Storage_Post();
-
-        $paginator = $this->createPaginator($post->count($where));
-        $page      = (int)$this->getParam('page');
-        $paginator->setCurrentPage($page);
-        $page_numbers = $paginator->getPageNumbers();
-
-        $records = $post->selectRecords(['*'], [
-            'where'    => $where,
-            'order_by' => 'id DESC',
-            'limit'    => $paginator->getPageItemCount(),
-            'offset'   => $paginator->getRecordOffset(),
-        ]);
-
-        $display_columns = ['id', 'title', 'comment', 'image_path', 'created_at'];
-
-        $this->render('admin/search.php', get_defined_vars());
     }
 
     protected function createPaginator($posts_count)
