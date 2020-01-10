@@ -1,5 +1,63 @@
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
 
+<script>
+  var check_all = function() {
+    var isChecked = document.getElementById('all_check_box').checked;
+
+    var check_boxes = document.getElementsByClassName('checkboxes');
+    var boxes_count = check_boxes.length;
+
+    for (var i = 0; i < boxes_count; i++) {
+      check_boxes[i].checked = isChecked;
+    }
+  }
+
+  var delete_image = function(post_id) {
+    var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
+    if (do_delete) {
+      var form = build_single_post_form('delete_image.php', {'post_id' : post_id});
+      form.submit();
+    }
+  }
+
+  var delete_post = function(post_id) {
+    var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
+    if (do_delete) {
+      var form = build_single_post_form('delete_posts.php', {'delete_ids[]' : post_id});
+      form.submit();
+    }
+  }
+
+  var recover_post = function(post_id) {
+    var form = build_single_post_form('recover.php', {'post_id' : post_id});
+    form.submit();
+  }
+
+  var build_single_post_form = function(action, post_values) {
+    var form = document.getElementById('single_post_form');
+    form.setAttribute('action', action);
+
+    var input = document.createElement('input');
+    for (var name in post_values) {
+      input.setAttribute('name', name);
+      input.setAttribute('value', post_values[name]);
+      input.setAttribute('type', 'hidden');
+
+      form.appendChild(input)
+    }
+
+    return form;
+  }
+
+  var delete_checked_posts = function() {
+    var do_delete = window.confirm(`Are you sure to delete checked items?`);
+    if (do_delete) {
+      var form = document.getElementById('checkbox_form');
+      form.submit();
+    }
+  }
+</script>
+
 <?php include(HTML_FILES_DIR . DIR_SEP . 'admin' . DIR_SEP . 'search_form.php') ?>
 
 <?php if (empty($records)) : ?>
@@ -71,66 +129,6 @@
     <?php endif ?>
   </form>
 <?php endif ?>
-
-<script>
-
-  var check_all = function() {
-    var isChecked = document.getElementById('all_check_box').checked;
-
-    var check_boxes = document.getElementsByClassName('checkboxes');
-    var boxes_count = check_boxes.length;
-
-    for (var i = 0; i < boxes_count; i++) {
-      check_boxes[i].checked = isChecked;
-    }
-  }
-
-  var delete_image = function(post_id) {
-    var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
-    if (do_delete) {
-      var form = build_single_post_form('delete_image.php', {'post_id' : post_id});
-      form.submit();
-    }
-  }
-
-  var delete_post = function(post_id) {
-    var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
-    if (do_delete) {
-      var form = build_single_post_form('delete_posts.php', {'delete_ids[]' : post_id});
-      form.submit();
-    }
-  }
-
-  var recover_post = function(post_id) {
-    var form = build_single_post_form('recover.php', {'post_id' : post_id});
-    form.submit();
-  }
-
-  var build_single_post_form = function(action, post_values) {
-    var form = document.getElementById('single_post_form');
-    form.setAttribute('action', action);
-
-    var input = document.createElement('input');
-    for (var name in post_values) {
-      input.setAttribute('name', name);
-      input.setAttribute('value', post_values[name]);
-      input.setAttribute('type', 'hidden');
-
-      form.appendChild(input)
-    }
-
-    return form;
-  }
-
-  var delete_checked_posts = function() {
-    var do_delete = window.confirm(`Are you sure to delete checked items?`);
-    if (do_delete) {
-      var form = document.getElementById('checkbox_form');
-      form.submit();
-    }
-  }
-
-</script>
 
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'pager.php') ?>
 
