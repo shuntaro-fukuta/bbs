@@ -31,7 +31,7 @@ class Controller_Admin_Authentication extends Controller_App
 
         if (empty($error_messages)) {
             $this->session_manager->regenerateId();
-            $this->session_manager->setVar('member_id', $account['id']);
+            $this->session_manager->setVar('is_admin', true);
             $this->redirect('index.php');
         }
 
@@ -40,7 +40,7 @@ class Controller_Admin_Authentication extends Controller_App
 
     public function logout()
     {
-        $this->session_manager->destroy();
+        $this->session_manager->unsetVar('is_admin');
         $this->redirect('index.php');
     }
 }
