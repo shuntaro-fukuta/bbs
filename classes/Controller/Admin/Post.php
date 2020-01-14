@@ -41,8 +41,6 @@ class Controller_Admin_Post extends Controller_App
         $page          = $this->getParam('page');
         $previous_page = (is_null($page)) ? 1 : $page;
 
-        debug($_POST);
-
         $delete_ids = $this->getParam('delete_ids');
         if (!is_null($delete_ids)) {
             $post     = new Storage_Post();
