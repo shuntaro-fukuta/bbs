@@ -5,12 +5,17 @@ class Controller_Admin_Post extends Controller_App
     const PAGE_ITEM_COUNT = 20;
     const PAGER_COUNT     = 10;
 
-    public function index()
+    public function __construct()
     {
+        parent::__construct();
+
         if (!$this->isAdmin()) {
             $this->redirect('login.php');
         }
+    }
 
+    public function index()
+    {
         $search_conditions = $this->getParam('search_conditions');
 
         $post  = new Storage_Post();
@@ -33,10 +38,6 @@ class Controller_Admin_Post extends Controller_App
 
     public function deletePosts()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login.php');
-        }
-
         $page          = $this->getParam('page');
         $previous_page = (is_null($page)) ? 1 : $page;
 
@@ -72,10 +73,6 @@ class Controller_Admin_Post extends Controller_App
 
     public function deleteImage()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login.php');
-        }
-
         $post_id = $this->getParam('post_id');
         if (is_null($post_id)) {
             $this->err400();
@@ -107,10 +104,6 @@ class Controller_Admin_Post extends Controller_App
 
     public function recover()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login.php');
-        }
-
         $post_id = $this->getParam('post_id');
         if (is_null($post_id)) {
             $this->err400();
