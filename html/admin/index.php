@@ -2,13 +2,13 @@
 
 <script>
   function check_all() {
-    var is_checked = document.getElementById('all_check_box').checked;
+    var is_checked = document.getElementById('js-all_check_box').checked;
 
-    var check_boxes = document.getElementsByClassName('checkboxes');
+    var check_boxes = document.getElementsByClassName('js-checkboxes');
     var boxes_count = check_boxes.length;
 
     for (var i = 0; i < boxes_count; i++) {
-      check_boxes[i].checked = isChecked;
+      check_boxes[i].checked = is_checked;
     }
   }
 
@@ -57,7 +57,7 @@
     // onClickもreturnが必要です。 onClick="return func()"
     var do_delete = window.confirm(`Are you sure to delete checked items?`);
     if (do_delete) {
-      var form = document.getElementById('checkbox_form');
+      var form = document.getElementById('js-checkbox_form');
       form.submit();
     }
   }
@@ -70,7 +70,7 @@
 <?php else : ?>
   <table border="1">
     <tr>
-      <th><input id="all_check_box" onclick="check_all()" type="checkbox"></th>
+      <th><input id="js-all_check_box" onclick="check_all()" type="checkbox"></th>
       <th>id</th>
       <th>title</th>
       <th>comment</th>
@@ -83,7 +83,7 @@
       <?php if ($record['is_deleted'] === 0) : ?>
         <tr>
           <td>
-            <input class="checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="checkbox_form">
+            <input class="js-checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="js-checkbox_form">
           </td>
       <?php else : ?>
         <tr style="background: gray;">
@@ -113,8 +113,8 @@
     <?php endforeach ?>
   </table>
 
-  <form id="checkbox_form" method="post" action="delete_posts.php">
-    <button onclick="delete_checked_posts('delete_posts')">Delete Checked Items</button>
+  <form id="js-checkbox_form" method="post" action="delete_posts.php">
+    <button onclick="delete_checked_posts('delete_posts');">Delete Checked Items</button>
   </form>
 <?php endif ?>
 
