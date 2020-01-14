@@ -109,7 +109,6 @@
   </table>
 
   <form id="single_post_form" method="post">
-    <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
   </form>
 
   <form id="checkbox_form" method="post" action="delete_posts.php">

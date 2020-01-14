@@ -34,13 +34,14 @@ class Controller_Admin_Post extends Controller_App
         ]);
 
         $this->session_manager->setVars('search_conditions', $search_conditions);
+        $this->session_manager->setVar('page', $page);
 
         $this->render('admin/index.php', get_defined_vars());
     }
 
     public function deletePosts()
     {
-        $page          = $this->getParam('page');
+        $page          = $this->session_manager->getVar('page');
         $previous_page = (is_null($page)) ? 1 : $page;
 
         $delete_ids = $this->getParam('delete_ids');
@@ -77,7 +78,7 @@ class Controller_Admin_Post extends Controller_App
             $this->err400();
         }
 
-        $page          = $this->getParam('page');
+        $page          = $this->session_manager->getVar('page');
         $previous_page = is_null($page) ? 1 : $page;
 
         $post   = new Storage_Post();
@@ -108,7 +109,7 @@ class Controller_Admin_Post extends Controller_App
             $this->err400();
         }
 
-        $page          = $this->getParam('page');
+        $page          = $this->session_manager->getVar('page');
         $previous_page = is_null($page) ? 1 : $page;
 
         $post = new Storage_Post();
