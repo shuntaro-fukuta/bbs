@@ -41,27 +41,26 @@ class Controller_Admin_Post extends Controller_App
         $page          = $this->getParam('page');
         $previous_page = (is_null($page)) ? 1 : $page;
 
+        debug($_POST);
+
         $delete_ids = $this->getParam('delete_ids');
         if (!is_null($delete_ids)) {
             $post     = new Storage_Post();
             $uploader = new Uploader();
 
-            foreach ($delete_ids as $id) {
-                $record = $post->selectRecord(['*'], [
-                    'condition' => 'id = ?',
-                    'values'    => [$id],
-                ]);
-                if (is_null($record)) {
-                    $this->err400();
-                }
+            foreach ($delete_ids as $key => $id) {
+                $delete_ids[$key] = $post->escape($id, false);
+            }
+            $records = $post->selectRecords(['*'], [
+                'where' => ['condition' => ' id IN (' . implode(', ', $delete_ids) . ')']
+            ]);
 
-                if ($record['is_deleted'] === 0) {
-                    if (isset($record['image_path'])) {
-                        $uploader->delete($record['image_path']);
-                        $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
-                    }
-                    $post->softDelete(['condition' => 'id = ?', 'values' => [$record['id']]]);
+            foreach ($records as $record) {
+                if (isset($record['image_path'])) {
+                    $uploader->delete($record['image_path']);
+                    $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
                 }
+                $post->softDelete(['condition' => 'id = ?', 'values' => [$record['id']]]);
             }
         }
 
