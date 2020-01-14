@@ -21,6 +21,11 @@ class SessionManager
         $_SESSION[$key] = $value;
     }
 
+    public function setVars(string $key, ?array $values)
+    {
+        $_SESSION[$key] = $values;
+    }
+
     public function unsetVar(string $key)
     {
         if (isset($_SESSION[$key])) {

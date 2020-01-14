@@ -33,6 +33,8 @@ class Controller_Admin_Post extends Controller_App
             'offset'   => $paginator->getRecordOffset(),
         ]);
 
+        $this->session_manager->setVars('search_conditions', $search_conditions);
+
         $this->render('admin/index.php', get_defined_vars());
     }
 
@@ -64,7 +66,7 @@ class Controller_Admin_Post extends Controller_App
 
         $this->redirect('index.php', [
             'page'              => $previous_page,
-            'search_conditions' => $this->getParam('search_conditions')
+            'search_conditions' => $this->session_manager->getVar('search_conditions'),
         ]);
     }
 
@@ -95,7 +97,7 @@ class Controller_Admin_Post extends Controller_App
 
         $this->redirect('index.php', [
             'page'              => $previous_page,
-            'search_conditions' => $this->getParam('search_conditions'),
+            'search_conditions' => $this->session_manager->getVar('search_conditions'),
         ]);
     }
 
@@ -114,7 +116,7 @@ class Controller_Admin_Post extends Controller_App
 
         $this->redirect('index.php', [
             'page'              => $previous_page,
-            'search_conditions' => $this->getParam('search_conditions'),
+            'search_conditions' => $this->session_manager->getVar('search_conditions'),
         ]);
     }
 

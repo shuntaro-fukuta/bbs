@@ -110,23 +110,11 @@
 
   <form id="single_post_form" method="post">
     <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-    <?php if (isset($search_conditions)) : ?>
-      <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
-      <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
-      <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
-      <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
-    <?php endif ?>
   </form>
 
   <form id="checkbox_form" method="post" action="delete_posts.php">
     <button onclick="delete_checked_posts('delete_posts')">Delete Checked Items</button>
     <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
-    <?php if (isset($search_conditions)) : ?>
-      <input type="hidden" name="search_conditions[title]"   value="<?php echo h($search_conditions['title'])   ?? null ?>">
-      <input type="hidden" name="search_conditions[comment]" value="<?php echo h($search_conditions['comment']) ?? null ?>">
-      <input type="hidden" name="search_conditions[image]"   value="<?php echo h($search_conditions['image'])   ?? null ?>">
-      <input type="hidden" name="search_conditions[post]"    value="<?php echo h($search_conditions['post'])    ?? null ?>">
-    <?php endif ?>
   </form>
 <?php endif ?>
 
