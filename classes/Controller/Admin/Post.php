@@ -52,17 +52,16 @@ class Controller_Admin_Post extends Controller_App
             foreach ($delete_ids as $key => $id) {
                 $delete_ids[$key] = $post->escape($id, false);
             }
-            $records = $post->selectRecords(['*'], [
-                'where' => ['condition' => ' id IN (' . implode(', ', $delete_ids) . ')']
-            ]);
+            $where = ['condition' => ' id IN (' . implode(', ', $delete_ids) . ')'];
 
+            $records = $post->selectRecords(['*'], ['where' => $where]);
             foreach ($records as $record) {
                 if (isset($record['image_path'])) {
                     $uploader->delete($record['image_path']);
                     $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
                 }
-                $post->softDelete(['condition' => 'id = ?', 'values' => [$record['id']]]);
             }
+            $post->update(['is_deleted' => 1], $where);
         }
 
         $this->redirect('index.php', [
