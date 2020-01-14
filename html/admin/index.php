@@ -2,8 +2,7 @@
 
 <script>
   function check_all() {
-    // doi: ここだけキャメルケースになってるよ。
-    var isChecked = document.getElementById('all_check_box').checked;
+    var is_checked = document.getElementById('all_check_box').checked;
 
     var check_boxes = document.getElementsByClassName('checkboxes');
     var boxes_count = check_boxes.length;
