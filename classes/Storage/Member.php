@@ -2,5 +2,5 @@
 
 class Storage_Member extends Storage_Base
 {
-    protected $table_name = 'member';
+    protected $table_name = 'members';
 }

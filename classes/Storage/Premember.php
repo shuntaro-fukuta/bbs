@@ -2,7 +2,7 @@
 
 class Storage_Premember extends Storage_Base
 {
-    protected $table_name = 'premember';
+    protected $table_name = 'premembers';
 
     protected $validation_rules = [
         'name' => [

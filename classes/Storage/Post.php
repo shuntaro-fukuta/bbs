@@ -2,7 +2,7 @@
 
 class Storage_Post extends Storage_Base
 {
-    protected $table_name = 'post';
+    protected $table_name = 'posts';
 
     protected $validation_rule = [
         'name'  => [

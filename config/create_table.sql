@@ -1,4 +1,4 @@
-| post  | CREATE TABLE `post` (
+| posts  | CREATE TABLE `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
@@ -11,7 +11,7 @@
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8737 DEFAULT CHARSET=utf8 |
 
-| premember | CREATE TABLE `premember` (
+| premembers | CREATE TABLE `premembers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -21,7 +21,7 @@
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8 |
 
-| member | CREATE TABLE `member` (
+| members | CREATE TABLE `members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -29,7 +29,9 @@
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 |
 
-| admin | CREATE TABLE `admin` (
+| admins | CREATE TABLE `admins` (
+  -- doi: 業務上意味のないキーなのでサロゲートキーをログインで使用するのは不自然かな。
+  -- login_idかemailカラムを用意しましょう。
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
