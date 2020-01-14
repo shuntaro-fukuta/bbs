@@ -47,4 +47,9 @@ abstract class Storage_Base
             $where
         );
     }
+
+    public function escape(string $value, bool $withQuotes = true)
+    {
+        return $this->database->escape($value, $withQuotes);
+    }
 }

@@ -235,6 +235,19 @@ class Storage_Database_MySQL extends Storage_Database
         return $where['values'];
     }
 
+    public function escape(string $value, bool $withQuotes = true)
+    {
+        if (empty($value)) {
+            return 'NULL';
+        } elseif (is_string($value)) {
+            $value = $this->conn->real_escape_string($value);
+
+            return ($withQuotes) ? "'{$value}'" : $value;
+        } else {
+            return $value;
+        }
+    }
+
     public function connect()
     {
         $config = $this->config;
