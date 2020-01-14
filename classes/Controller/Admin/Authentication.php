@@ -17,7 +17,6 @@ class Controller_Admin_Authentication extends Controller_App
         $id       = $this->getParam('id');
         $password = $this->getParam('password');
 
-        // 利用者と管理者が同じテーブルに入ってるのはおかしいかな
         $admin   = new Storage_Admin();
         $account = $admin->selectRecord(['*'], [
             'condition' => 'id = ?',
