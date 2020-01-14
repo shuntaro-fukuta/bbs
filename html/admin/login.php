@@ -9,3 +9,5 @@
   <input type="password" name="password"><br>
   <input type="submit" value="login">
 </form>
+
+<button onclick="location.href='../index.php'">トップへ戻る</button>
