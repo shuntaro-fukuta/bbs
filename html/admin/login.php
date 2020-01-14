@@ -1,4 +1,4 @@
-<?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'header.php') ?>
+<?php include(HTML_FILES_DIR . DIR_SEP . 'admin' . DIR_SEP . 'header.php') ?>
 
 <?php include(HTML_FILES_DIR . DIR_SEP . 'common' . DIR_SEP . 'error.php') ?>
 
