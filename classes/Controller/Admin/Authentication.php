@@ -19,7 +19,7 @@ class Controller_Admin_Authentication extends Controller_App
 
         $admin   = new Storage_Admin();
         $account = $admin->selectRecord(['*'], [
-            'condition' => 'id = ?',
+            'condition' => 'login_id = ?',
             'values'    => [$id],
         ]);
 

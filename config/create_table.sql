@@ -30,9 +30,7 @@
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 |
 
 | admins | CREATE TABLE `admins` (
-  -- doi: 業務上意味のないキーなのでサロゲートキーをログインで使用するのは不自然かな。
-  -- login_idかemailカラムを用意しましょう。
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `login_id` int(11) NOT NULL,
   `password` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 |
+  PRIMARY KEY (`login_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
