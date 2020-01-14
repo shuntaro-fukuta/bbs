@@ -113,7 +113,6 @@
 
   <form id="checkbox_form" method="post" action="delete_posts.php">
     <button onclick="delete_checked_posts('delete_posts')">Delete Checked Items</button>
-    <input type="hidden" name="page" value="<?php echo h($paginator->getCurrentPage()) ?>">
   </form>
 <?php endif ?>
 
