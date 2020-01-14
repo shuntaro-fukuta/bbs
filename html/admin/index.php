@@ -34,7 +34,8 @@
   }
 
   var build_single_post_form = function(action, post_values) {
-    var form = document.getElementById('single_post_form');
+    var form = document.createElement('form');
+    form.setAttribute('method', 'post');
     form.setAttribute('action', action);
 
     var input = document.createElement('input');
@@ -45,6 +46,8 @@
 
       form.appendChild(input)
     }
+
+    document.body.appendChild(form);
 
     return form;
   }
@@ -107,9 +110,6 @@
       </tr>
     <?php endforeach ?>
   </table>
-
-  <form id="single_post_form" method="post">
-  </form>
 
   <form id="checkbox_form" method="post" action="delete_posts.php">
     <button onclick="delete_checked_posts('delete_posts')">Delete Checked Items</button>
