@@ -59,7 +59,7 @@
           <td>
             <?php if (!is_null($record['image_path'])) : ?>
               <img src="<?php echo h($record['image_path']) ?>" width="150" height="100">
-              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return submit_single_post_form()">DEL</button>
+              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return window.confirm('Are you sure?')">DEL</button>
             <?php endif ?>
           </td>
           <td><?php echo h($record['created_at']) ?></td>
