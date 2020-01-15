@@ -4,11 +4,11 @@
   function check_all() {
     var is_checked = document.getElementById('js-all_check_box').checked;
 
-    var check_boxes = document.getElementsByClassName('js-checkboxes');
-    var boxes_count = check_boxes.length;
+    var checkboxes  = document.getElementsByClassName('js-checkboxes');
+    var boxes_count = checkboxes.length;
 
     for (var i = 0; i < boxes_count; i++) {
-      check_boxes[i].checked = is_checked;
+      checkboxes[i].checked = is_checked;
     }
   }
 
@@ -18,7 +18,12 @@
       return false;
     }
 
-    // TODO:チェックボックスのチェックを外す
+    var checkboxes  = document.getElementsByClassName('js-checkboxes');
+    var boxes_count = checkboxes.length;
+
+    for (var i = 0; i < boxes_count; i++) {
+      checkboxes[i].checked = false;
+    }
 
     return true;
   }
@@ -59,16 +64,16 @@
           <td>
             <?php if (!is_null($record['image_path'])) : ?>
               <img src="<?php echo h($record['image_path']) ?>" width="150" height="100">
-              <button name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return submit_single_post_form()">DEL</button>
+              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return submit_single_post_form()">DEL</button>
             <?php endif ?>
           </td>
           <td><?php echo h($record['created_at']) ?></td>
 
           <td>
             <?php if ($record['is_deleted'] === 0) : ?>
-              <button name="delete_ids[]" value="<?php echo h($record['id']) ?>" formaction="delete_posts.php" onclick="return submit_single_post_form()">DEL</button>
+              <button type="submit" name="delete_ids[]" value="<?php echo h($record['id']) ?>" formaction="delete_posts.php" onclick="return submit_single_post_form()">DEL</button>
             <?php else : ?>
-              <button name="post_id" value="<?php echo h($record['id']) ?>" formaction="recover.php">REC</button>
+              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="recover.php">REC</button>
             <?php endif ?>
           </td>
 
