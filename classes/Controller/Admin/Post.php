@@ -61,7 +61,8 @@ class Controller_Admin_Post extends Controller_App
                     $post->update(['image_path' => null], ['condition' => 'id = ?', 'values' => [$record['id']]]);
                 }
             }
-            $post->update(['is_deleted' => 1], $where);
+
+            $post->softDelete($where);
         }
 
         $this->redirect('index.php', [
