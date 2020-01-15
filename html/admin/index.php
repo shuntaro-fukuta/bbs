@@ -4,12 +4,7 @@
   function check_all() {
     var is_checked = document.getElementById('js-all_check_box').checked;
 
-    var checkboxes  = document.getElementsByClassName('js-checkboxes');
-    var boxes_count = checkboxes.length;
-
-    for (var i = 0; i < boxes_count; i++) {
-      checkboxes[i].checked = is_checked;
-    }
+    toggle_checkboxes(is_checked);
   }
 
   function submit_single_post_form() {
@@ -18,14 +13,18 @@
       return false;
     }
 
+    toggle_checkboxes(false);
+
+    return true;
+  }
+
+  function toggle_checkboxes(is_checked) {
     var checkboxes  = document.getElementsByClassName('js-checkboxes');
     var boxes_count = checkboxes.length;
 
     for (var i = 0; i < boxes_count; i++) {
-      checkboxes[i].checked = false;
+      checkboxes[i].checked = is_checked;
     }
-
-    return true;
   }
 </script>
 
