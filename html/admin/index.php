@@ -46,16 +46,12 @@
       </tr>
 
       <?php foreach($records as $record) : ?>
-        <?php if ($record['is_deleted'] === 0) : ?>
-          <tr>
-            <td>
+        <tr style="<?php if ($record['is_deleted']) echo 'background: gray;' ?>">
+          <td>
+            <?php if (!$record['is_deleted']) : ?>
               <input class="js-checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>">
-            </td>
-        <?php else : ?>
-          <!-- doi: style="<?php if ($record['is_deleted']) echo 'background: gray;' ?>" って書けるよ。 -->
-          <tr style="background: gray;">
-            <td></td>
-        <?php endif ?>
+            <?php endif ?>
+          </td>
 
           <td><?php echo h($record['id']) ?></td>
           <td><?php echo h($record['title']) ?></td>
@@ -69,10 +65,10 @@
           <td><?php echo h($record['created_at']) ?></td>
 
           <td>
-            <?php if ($record['is_deleted'] === 0) : ?>
-              <button type="submit" name="delete_ids[]" value="<?php echo h($record['id']) ?>" formaction="delete_posts.php" onclick="return submit_single_post_form()">DEL</button>
-            <?php else : ?>
+            <?php if ($record['is_deleted']) : ?>
               <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="recover.php">REC</button>
+            <?php else : ?>
+              <button type="submit" name="delete_ids[]" value="<?php echo h($record['id']) ?>" formaction="delete_posts.php" onclick="return submit_single_post_form()">DEL</button>
             <?php endif ?>
           </td>
 
@@ -80,7 +76,7 @@
       <?php endforeach ?>
     </table>
 
-    <input type="submit" value="Delete Checked Items." formaction="delete_posts.php" onclick="return window.confirm(`Are you sure to delete checked items?`)">
+    <input type="submit" value="Delete Checked Items" formaction="delete_posts.php" onclick="return window.confirm('Are you sure to delete checked items?')">
   </form>
 
 <?php endif ?>
