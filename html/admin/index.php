@@ -8,7 +8,7 @@
   }
 
   function confirm_delete_post() {
-    var do_delete = window.confirm('Are you sure?');
+    var do_delete = confirm('Are you sure?');
     if (!do_delete) {
       return false;
     }
@@ -59,7 +59,7 @@
           <td>
             <?php if (!is_null($record['image_path'])) : ?>
               <img src="<?php echo h($record['image_path']) ?>" width="150" height="100">
-              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return window.confirm('Are you sure?')">DEL</button>
+              <button type="submit" name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return confirm('Are you sure?')">DEL</button>
             <?php endif ?>
           </td>
           <td><?php echo h($record['created_at']) ?></td>
@@ -76,7 +76,7 @@
       <?php endforeach ?>
     </table>
 
-    <input type="submit" value="Delete Checked Items" formaction="delete_posts.php" onclick="return window.confirm('Are you sure to delete checked items?')">
+    <input type="submit" value="Delete Checked Items" formaction="delete_posts.php" onclick="return confirm('Are you sure to delete checked items?')">
   </form>
 
 <?php endif ?>
