@@ -162,10 +162,6 @@ class Controller_Member extends Controller_App
 
     public function logout()
     {
-        if (!$this->isLoggedIn()) {
-            $this->redirect('login.php');
-        }
-
         $this->session_manager->unsetVar('member_id');
         $this->redirect('index.php');
     }
