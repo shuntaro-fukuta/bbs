@@ -12,38 +12,15 @@
     }
   }
 
-  function delete_image(post_id) {
-    var do_delete = window.confirm(`Are you sure to delete the image of post ${post_id}?`);
-    if (do_delete) {
-      submit_single_post_form('delete_image.php', post_id);
+  function submit_single_post_form() {
+    var do_delete = window.confirm('Are you sure?');
+    if (!do_delete) {
+      return false;
     }
-  }
 
-  function delete_post(post_id) {
-    var do_delete = window.confirm(`Are you sure to delete the post ${post_id}?`);
-    if (do_delete) {
-      submit_single_post_form('delete_posts.php', post_id);
-    }
-  }
+    // TODO:チェックボックスのチェックを外す
 
-  function recover_post(post_id) {
-    submit_single_post_form('recover.php', post_id);
-  }
-
-  function submit_single_post_form(action, post_id) {
-    document.getElementById('post_id').value = post_id;
-
-    document.js_admin_form.action = action;
-    document.js_admin_form.method = 'post';
-    document.js_admin_form.submit();
-  }
-
-  function delete_checked_posts() {
-    var do_delete = window.confirm(`Are you sure to delete checked items?`);
-    if (do_delete) {
-      var form = document.getElementById('js-checkbox_form');
-      form.submit();
-    }
+    return true;
   }
 </script>
 
@@ -52,9 +29,7 @@
 <?php if (empty($records)) : ?>
   <p>Not found.</p>
 <?php else : ?>
-  <form name="js_admin_form">
-    <input type="hidden" id="post_id" name="post_id" value="">
-
+  <form method="post">
     <table border="1">
       <tr>
         <th><input id="js-all_check_box" onclick="check_all()" type="checkbox"></th>
@@ -70,7 +45,7 @@
         <?php if ($record['is_deleted'] === 0) : ?>
           <tr>
             <td>
-              <input class="js-checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>" form="js-checkbox_form">
+              <input class="js-checkboxes" type="checkbox" name="delete_ids[]" value="<?php echo h($record['id']) ?>">
             </td>
         <?php else : ?>
           <!-- doi: style="<?php if ($record['is_deleted']) echo 'background: gray;' ?>" って書けるよ。 -->
@@ -84,16 +59,16 @@
           <td>
             <?php if (!is_null($record['image_path'])) : ?>
               <img src="<?php echo h($record['image_path']) ?>" width="150" height="100">
-              <button onclick="delete_image(<?php echo h($record['id']) ?>)">DEL</button>
+              <button name="post_id" value="<?php echo h($record['id']) ?>" formaction="delete_image.php"  onclick="return submit_single_post_form()">DEL</button>
             <?php endif ?>
           </td>
           <td><?php echo h($record['created_at']) ?></td>
 
           <td>
             <?php if ($record['is_deleted'] === 0) : ?>
-              <button onclick="delete_post(<?php echo h($record['id']) ?>)">DEL</button>
+              <button name="delete_ids[]" value="<?php echo h($record['id']) ?>" formaction="delete_posts.php" onclick="return submit_single_post_form()">DEL</button>
             <?php else : ?>
-              <button onclick="recover_post(<?php echo h($record['id']) ?>)">REC</button>
+              <button name="post_id" value="<?php echo h($record['id']) ?>" formaction="recover.php">REC</button>
             <?php endif ?>
           </td>
 
@@ -101,7 +76,7 @@
       <?php endforeach ?>
     </table>
 
-    <button onclick="delete_checked_posts('delete_posts');">Delete Checked Items</button>
+    <input type="submit" value="Delete Checked Items." formaction="delete_posts.php" onclick="return window.confirm(`Are you sure to delete checked items?`)">
   </form>
 
 <?php endif ?>
