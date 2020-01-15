@@ -52,7 +52,7 @@ class Controller_Admin_Post extends Controller_App
             foreach ($delete_ids as $key => $id) {
                 $delete_ids[$key] = $post->escape($id, false);
             }
-            $condition = ' id IN (' . implode(', ', $delete_ids) . ')';
+            $condition = 'id IN (' . implode(', ', $delete_ids) . ')';
 
             $records = $post->selectRecords(['*'], ['where' => ['condition' => $condition . ' AND image_path IS NOT NULL']]);
             foreach($records as $record) {
